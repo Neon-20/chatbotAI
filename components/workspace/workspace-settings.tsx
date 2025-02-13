@@ -222,10 +222,12 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
           </SheetHeader>
 
           <Tabs defaultValue="main">
-            <TabsList className="mt-4 grid w-full grid-cols-2">
-              <TabsTrigger value="main">Main</TabsTrigger>
-              <TabsTrigger value="defaults">Defaults</TabsTrigger>
-            </TabsList>
+            {profile?.roles != "user" && (
+              <TabsList className="mt-4 grid w-full grid-cols-2">
+                <TabsTrigger value="main">Main</TabsTrigger>
+                <TabsTrigger value="defaults">Defaults</TabsTrigger>
+              </TabsList>
+            )}
 
             <TabsContent className="mt-4 space-y-4" value="main">
               <>

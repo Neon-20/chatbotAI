@@ -107,6 +107,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({
             ref={triggerRef}
             className="flex items-center justify-between"
             variant="ghost"
+            disabled={profile?.roles === "user"}
           >
             <div className="flex items-center">
               {selectedModel ? (

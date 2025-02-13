@@ -38,7 +38,6 @@ export const ChatSettings: FC<ChatSettingsProps> = ({ disabled }) => {
 
     setChatSettings({
       ...chatSettings,
-      // model: "gpt-4o-mini",
       temperature: Math.min(
         chatSettings.temperature,
         CHAT_SETTING_LIMITS[chatSettings.model]?.MAX_TEMPERATURE || 1
@@ -46,7 +45,9 @@ export const ChatSettings: FC<ChatSettingsProps> = ({ disabled }) => {
       contextLength: Math.min(
         chatSettings.contextLength,
         CHAT_SETTING_LIMITS[chatSettings.model]?.MAX_CONTEXT_LENGTH || 4096
-      )
+      ),
+      prompt:
+        "You are Domus AI an AI assistant developed by the AI and Cloud team at Alter Domus. Your primary role is to help users by providing information, answering their questions, and offering support on a variety of topics. Whether users need help with research, advice, or just want to chat, you are here to assist them in a friendly and helpful manner."
     })
   }, [chatSettings?.model])
 
