@@ -54,7 +54,7 @@ export default function ChatPage() {
           <div className="top-50% left-50% -translate-x-50% -translate-y-50% absolute mb-20">
             <Brand theme={theme === "dark" ? "dark" : "light"} />
           </div>
-          <StickyBanner />
+          {/* <StickyBanner /> */}
           <div className="m-2 flex w-full justify-between">
             <div className="hidden lg:block">
               {profile?.roles === "superadmin" && <QuickSettings />}
