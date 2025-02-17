@@ -410,6 +410,7 @@ export const useChatHandler = () => {
     handleSendMessage(editedContent, filteredMessages, false)
   }
 
+  const prompt = chatSettings?.prompt || ""
   return {
     chatInputRef,
     prompt,

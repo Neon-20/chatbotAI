@@ -15,7 +15,16 @@ import {
 } from "@/components/ui/card"
 import { createClient } from "@supabase/supabase-js"
 import { useEffect, useState } from "react"
-import { Cell, Pie, PieChart } from "recharts"
+import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip
+} from "recharts"
+// Add the Dialog imports
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -59,6 +68,8 @@ export function ChartPieTopUsers() {
   const [chartData, setChartData] = useState<
     Array<{ name: string; value: number }>
   >([])
+  // Add dialog open state
+  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -93,42 +104,78 @@ export function ChartPieTopUsers() {
   }, [])
 
   return (
-    <Card className="h-full">
-      <CardHeader>
-        <CardTitle className="text-ad-teal">Top Users Distribution</CardTitle>
-        <CardDescription>
-          Message distribution among top 5 users and others
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grow">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
+    <>
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle className="text-ad-teal">Top Users Distribution</CardTitle>
+          <CardDescription>
+            Message distribution among top 5 users and others
+          </CardDescription>
+        </CardHeader>
+        <CardContent
+          className="h-[300px] w-full grow"
+          onClick={() => setIsOpen(true)}
+          style={{ cursor: "pointer" }}
         >
-          <PieChart>
-            <Pie
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              outerRadius="80%"
-              fill="#8884d8"
-              dataKey="value"
-            >
-              {chartData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-          </PieChart>
-        </ChartContainer>
-      </CardContent>
-    </Card>
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+            style={{ cursor: "pointer" }}
+          >
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+                label
+              >
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+                <Tooltip />
+                <Legend />
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="h-[80vh] w-[1200px] max-w-[90vw]">
+          <DialogHeader>
+            <DialogTitle>Top Users Distribution</DialogTitle>
+          </DialogHeader>
+          {/* Enlarge the pie chart for detailed view */}
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                outerRadius={200}
+                innerRadius={100}
+                fill="#8884d8"
+                dataKey="value"
+                label={entry => entry.name}
+              >
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend verticalAlign="bottom" height={36} />
+            </PieChart>
+          </ResponsiveContainer>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
