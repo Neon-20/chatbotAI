@@ -1,21 +1,21 @@
+import { ChatbotUIContext } from "@/context/context"
 import { ContentType } from "@/types"
 import {
-  IconAdjustmentsHorizontal,
-  IconBolt,
   IconBooks,
+  IconChartBar,
   IconFile,
   IconMessage,
   IconPencil,
-  IconRobotFace,
-  IconSparkles
+  IconRobotFace
 } from "@tabler/icons-react"
 import { FC, useContext } from "react"
+import AdminRolesPage from "../AdminRolesPage"
 import { TabsList } from "../ui/tabs"
 import { WithTooltip } from "../ui/with-tooltip"
 import { ProfileSettings } from "../utility/profile-settings"
 import { SidebarSwitchItem } from "./sidebar-switch-item"
-import { ChatbotUIContext } from "@/context/context"
-import AdminRolesPage from "../AdminRolesPage"
+import { Button } from "../ui/button"
+import Link from "next/link"
 
 export const SIDEBAR_ICON_SIZE = 28
 
@@ -64,6 +64,18 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
           )}
         {(profile?.roles == "admin" || profile?.roles == "superadmin") && (
           <AdminRolesPage />
+        )}
+        {profile?.roles == "superadmin" && (
+          <WithTooltip
+            display={<div>Analytics</div>}
+            trigger={
+              <Link href="/analytics" passHref>
+                <Button variant={"ghost"}>
+                  <IconChartBar />
+                </Button>
+              </Link>
+            }
+          />
         )}
       </TabsList>
 
