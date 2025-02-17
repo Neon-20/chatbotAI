@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Database } from "@/supabase/types"
 import { createClient } from "@supabase/supabase-js"
 import { cookies } from "next/headers"
+import { MessageSquare, Users, BarChart2, TrendingUp } from "lucide-react"
 
 export async function KeyMetrics() {
   const cookieStore = cookies()
@@ -115,25 +116,33 @@ export async function KeyMetrics() {
       title: "Total Messages",
       value: totalMessages,
       description: "All-time messages sent",
-      className: "bg-[#004851] text-white"
+      className: "bg-[#004851] text-white",
+      icon: MessageSquare,
+      iconColor: "text-white"
     },
     {
       title: "Active Users",
       value: activeUsers,
       description: "Users active in the last 30 days",
-      className: "bg-[#ffb81c] text-black"
+      className: "bg-[#ffb81c] text-black",
+      icon: Users,
+      iconColor: "text-black"
     },
     {
       title: "Avg. Messages/User",
       value: avgMessagesPerUser,
       description: "Messages per active user",
-      className: "bg-[#e84e0f] text-white"
+      className: "bg-[#e84e0f] text-white",
+      icon: BarChart2,
+      iconColor: "text-white"
     },
     {
       title: "Monthly Growth",
       value: monthlyGrowthFormatted,
       description: "Message growth last month",
-      className: "bg-white border border-gray-200"
+      className: "bg-white border border-gray-200",
+      icon: TrendingUp,
+      iconColor: "text-black"
     }
   ]
 
@@ -145,7 +154,8 @@ export async function KeyMetrics() {
           className={`${metric.className} shadow-sm transition-all hover:shadow-md`}
         >
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium opacity-90">
+            <CardTitle className="mb-4 flex items-center gap-4 text-sm font-medium opacity-90">
+              <metric.icon className={"size-5 " + metric.iconColor} />
               {metric.title}
             </CardTitle>
           </CardHeader>
