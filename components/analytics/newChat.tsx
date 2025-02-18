@@ -9,7 +9,8 @@ const NewChat = () => {
   return (
     <Button
       onClick={handleNewChat}
-      className="hover:text-ad-gold text-sm transition-colors"
+      variant={"ghost"}
+      className="text-sm transition-colors hover:bg-transparent hover:text-white/90"
     >
       <IconArrowLeft className="mr-2" size={20} />
       Go Back to Chat

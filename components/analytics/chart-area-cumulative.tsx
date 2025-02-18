@@ -67,10 +67,12 @@ export function ChartAreaCumulative() {
     <>
       <Card className="h-full">
         <CardHeader>
-          <CardTitle className="text-ad-teal">
+          <h3 className="mb-2 text-lg font-medium">
             Cumulative Message Growth
-          </CardTitle>
-          <CardDescription>Total messages sent over time</CardDescription>
+          </h3>
+          <p className="mb-6 text-sm text-gray-500">
+            Total messages sent over time
+          </p>
         </CardHeader>
         <CardContent className="grow" onClick={() => setIsOpen(true)}>
           {" "}
