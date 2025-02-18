@@ -29,8 +29,8 @@ export async function ChartFileTypes({
     <>
       <Card className="h-full shadow-sm transition-all hover:shadow-md">
         <CardHeader>
-          <CardTitle className="text-ad-teal">File Type Distribution</CardTitle>
-          <CardDescription>Number of files by type</CardDescription>
+          <h3 className="mb-2 text-lg font-medium">File Type Distribution</h3>
+          <p className="mb-6 text-sm text-gray-500">Number of files by type</p>
         </CardHeader>
         <CardContent className="grow" onClick={() => setIsOpen(true)}>
           <ResponsiveContainer width="100%" height={300}>
