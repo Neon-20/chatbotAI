@@ -10,16 +10,12 @@ import {
   ResponsiveContainer,
   Legend
 } from "recharts"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card"
-import { useState, useEffect } from "react"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { useState, useEffect, useContext } from "react"
 import { createClient } from "@supabase/supabase-js"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
+import { ChatbotUIContext } from "@/context/context"
+import { redirect } from "next/navigation"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -30,6 +26,13 @@ export function ChartMessagesGrowth() {
   const [dataWithGrowth, setDataWithGrowth] = useState<
     Array<{ month: string; total_messages: number; growth: number }>
   >([])
+  const { profile } = useContext(ChatbotUIContext)
+
+  useEffect(() => {
+    if (profile?.roles !== "superadmin") {
+      redirect("/login")
+    }
+  }, [profile])
 
   useEffect(() => {
     async function fetchMessages() {

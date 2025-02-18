@@ -1,11 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Database } from "@/supabase/types"
 import { createClient } from "@supabase/supabase-js"
-import { cookies } from "next/headers"
 import { MessageSquare, Users, BarChart2, TrendingUp } from "lucide-react"
 
 export async function KeyMetrics() {
-  const cookieStore = cookies()
   const supabaseAdmin = createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
