@@ -15,22 +15,71 @@ import {
   Tooltip,
   Line
 } from "recharts"
+import { useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 
-export async function ChartActiveUsers({
+export function ChartActiveUsers({
   chartData
 }: {
   chartData: Array<{ month: string; active_users: number }>
 }) {
+  const [isOpen, setIsOpen] = useState(false)
+
   return (
-    <Card className="h-full shadow-sm transition-all hover:shadow-md">
-      <CardHeader>
-        <CardTitle className="text-ad-teal">Monthly Active Users</CardTitle>
-        <CardDescription>Growth in active users over time</CardDescription>
-      </CardHeader>
-      <CardContent className="grow">
-        <ActiveUsersChart data={chartData} />
-      </CardContent>
-    </Card>
+    <>
+      <Card className="h-full shadow-sm transition-all hover:shadow-md">
+        <CardHeader>
+          <CardTitle className="text-ad-teal">Monthly Active Users</CardTitle>
+          <CardDescription>Growth in active users over time</CardDescription>
+        </CardHeader>
+        {/* Trigger dialog on click */}
+        <CardContent className="grow" onClick={() => setIsOpen(true)}>
+          <ActiveUsersChart data={chartData} />
+        </CardContent>
+      </Card>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="h-[80vh] w-[1200px] max-w-[90vw]">
+          <DialogHeader>
+            <DialogTitle>Monthly Active Users</DialogTitle>
+          </DialogHeader>
+          <div className="size-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={chartData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="var(--ad-gray-200)"
+                />
+                <XAxis
+                  dataKey="month"
+                  stroke="var(--ad-gray-600)"
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis stroke="var(--ad-gray-600)" tick={{ fontSize: 12 }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "var(--ad-white)",
+                    borderColor: "var(--ad-gray-300)"
+                  }}
+                  formatter={(value: number) => [
+                    `${value} users`,
+                    "Active Users"
+                  ]}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="active_users"
+                  stroke="var(--ad-orange)"
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
@@ -64,17 +113,7 @@ export function ActiveUsersChart({
           type="monotone"
           dataKey="active_users"
           stroke="var(--ad-orange)"
-          strokeWidth={3}
-          dot={{
-            fill: "var(--ad-orange)",
-            strokeWidth: 2,
-            r: 4
-          }}
-          activeDot={{
-            fill: "var(--ad-orange)",
-            strokeWidth: 2,
-            r: 6
-          }}
+          strokeWidth={2}
         />
       </LineChart>
     </ResponsiveContainer>
