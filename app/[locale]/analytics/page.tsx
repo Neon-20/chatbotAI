@@ -5,10 +5,8 @@ import { ChartMessagesGrowth } from "@/components/analytics/chart-messages-growt
 import { ChartPieTopUsers } from "@/components/analytics/chart-pie-top-users"
 import { KeyMetrics } from "@/components/analytics/key-metrics"
 import NewChat from "@/components/analytics/newChat"
-import { TopUsersTable } from "@/components/analytics/top-users-table"
 import { Database } from "@/supabase/types"
 import { createClient } from "@supabase/supabase-js"
-import { redirect } from "next/navigation"
 
 export default async function Page() {
   const supabaseAdmin = createClient<Database>(
@@ -62,10 +60,10 @@ export default async function Page() {
     .sort((a, b) => b.count - a.count)
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      <header className="h-14 border-b">
-        <div className="container mx-auto h-full px-4">
-          <div className="flex  h-16 items-center justify-between ">
+    <div className="min-h-screen">
+      <header className="w-screen bg-[#004D4D] text-white">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -98,19 +96,20 @@ export default async function Page() {
       </header>
       <main className="container mx-auto flex-1 space-y-6 p-6">
         <KeyMetrics />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <ChartMessagesGrowth />
-          </div>
+        <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <ChartMessagesGrowth />
           <ChartActiveUsers chartData={chartActiveUsersData} />
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <ChartFileTypes fileTypeData={fileTypeData} />
           <ChartAreaCumulative />
           <ChartPieTopUsers />
-          <div className="lg:col-span-2">
-            <TopUsersTable />
-          </div>
         </div>
       </main>
+      <footer className="mt-4 flex items-center justify-center border-t border-black py-2 text-[11px] text-black">
+        domus AI is an AI tool brought to you by the Alter Domus AI Team and
+        adapted by the Cloud Platform Engineering Team.
+      </footer>
     </div>
   )
 }
