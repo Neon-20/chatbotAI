@@ -15,24 +15,6 @@ export default async function Page() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
-  // Super Admin check
-  const {
-    data: { user }
-  } = await supabaseAdmin.auth.getUser()
-
-  if (!user?.id) {
-    return redirect("/")
-  }
-
-  const { data: profile, error: profileErr } = await supabaseAdmin
-    .from("profiles")
-    .select("*")
-    .eq("user_id", user?.id)
-    .single()
-
-  if (profileErr || profile?.roles !== "superadmin") {
-    redirect("/")
-  }
 
   const oneYearAgo = new Date()
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
