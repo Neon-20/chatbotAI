@@ -1,18 +1,7 @@
 "use client"
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent
-} from "@/components/ui/chart"
+import { ChartConfig } from "@/components/ui/chart"
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { createClient } from "@supabase/supabase-js"
 import { useEffect, useState } from "react"
 import {
@@ -23,37 +12,11 @@ import {
   ResponsiveContainer,
   Tooltip
 } from "recharts"
-// Add the Dialog imports
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const supabase = createClient(supabaseUrl, supabaseAnonKey)
-const chartConfig = {
-  visitors: {
-    label: "Users"
-  },
-  user1: {
-    label: "User 1",
-    color: "hsl(var(--chart-1))"
-  },
-  user2: {
-    label: "User 2",
-    color: "hsl(var(--chart-2))"
-  },
-  user3: {
-    label: "User 3",
-    color: "hsl(var(--chart-3))"
-  },
-  user4: {
-    label: "User 4",
-    color: "hsl(var(--chart-4))"
-  },
-  others: {
-    label: "Other",
-    color: "hsl(var(--chart-5))"
-  }
-} satisfies ChartConfig
 
 const COLORS = [
   "var(--ad-teal)",
@@ -107,10 +70,10 @@ export function ChartPieTopUsers() {
     <>
       <Card className="h-full">
         <CardHeader>
-          <CardTitle className="text-ad-teal">Top Users Distribution</CardTitle>
-          <CardDescription>
+          <h3 className="mb-2 text-lg font-medium">Top Users Distribution</h3>
+          <p className="mb-6 text-sm text-gray-500">
             Message distribution among top 5 users and others
-          </CardDescription>
+          </p>
         </CardHeader>
         <CardContent
           className="h-[300px] w-full grow"
@@ -138,9 +101,9 @@ export function ChartPieTopUsers() {
                     fill={COLORS[index % COLORS.length]}
                   />
                 ))}
-                <Tooltip />
-                <Legend />
               </Pie>
+              <Tooltip />
+              <Legend verticalAlign="bottom" height={36} />
             </PieChart>
           </ResponsiveContainer>
         </CardContent>

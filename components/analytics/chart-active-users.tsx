@@ -29,8 +29,10 @@ export function ChartActiveUsers({
     <>
       <Card className="h-full shadow-sm transition-all hover:shadow-md">
         <CardHeader>
-          <CardTitle className="text-ad-teal">Monthly Active Users</CardTitle>
-          <CardDescription>Growth in active users over time</CardDescription>
+          <h3 className="mb-2 text-lg font-medium">Monthly Active Users</h3>
+          <p className="mb-6 text-sm text-gray-500">
+            Growth in active users over time
+          </p>
         </CardHeader>
         {/* Trigger dialog on click */}
         <CardContent className="grow" onClick={() => setIsOpen(true)}>
@@ -40,7 +42,10 @@ export function ChartActiveUsers({
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="h-[80vh] w-[1200px] max-w-[90vw]">
           <DialogHeader>
-            <DialogTitle>Monthly Active Users</DialogTitle>
+            <h3 className="mb-2 text-lg font-medium">Monthly Active Users</h3>
+            <p className="mb-6 text-sm text-gray-500">
+              Growth in active users over time
+            </p>
           </DialogHeader>
           <div className="size-full">
             <ResponsiveContainer width="100%" height="100%">
