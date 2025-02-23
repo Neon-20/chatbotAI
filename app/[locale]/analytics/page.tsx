@@ -1,3 +1,6 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { ChartActiveUsers } from "@/components/analytics/chart-active-users"
 import { ChartAreaCumulative } from "@/components/analytics/chart-area-cumulative"
 import { ChartFileTypes } from "@/components/analytics/chart-file-types"
@@ -5,59 +8,72 @@ import { ChartMessagesGrowth } from "@/components/analytics/chart-messages-growt
 import { ChartPieTopUsers } from "@/components/analytics/chart-pie-top-users"
 import { KeyMetrics } from "@/components/analytics/key-metrics"
 import NewChat from "@/components/analytics/newChat"
-import { Database } from "@/supabase/types"
-import { createClient } from "@supabase/supabase-js"
+import { supabase } from "@/lib/supabase/browser-client"
 
-export default async function Page() {
-  const supabaseAdmin = createClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
+type Message = { created_at: string; user_id: string }
+type FileRow = { type?: string }
 
-  const oneYearAgo = new Date()
-  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
-  const oneYearAgoISO = oneYearAgo.toISOString()
+export default function Page() {
+  const [chartActiveUsersData, setChartActiveUsersData] = useState<
+    { month: string; active_users: number }[]
+  >([])
+  const [fileTypeData, setFileTypeData] = useState<
+    { type: string; count: number }[]
+  >([])
 
-  const { data: messages, error } = await supabaseAdmin
-    .from("messages")
-    .select("created_at, user_id")
-    .gte("created_at", oneYearAgoISO)
+  useEffect(() => {
+    async function fetchData() {
+      // Fetch messages data
+      const oneYearAgo = new Date()
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
+      const oneYearAgoISO = oneYearAgo.toISOString()
 
-  if (error) {
-    console.error("Error fetching messages:", error.message)
-  }
+      const { data: messages, error: msgError } = await supabase
+        .from("messages")
+        .select("created_at, user_id")
+        .gte("created_at", oneYearAgoISO)
 
-  const monthMap: Record<string, Set<string>> = {}
-  messages?.forEach((msg: { created_at: string; user_id: string }) => {
-    const date = new Date(msg.created_at)
-    const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
-    if (!monthMap[month]) {
-      monthMap[month] = new Set()
+      if (msgError) {
+        console.error("Error fetching messages:", msgError.message)
+      }
+
+      const monthMap: Record<string, Set<string>> = {}
+      messages?.forEach((msg: Message) => {
+        const date = new Date(msg.created_at)
+        const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
+        if (!monthMap[month]) {
+          monthMap[month] = new Set()
+        }
+        monthMap[month].add(msg.user_id)
+      })
+      const activeUsersData = Object.entries(monthMap)
+        .map(([month, users]) => ({ month, active_users: users.size }))
+        .sort((a, b) => (a.month > b.month ? 1 : -1))
+      setChartActiveUsersData(activeUsersData)
+
+      // Fetch file types data
+      const { data: files, error: filesErr } = await supabase
+        .from("files")
+        .select("type")
+
+      if (filesErr) {
+        console.error("Error fetching file types:", filesErr.message)
+      }
+
+      const counts: Record<string, number> = {}
+      files?.forEach((row: FileRow) => {
+        const type = row.type || "Other"
+        counts[type] = (counts[type] || 0) + 1
+      })
+
+      const fileTypes = Object.entries(counts)
+        .map(([type, count]) => ({ type, count }))
+        .sort((a, b) => b.count - a.count)
+      setFileTypeData(fileTypes)
     }
-    monthMap[month].add(msg.user_id)
-  })
-  const chartActiveUsersData = Object.entries(monthMap)
-    .map(([month, users]) => ({ month, active_users: users.size }))
-    .sort((a, b) => (a.month > b.month ? 1 : -1))
 
-  // fileTypeData
-  const { data: files, error: filesErr } = await supabaseAdmin
-    .from("files")
-    .select("type")
-
-  if (filesErr) {
-    console.error("Error fetching file types:", filesErr.message)
-  }
-
-  const counts: Record<string, number> = {}
-  files?.forEach(row => {
-    const type = row.type || "Other"
-    counts[type] = (counts[type] || 0) + 1
-  })
-
-  const fileTypeData = Object.entries(counts)
-    .map(([type, count]) => ({ type, count }))
-    .sort((a, b) => b.count - a.count)
+    fetchData()
+  }, [])
 
   return (
     <div className="min-h-screen">
