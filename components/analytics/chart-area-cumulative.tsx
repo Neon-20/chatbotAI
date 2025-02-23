@@ -1,30 +1,18 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { createClient } from "@supabase/supabase-js"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { supabase } from "@/lib/supabase/browser-client"
+import { useEffect, useState } from "react"
 import {
   Area,
   AreaChart,
-  XAxis,
-  YAxis,
   CartesianGrid,
+  ResponsiveContainer,
   Tooltip,
-  ResponsiveContainer
+  XAxis,
+  YAxis
 } from "recharts"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
-
-// Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
 export function ChartAreaCumulative() {
   // Dynamic data state replacing static data
   const [data, setData] = useState<Array<{ month: string; messages: number }>>(
