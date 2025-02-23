@@ -1,25 +1,21 @@
 "use client"
 
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { ChatbotUIContext } from "@/context/context"
+import { supabase } from "@/lib/supabase/browser-client"
+import { redirect } from "next/navigation"
+import { useContext, useEffect, useState } from "react"
 import {
+  CartesianGrid,
+  Legend,
   Line,
   LineChart,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
   ResponsiveContainer,
-  Legend
+  Tooltip,
+  XAxis,
+  YAxis
 } from "recharts"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { useState, useEffect, useContext } from "react"
-import { createClient } from "@supabase/supabase-js"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
-import { ChatbotUIContext } from "@/context/context"
-import { redirect } from "next/navigation"
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 export function ChartMessagesGrowth() {
   const [isOpen, setIsOpen] = useState(false)

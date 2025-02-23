@@ -1,8 +1,5 @@
 "use client"
-import { ChartConfig } from "@/components/ui/chart"
-
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { createClient } from "@supabase/supabase-js"
 import { useEffect, useState } from "react"
 import {
   Cell,
@@ -13,10 +10,7 @@ import {
   Tooltip
 } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabase = createClient(supabaseUrl, supabaseAnonKey)
+import { supabase } from "@/lib/supabase/browser-client"
 
 const COLORS = [
   "var(--ad-teal)",
