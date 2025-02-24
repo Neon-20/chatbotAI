@@ -1,16 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Database } from "@/supabase/types"
-import { createClient } from "@supabase/supabase-js"
-import { MessageSquare, Users, BarChart2, TrendingUp } from "lucide-react"
+import { createClient } from "@/lib/supabase/server"
+import { BarChart2, MessageSquare, TrendingUp, Users } from "lucide-react"
+import { cookies } from "next/headers"
 
 export async function KeyMetrics() {
-  const supabaseAdmin = createClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
+  const cookieStore = cookies()
+  const supabaseAdmin = createClient(cookieStore)
   // --- 1. Total Users ---
   const { data: totalUsersData, error: totalUsersError } =
     await supabaseAdmin.auth.admin.listUsers()
+
   const totalUsers = totalUsersData?.users ? totalUsersData.users.length : 0 // Default to 0 if error
   if (totalUsersError) {
     console.error("Error fetching total users:", totalUsersError.message)
