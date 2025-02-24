@@ -155,6 +155,9 @@ const AdminRolesPage = () => {
     }))
   }
 
+  const totalSuperAdmins = filteredProfileList.filter(
+    user => user.roles === "superadmin"
+  )
   const totalAdmins = filteredProfileList.filter(
     user => user.roles === "admin"
   ).length
@@ -190,6 +193,10 @@ const AdminRolesPage = () => {
           </div>
           <Table>
             <TableHeader>
+              <TableCell colSpan={5} className="text-center text-red-400">
+                Total SuperAdmins: {totalSuperAdmins.length} | Total Admins:{" "}
+                {totalAdmins} | Total Users: {totalUsers}
+              </TableCell>
               <TableRow>
                 <TableHead>Name</TableHead>
                 <TableHead>Role</TableHead>
@@ -284,11 +291,7 @@ const AdminRolesPage = () => {
               ))}
             </TableBody>
             <TableFooter className="bg-background">
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-red-400">
-                  Total Admins: {totalAdmins} | Total Users: {totalUsers}
-                </TableCell>
-              </TableRow>
+              <TableRow></TableRow>
             </TableFooter>
           </Table>
         </div>
