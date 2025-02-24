@@ -68,7 +68,7 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
   )
 
   const [defaultChatSettings, setDefaultChatSettings] = useState({
-    model: selectedWorkspace?.default_model,
+    model: "gpt-4o-mini" as LLMID,
     prompt: selectedWorkspace?.default_prompt,
     temperature: selectedWorkspace?.default_temperature,
     contextLength: selectedWorkspace?.default_context_length,
@@ -166,6 +166,7 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
     })
 
     toast.success("Workspace updated!")
+    // window.location.reload()
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
