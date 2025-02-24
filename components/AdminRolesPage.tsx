@@ -155,6 +155,9 @@ const AdminRolesPage = () => {
     }))
   }
 
+  const totalSuperAdmins = filteredProfileList.filter(
+    user => user.roles === "superadmin"
+  )
   const totalAdmins = filteredProfileList.filter(
     user => user.roles === "admin"
   ).length
@@ -191,7 +194,8 @@ const AdminRolesPage = () => {
           <Table>
             <TableHeader>
               <TableCell colSpan={5} className="text-center text-red-400">
-                Total Admins: {totalAdmins} | Total Users: {totalUsers}
+                Total SuperAdmins: {totalSuperAdmins.length} | Total Admins:{" "}
+                {totalAdmins} | Total Users: {totalUsers}
               </TableCell>
               <TableRow>
                 <TableHead>Name</TableHead>
