@@ -7,11 +7,7 @@ import { Button } from "../ui/button"
 const NewChat = () => {
   const { handleNewChat } = useChatHandler()
   return (
-    <Button
-      onClick={handleNewChat}
-      variant={"ghost"}
-      className="text-sm transition-colors hover:bg-transparent hover:text-white/90"
-    >
+    <Button onClick={handleNewChat} variant={"ghost"} className="text-sm">
       <IconArrowLeft className="mr-2" size={20} />
       Go Back to Chat
     </Button>
