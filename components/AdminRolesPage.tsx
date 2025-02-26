@@ -1,5 +1,12 @@
 "use client"
 import { toast } from "sonner"
+import { useContext, useEffect, useState, useMemo } from "react"
+import { TablesUpdate } from "@/supabase/types"
+import { supabase } from "@/lib/supabase/browser-client"
+import { getAllProfiles } from "@/db/profile"
+import { ChatbotUIContext } from "@/context/context"
+import { IconCrown } from "@tabler/icons-react"
+import { ArrowUpDown, Trash2, XIcon } from "lucide-react"
 import {
   Sheet,
   SheetContent,
@@ -7,7 +14,8 @@ import {
   SheetTitle,
   SheetTrigger
 } from "@/components/ui/sheet"
-import { useContext, useEffect, useState } from "react"
+import { Button } from "./ui/button"
+import { Input } from "./ui/input"
 import {
   Select,
   SelectContent,
@@ -35,14 +43,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog"
-import { TablesUpdate } from "@/supabase/types"
-import { supabase } from "@/lib/supabase/browser-client"
-import { Button } from "./ui/button"
-import { IconCrown } from "@tabler/icons-react"
-import { getAllProfiles } from "@/db/profile"
-import { Input } from "./ui/input"
-import { ArrowUpDown, Trash2, XIcon } from "lucide-react"
-import { ChatbotUIContext } from "@/context/context"
 
 type Role = "user" | "developer" | "admin" | "superadmin"
 
@@ -50,9 +50,6 @@ const AdminRolesPage = () => {
   const { profile } = useContext(ChatbotUIContext)
   const [profileList, setProfileList] = useState<TablesUpdate<"profiles">[]>([])
   const [inputValue, setInputValue] = useState("")
-  const [filteredProfileList, setFilteredProfileList] = useState<
-    TablesUpdate<"profiles">[]
-  >([])
   const [sortOrder, setSortOrder] = useState<{
     created_at: "asc" | "desc"
     updated_at: "asc" | "desc"
@@ -60,33 +57,38 @@ const AdminRolesPage = () => {
   const [sortBy, setSortBy] = useState<"created_at" | "updated_at">(
     "created_at"
   )
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     async function fetchProfiles() {
+      setLoading(true)
       let profiles = await getAllProfiles()
-      profiles.map(profile => {
+      profiles.forEach(profile => {
         if (!profile.updated_at) {
           profile.updated_at = profile.created_at
         }
       })
       setProfileList(profiles)
+      setLoading(false)
     }
-    fetchProfiles()
-  }, [])
+    if (sheetOpen && profileList.length === 0) {
+      fetchProfiles()
+    }
+  }, [sheetOpen, profileList.length])
 
-  useEffect(() => {
-    let sortedList = [...profileList].filter(
+  const filteredProfileList = useMemo(() => {
+    const filtered = profileList.filter(
       user =>
         user.username?.toLowerCase().includes(inputValue.toLowerCase()) ||
         user.display_name?.toLowerCase().includes(inputValue.toLowerCase())
     )
-    sortedList = sortedList.sort((a, b) => {
+    const sorted = filtered.sort((a, b) => {
       const dateA = new Date(a[sortBy] ?? "").getTime()
       const dateB = new Date(b[sortBy] ?? "").getTime()
       return sortOrder[sortBy] === "asc" ? dateA - dateB : dateB - dateA
     })
-
-    setFilteredProfileList(sortedList)
+    return sorted
   }, [inputValue, profileList, sortOrder, sortBy])
 
   const handleRoleChange = async (username: string, newRole: Role) => {
@@ -103,7 +105,6 @@ const AdminRolesPage = () => {
           user.username === username ? { ...user, roles: newRole } : user
         )
       )
-
       console.log("Role updated successfully")
       toast.success("Role updated successfully")
     } catch (error) {
@@ -166,7 +167,7 @@ const AdminRolesPage = () => {
   ).length
 
   return (
-    <Sheet>
+    <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
       <SheetTrigger asChild>
         <Button variant={"ghost"}>
           <IconCrown size={28} />
@@ -177,123 +178,128 @@ const AdminRolesPage = () => {
           <SheetTitle>Admin Role Management</SheetTitle>
         </SheetHeader>
         <div className="max-h-[95vh] overflow-y-auto">
-          <div className="relative">
-            <Input
-              value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
-              placeholder="Search users..."
-              className="my-2 pr-8"
-            />
-            {inputValue && (
-              <XIcon
-                className="absolute right-2 top-1/2 size-4 -translate-y-1/2 cursor-pointer"
-                onClick={() => setInputValue("")}
-              />
-            )}
-          </div>
-          <Table>
-            <TableHeader>
-              <TableCell colSpan={5} className="text-center text-red-400">
-                Total SuperAdmins: {totalSuperAdmins.length} | Total Admins:{" "}
-                {totalAdmins} | Total Users: {totalUsers}
-              </TableCell>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>
-                  <Button
-                    className="gap-3"
-                    variant="ghost"
-                    onClick={() => toggleSortOrder("created_at")}
-                  >
-                    Date Joined <ArrowUpDown size={18} />
-                  </Button>
-                </TableHead>
-                <TableHead>
-                  <Button
-                    variant="ghost"
-                    className="gap-3"
-                    onClick={() => toggleSortOrder("updated_at")}
-                  >
-                    Last Login <ArrowUpDown size={18} />
-                  </Button>
-                </TableHead>
-                {profile?.roles === "superadmin" && (
-                  <TableHead>Actions</TableHead>
+          {loading ? (
+            <div className="p-4 text-center">Loading...</div>
+          ) : (
+            <>
+              <div className="relative">
+                <Input
+                  value={inputValue}
+                  onChange={e => setInputValue(e.target.value)}
+                  placeholder="Search users..."
+                  className="my-2 pr-8"
+                />
+                {inputValue && (
+                  <XIcon
+                    className="absolute right-2 top-1/2 size-4 -translate-y-1/2 cursor-pointer"
+                    onClick={() => setInputValue("")}
+                  />
                 )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredProfileList.map(user => (
-                <TableRow key={user.id}>
-                  <TableCell>{user.username}</TableCell>
-                  <TableCell>
-                    <Select
-                      value={user.roles}
-                      onValueChange={(value: Role) =>
-                        handleRoleChange(user.username!, value)
-                      }
-                    >
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select a role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="user">User 👨🏻</SelectItem>
-                        <SelectItem value="developer">Developer 👨🏻‍💻</SelectItem>
-                        <SelectItem value="admin">Admin 👑</SelectItem>
-                        <SelectItem
-                          value="superadmin"
-                          disabled={profile?.roles != "superadmin"}
-                        >
-                          Super Admin 👑👑
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+              </div>
+              <Table>
+                <TableHeader>
+                  <TableCell colSpan={5} className="text-center text-red-400">
+                    Total SuperAdmins: {totalSuperAdmins.length} | Total Admins:{" "}
+                    {totalAdmins} | Total Users: {totalUsers}
                   </TableCell>
-                  <TableCell>{formatDate(user.created_at ?? "")}</TableCell>
-                  <TableCell>{formatDate(user.updated_at ?? "")}</TableCell>
-                  {profile?.roles === "superadmin" && (
-                    <TableCell>
-                      <AlertDialog>
-                        <AlertDialogTrigger>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="size-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you sure you want to delete this user?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              The profile will be permanently removed from the
-                              database and cannot be recovered.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              className="bg-red-600"
-                              onClick={() => handleDeleteUser(user.id)}
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>
+                      <Button
+                        className="gap-3"
+                        variant="ghost"
+                        onClick={() => toggleSortOrder("created_at")}
+                      >
+                        Date Joined <ArrowUpDown size={18} />
+                      </Button>
+                    </TableHead>
+                    <TableHead>
+                      <Button
+                        variant="ghost"
+                        className="gap-3"
+                        onClick={() => toggleSortOrder("updated_at")}
+                      >
+                        Last Login <ArrowUpDown size={18} />
+                      </Button>
+                    </TableHead>
+                    {profile?.roles === "superadmin" && (
+                      <TableHead>Actions</TableHead>
+                    )}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredProfileList.map(user => (
+                    <TableRow key={user.id}>
+                      <TableCell>{user.username}</TableCell>
+                      <TableCell>
+                        <Select
+                          value={user.roles}
+                          onValueChange={(value: Role) =>
+                            handleRoleChange(user.username!, value)
+                          }
+                        >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="user">User 👨🏻</SelectItem>
+                            <SelectItem value="developer">
+                              Developer 👨🏻‍💻
+                            </SelectItem>
+                            <SelectItem value="admin">Admin 👑</SelectItem>
+                            <SelectItem
+                              value="superadmin"
+                              disabled={profile?.roles !== "superadmin"}
                             >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter className="bg-background">
-              <TableRow></TableRow>
-            </TableFooter>
-          </Table>
+                              Super Admin 👑👑
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>{formatDate(user.created_at ?? "")}</TableCell>
+                      <TableCell>{formatDate(user.updated_at ?? "")}</TableCell>
+                      {profile?.roles === "superadmin" && (
+                        <TableCell>
+                          <AlertDialog>
+                            <AlertDialogTrigger>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash2 className="size-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you sure you want to delete this user?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  The profile will be permanently removed and
+                                  cannot be recovered.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="bg-red-600"
+                                  onClick={() => handleDeleteUser(user.id)}
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </>
+          )}
         </div>
       </SheetContent>
     </Sheet>
