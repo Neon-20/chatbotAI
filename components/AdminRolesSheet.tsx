@@ -29,8 +29,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-  TableFooter
+  TableRow
 } from "@/components/ui/table"
 import {
   AlertDialog,
@@ -46,7 +45,7 @@ import {
 
 type Role = "user" | "developer" | "admin" | "superadmin"
 
-const AdminRolesPage = () => {
+const AdminRolesSheet = () => {
   const { profile } = useContext(ChatbotUIContext)
   const [profileList, setProfileList] = useState<TablesUpdate<"profiles">[]>([])
   const [inputValue, setInputValue] = useState("")
@@ -76,6 +75,13 @@ const AdminRolesPage = () => {
       fetchProfiles()
     }
   }, [sheetOpen, profileList.length])
+
+  useEffect(() => {
+    if (!sheetOpen) {
+      setProfileList([])
+      setInputValue("")
+    }
+  }, [sheetOpen])
 
   const filteredProfileList = useMemo(() => {
     const filtered = profileList.filter(
@@ -306,4 +312,4 @@ const AdminRolesPage = () => {
   )
 }
 
-export default AdminRolesPage
+export default AdminRolesSheet

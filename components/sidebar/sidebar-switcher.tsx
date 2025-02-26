@@ -3,13 +3,14 @@ import { ContentType } from "@/types"
 import {
   IconBooks,
   IconChartBar,
+  IconCrown,
   IconFile,
   IconMessage,
   IconPencil,
   IconRobotFace
 } from "@tabler/icons-react"
 import { FC, useContext } from "react"
-import AdminRolesPage from "../AdminRolesPage"
+import AdminRolesSheet from "../AdminRolesSheet"
 import { TabsList } from "../ui/tabs"
 import { WithTooltip } from "../ui/with-tooltip"
 import { ProfileSettings } from "../utility/profile-settings"
@@ -63,7 +64,17 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
             />
           )}
         {(profile?.roles == "admin" || profile?.roles == "superadmin") && (
-          <AdminRolesPage />
+          // <AdminRolesSheet />
+          <WithTooltip
+            display={<div>Admin</div>}
+            trigger={
+              <Link href="/admin" passHref>
+                <Button variant={"ghost"}>
+                  <IconCrown size={28} />
+                </Button>
+              </Link>
+            }
+          />
         )}
         {profile?.roles == "superadmin" && (
           <WithTooltip
