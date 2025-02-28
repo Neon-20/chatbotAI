@@ -16,6 +16,7 @@ import {
   YAxis
 } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
+import { getMessages } from "@/db/admin"
 
 export function ChartMessagesGrowth() {
   const [isOpen, setIsOpen] = useState(false)
@@ -32,44 +33,10 @@ export function ChartMessagesGrowth() {
 
   useEffect(() => {
     async function fetchMessages() {
-      // Fetch all messages with created_at
-      const { data, error } = await supabase
-        .from("messages")
-        .select("created_at")
-      if (error) {
-        console.error("Error fetching messages:", error.message)
-        return
+      const computedData = await getMessages()
+      if (computedData) {
+        setDataWithGrowth(computedData)
       }
-
-      // Group messages by month (format YYYY-MM)
-      const monthlyMap: Record<string, number> = {}
-      data?.forEach(msg => {
-        const date = new Date(msg.created_at)
-        const month = `${date.getFullYear()}-${(date.getMonth() + 1)
-          .toString()
-          .padStart(2, "0")}`
-        monthlyMap[month] = (monthlyMap[month] || 0) + 1
-      })
-
-      // Convert to sorted array
-      const sortedMonths = Object.keys(monthlyMap).sort()
-      const monthlyData = sortedMonths.map(month => ({
-        month,
-        total_messages: monthlyMap[month]
-      }))
-
-      // Calculate growth percentages
-      const computedData = monthlyData.map((item, index) => {
-        if (index === 0) return { ...item, growth: 0 }
-        const previous = monthlyData[index - 1].total_messages
-        const growth =
-          previous > 0
-            ? Math.round(((item.total_messages - previous) / previous) * 100)
-            : 0
-        return { ...item, growth }
-      })
-
-      setDataWithGrowth(computedData)
     }
     fetchMessages()
   }, [])
