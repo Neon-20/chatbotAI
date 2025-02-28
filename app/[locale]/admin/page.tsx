@@ -180,10 +180,10 @@ const AdminRolesPage = () => {
             </div>
             <Table>
               <TableHeader>
-                {/* <TableCell colSpan={5} className="text-center text-red-400">
+                <TableCell colSpan={5} className="text-center text-red-400">
                   Total SuperAdmins: {totalSuperAdmins} | Total Admins:{" "}
                   {totalAdmins} | Total Users: {totalUsers}
-                </TableCell> */}
+                </TableCell>
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Role</TableHead>
