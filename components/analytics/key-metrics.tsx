@@ -4,16 +4,10 @@ import {
   getCurrentMonthMessages,
   getMonthlyGrowthFormatted,
   getTotalMessages
-} from "@/db/admin"
-import { createClient } from "@/lib/supabase/server"
-import { get } from "http"
+} from "@/db/client_admin"
 import { BarChart2, MessageSquare, TrendingUp, Users } from "lucide-react"
-import { cookies } from "next/headers"
 
 export async function KeyMetrics() {
-  const cookieStore = cookies()
-  const supabaseAdmin = createClient(cookieStore)
-
   // --- 2. Total Messages ---
   const totalMessages = await getTotalMessages()
 
@@ -22,20 +16,7 @@ export async function KeyMetrics() {
 
   // --- 4. Average Messages Per Active User ---
   const avgMessagesPerUser =
-    activeUsers > 0 ? (totalMessages / activeUsers).toFixed(2) : 0 // Avoid division by zero
-
-  // --- 5. Monthly Growth ---
-  const today = new Date()
-  const firstDayOfCurrentMonth = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    1
-  )
-  const firstDayOfPreviousMonth = new Date(
-    today.getFullYear(),
-    today.getMonth() - 1,
-    1
-  )
+    activeUsers > 0 ? (totalMessages / activeUsers).toFixed(2) : 0
 
   // Count messages in the current month
   const currentMonthMessageCount = await getCurrentMonthMessages()
