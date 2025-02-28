@@ -13,6 +13,7 @@ import {
   YAxis
 } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
+import { getCumulativeData } from "@/db/admin"
 export function ChartAreaCumulative() {
   // Dynamic data state replacing static data
   const [data, setData] = useState<Array<{ month: string; messages: number }>>(
@@ -22,31 +23,10 @@ export function ChartAreaCumulative() {
 
   useEffect(() => {
     async function fetchMessages() {
-      // Fetch messages with created_at field
-      const { data: messages, error } = await supabase
-        .from("messages")
-        .select("created_at")
-      if (error) {
-        console.error("Error fetching messages:", error.message)
-        return
+      const cumulativeData = await getCumulativeData()
+      if (cumulativeData) {
+        setData(cumulativeData)
       }
-      // Group messages by month
-      const monthlyMap: Record<string, number> = {}
-      messages?.forEach((msg: { created_at: string }) => {
-        const date = new Date(msg.created_at)
-        const month = `${date.getFullYear()}-${(date.getMonth() + 1)
-          .toString()
-          .padStart(2, "0")}`
-        monthlyMap[month] = (monthlyMap[month] || 0) + 1
-      })
-      // Sort months and compute cumulative count
-      const sortedMonths = Object.keys(monthlyMap).sort()
-      let cumulative = 0
-      const cumulativeData = sortedMonths.map(month => {
-        cumulative += monthlyMap[month]
-        return { month, messages: cumulative }
-      })
-      setData(cumulativeData)
     }
     fetchMessages()
   }, [])

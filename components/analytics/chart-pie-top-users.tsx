@@ -11,6 +11,7 @@ import {
 } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { supabase } from "@/lib/supabase/browser-client"
+import { getTopUsers } from "@/db/admin"
 
 const COLORS = [
   "var(--ad-teal)",
@@ -30,32 +31,8 @@ export function ChartPieTopUsers() {
 
   useEffect(() => {
     async function fetchData() {
-      const { data, error } = await supabase.from("messages").select("user_id")
-      if (error) {
-        console.error("Error fetching messages:", error.message)
-        return
-      }
-      const userCounts: Record<string, number> = {}
-      data?.forEach(row => {
-        const user = row.user_id || "Unknown"
-        userCounts[user] = (userCounts[user] || 0) + 1
-      })
-      // Build sorted array
-      const usersArray = Object.entries(userCounts)
-        .map(([user, count], index) => ({
-          name: `User ${index + 1}`,
-          value: count
-        }))
-        .sort((a, b) => b.value - a.value)
-      // Top 5 and rest as "Others"
-      const topUsers = usersArray.slice(0, 5)
-      const othersTotal = usersArray
-        .slice(5)
-        .reduce((sum, entry) => sum + entry.value, 0)
-      if (othersTotal > 0) {
-        topUsers.push({ name: "Others", value: othersTotal })
-      }
-      setChartData(topUsers)
+      const topUsers = await getTopUsers()
+      if (topUsers) setChartData(topUsers)
     }
     fetchData()
   }, [])
