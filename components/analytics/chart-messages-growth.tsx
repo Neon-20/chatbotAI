@@ -16,7 +16,7 @@ import {
   YAxis
 } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
-import { getMessages } from "@/db/admin"
+import { getMessages } from "@/db/client_admin"
 
 export function ChartMessagesGrowth() {
   const [isOpen, setIsOpen] = useState(false)
