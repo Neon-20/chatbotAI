@@ -1,5 +1,6 @@
 "use client"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { getTopUsers } from "@/db/client_admin"
 import { useEffect, useState } from "react"
 import {
   Cell,
@@ -10,8 +11,6 @@ import {
   Tooltip
 } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
-import { supabase } from "@/lib/supabase/browser-client"
-import { getTopUsers } from "@/db/admin"
 
 const COLORS = [
   "var(--ad-teal)",
