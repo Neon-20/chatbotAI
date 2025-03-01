@@ -1,3 +1,4 @@
+"use client"
 import { ChartActiveUsers } from "@/components/analytics/chart-active-users"
 import { ChartAreaCumulative } from "@/components/analytics/chart-area-cumulative"
 import { ChartFileTypes } from "@/components/analytics/chart-file-types"
@@ -5,12 +6,8 @@ import { ChartMessagesGrowth } from "@/components/analytics/chart-messages-growt
 import { ChartPieTopUsers } from "@/components/analytics/chart-pie-top-users"
 import { KeyMetrics } from "@/components/analytics/key-metrics"
 import NewChat from "@/components/analytics/newChat"
-import { getFilesType, getYearMessages } from "@/db/client_admin"
 
-export default async function Page() {
-  const chartActiveUsersData = await getYearMessages()
-  const fileTypeData = await getFilesType()
-
+export default function Page() {
   return (
     <div className="min-h-screen">
       <header className="w-screen bg-[#004D4D] text-white">
@@ -50,10 +47,10 @@ export default async function Page() {
         <KeyMetrics />
         <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <ChartMessagesGrowth />
-          <ChartActiveUsers chartData={chartActiveUsersData} />
+          <ChartActiveUsers />
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <ChartFileTypes fileTypeData={fileTypeData} />
+          <ChartFileTypes />
           <ChartAreaCumulative />
           <ChartPieTopUsers />
         </div>

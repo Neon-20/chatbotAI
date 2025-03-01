@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   Bar,
   BarChart,
@@ -17,13 +17,21 @@ import {
   CardTitle
 } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
+import { getFilesType } from "@/db/client_admin"
 
-export async function ChartFileTypes({
-  fileTypeData
-}: {
-  fileTypeData: Array<{ type: string; count: number }>
-}) {
+type FileTypeData = Array<{ type: string; count: number }>
+
+export async function ChartFileTypes() {
   const [isOpen, setIsOpen] = useState(false)
+  const [fileTypeData, setFileTypeData] = useState<FileTypeData>()
+
+  useEffect(() => {
+    async function fetchFileTypeData() {
+      const fileTypeData = await getFilesType()
+      setFileTypeData(fileTypeData)
+    }
+    fetchFileTypeData()
+  }, [])
 
   return (
     <>
