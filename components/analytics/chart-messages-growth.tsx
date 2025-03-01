@@ -2,7 +2,6 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { ChatbotUIContext } from "@/context/context"
-import { supabase } from "@/lib/supabase/browser-client"
 import { redirect } from "next/navigation"
 import { useContext, useEffect, useState } from "react"
 import {

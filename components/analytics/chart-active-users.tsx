@@ -15,15 +15,22 @@ import {
   Tooltip,
   Line
 } from "recharts"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
+import { getYearMessages } from "@/db/client_admin"
 
-export function ChartActiveUsers({
-  chartData
-}: {
-  chartData: Array<{ month: string; active_users: number }>
-}) {
+type ActiveUsersData = Array<{ month: string; active_users: number }>
+
+export function ChartActiveUsers() {
   const [isOpen, setIsOpen] = useState(false)
+  const [chartData, setChartData] = useState<ActiveUsersData>([])
+  useEffect(() => {
+    async function fetchChartData() {
+      const chartActiveUsersData = await getYearMessages()
+      setChartData(chartActiveUsersData)
+    }
+    fetchChartData()
+  }, [])
 
   return (
     <>
