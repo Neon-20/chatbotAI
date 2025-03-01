@@ -5,7 +5,7 @@ import { ChartMessagesGrowth } from "@/components/analytics/chart-messages-growt
 import { ChartPieTopUsers } from "@/components/analytics/chart-pie-top-users"
 import { KeyMetrics } from "@/components/analytics/key-metrics"
 import NewChat from "@/components/analytics/newChat"
-import { getFilesType, getYearMessages } from "@/db/admin"
+import { getFilesType, getYearMessages } from "@/db/client_admin"
 
 export default async function Page() {
   const chartActiveUsersData = await getYearMessages()

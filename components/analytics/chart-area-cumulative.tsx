@@ -13,7 +13,7 @@ import {
   YAxis
 } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
-import { getCumulativeData } from "@/db/admin"
+import { getCumulativeData } from "@/db/client_admin"
 export function ChartAreaCumulative() {
   // Dynamic data state replacing static data
   const [data, setData] = useState<Array<{ month: string; messages: number }>>(
