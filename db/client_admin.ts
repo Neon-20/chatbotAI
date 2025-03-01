@@ -16,10 +16,14 @@ export async function getAllActiveUsers() {
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
   const thirtyDaysAgoISO = thirtyDaysAgo.toISOString()
 
-  const { count: activeUsers, error: activeUsersError } = await supabase
+  const { data: activeUsersData, error: activeUsersError } = await supabase
     .from("messages")
-    .select("user_id", { count: "exact", head: true })
+    .select("user_id")
     .gte("created_at", thirtyDaysAgoISO)
+
+  const activeUsers = activeUsersData
+    ? new Set(activeUsersData.map(message => message.user_id)).size
+    : 0
 
   if (activeUsersError) {
     console.error("Error fetching active users:", activeUsersError.message)
