@@ -71,7 +71,7 @@ const KeyMetricsComponent = () => {
         {
           title: "Monthly Growth",
           value: monthlyGrowthFormatted,
-          description: "Message growth last month",
+          description: "Message growth in current month",
           className: "bg-white border border-gray-200",
           icon: TrendingUp,
           iconColor: "text-black"
