@@ -18,6 +18,7 @@ import {
 import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { getYearMessages } from "@/db/client_admin"
+import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
 
 type ActiveUsersData = Array<{ month: string; active_users: number }>
 
@@ -31,6 +32,10 @@ export function ChartActiveUsers() {
     }
     fetchChartData()
   }, [])
+
+  if (chartData.length === 0) {
+    return <ChartLoadingSkeleton />
+  }
 
   return (
     <>

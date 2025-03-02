@@ -11,6 +11,7 @@ import {
   Tooltip
 } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
+import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
 
 const COLORS = [
   "var(--ad-teal)",
@@ -35,6 +36,10 @@ export function ChartPieTopUsers() {
     }
     fetchData()
   }, [])
+
+  if (chartData.length === 0) {
+    return <ChartLoadingSkeleton />
+  }
 
   return (
     <>
@@ -90,7 +95,7 @@ export function ChartPieTopUsers() {
                 data={chartData}
                 cx="50%"
                 cy="50%"
-                outerRadius={200}
+                outerRadius={280}
                 innerRadius={100}
                 fill="#8884d8"
                 dataKey="value"
