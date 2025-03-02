@@ -63,7 +63,7 @@ const KeyMetricsComponent = () => {
         {
           title: "Avg. Messages/User",
           value: avgMessagesPerUser,
-          description: "Messages per active user",
+          description: "Messages per active user in last 30 days",
           className: "bg-[#e84e0f] text-white",
           icon: BarChart2,
           iconColor: "text-white"
