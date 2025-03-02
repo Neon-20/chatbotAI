@@ -18,10 +18,11 @@ import {
 } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { getFilesType } from "@/db/client_admin"
+import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
 
 type FileTypeData = Array<{ type: string; count: number }>
 
-export async function ChartFileTypes() {
+export function ChartFileTypes() {
   const [isOpen, setIsOpen] = useState(false)
   const [fileTypeData, setFileTypeData] = useState<FileTypeData>()
 
@@ -32,6 +33,10 @@ export async function ChartFileTypes() {
     }
     fetchFileTypeData()
   }, [])
+
+  if (!fileTypeData) {
+    return <ChartLoadingSkeleton />
+  }
 
   return (
     <>
