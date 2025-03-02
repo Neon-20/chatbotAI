@@ -1,66 +1,89 @@
+"use client"
+import { useState, useEffect, memo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   getAllActiveUsers,
   getCurrentMonthMessages,
   getMonthlyGrowthFormatted,
-  getTotalMessages
+  get30daysMessages,
+  getLast30DaysMessages
 } from "@/db/client_admin"
 import { BarChart2, MessageSquare, TrendingUp, Users } from "lucide-react"
 
-export async function KeyMetrics() {
-  // --- 2. Total Messages ---
-  const totalMessages = await getTotalMessages()
+type MetricsTypes = {
+  title: string
+  value: number | string
+  description: string
+  className: string
+  icon: React.ComponentType<{ className?: string }>
+  iconColor: string
+}[]
 
-  // --- 3. Active Users (Last 30 Days) ---
-  const activeUsers = await getAllActiveUsers()
+const KeyMetricsComponent = () => {
+  const [metrics, setMetrics] = useState<MetricsTypes>([])
 
-  // --- 4. Average Messages Per Active User ---
-  const avgMessagesPerUser =
-    activeUsers > 0 ? (totalMessages / activeUsers).toFixed(2) : 0
+  useEffect(() => {
+    async function fetchData() {
+      // --- 2. Total Messages ---
+      const totalMessages = await get30daysMessages()
 
-  // Count messages in the current month
-  const currentMonthMessageCount = await getCurrentMonthMessages()
+      // --- 3. Active Users (Last 30 Days) ---
+      const activeUsers = await getAllActiveUsers()
 
-  // Count messages in the previous month
-  const monthlyGrowthFormatted = await getMonthlyGrowthFormatted(
-    currentMonthMessageCount
-  )
+      // --- 4. Average Messages Per Active User ---
+      const last30DaysMessages = await getLast30DaysMessages()
+      const avgMessagesPerUser =
+        activeUsers > 0 ? (last30DaysMessages / activeUsers).toFixed(2) : 0
 
-  // --- Construct Metrics ---
-  const metrics = [
-    {
-      title: "Total Messages",
-      value: totalMessages,
-      description: "All-time messages sent",
-      className: "bg-[#004851] text-white",
-      icon: MessageSquare,
-      iconColor: "text-white"
-    },
-    {
-      title: "Active Users",
-      value: activeUsers,
-      description: "Users active in the last 30 days",
-      className: "bg-[#ffb81c] text-black",
-      icon: Users,
-      iconColor: "text-black"
-    },
-    {
-      title: "Avg. Messages/User",
-      value: avgMessagesPerUser,
-      description: "Messages per active user",
-      className: "bg-[#e84e0f] text-white",
-      icon: BarChart2,
-      iconColor: "text-white"
-    },
-    {
-      title: "Monthly Growth",
-      value: monthlyGrowthFormatted,
-      description: "Message growth last month",
-      className: "bg-white border border-gray-200",
-      icon: TrendingUp,
-      iconColor: "text-black"
+      // Count messages in the current month
+      const currentMonthMessageCount = await getCurrentMonthMessages()
+
+      // Count messages in the previous month
+      const monthlyGrowthFormatted = await getMonthlyGrowthFormatted(
+        currentMonthMessageCount
+      )
+
+      const data = [
+        {
+          title: "Total Messages",
+          value: totalMessages,
+          description: "All-time messages sent",
+          className: "bg-[#004851] text-white",
+          icon: MessageSquare,
+          iconColor: "text-white"
+        },
+        {
+          title: "Active Users",
+          value: activeUsers,
+          description: "Users active in the last 30 days",
+          className: "bg-[#ffb81c] text-black",
+          icon: Users,
+          iconColor: "text-black"
+        },
+        {
+          title: "Avg. Messages/User",
+          value: avgMessagesPerUser,
+          description: "Messages per active user",
+          className: "bg-[#e84e0f] text-white",
+          icon: BarChart2,
+          iconColor: "text-white"
+        },
+        {
+          title: "Monthly Growth",
+          value: monthlyGrowthFormatted,
+          description: "Message growth last month",
+          className: "bg-white border border-gray-200",
+          icon: TrendingUp,
+          iconColor: "text-black"
+        }
+      ]
+      setMetrics(data)
     }
-  ]
+    fetchData()
+  }, [])
+
+  // Render nothing until the fetch completes.
+  if (metrics.length === 0) return null
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -77,7 +100,9 @@ export async function KeyMetrics() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold tracking-tight">
-              {metric.value}
+              {Number(metric.value)
+                ? formatNumber(Number(metric.value))
+                : metric.value}
             </div>
             <p className="mt-1 text-sm opacity-80">{metric.description}</p>
           </CardContent>
@@ -85,4 +110,11 @@ export async function KeyMetrics() {
       ))}
     </div>
   )
+}
+
+// Wrap with memo so parent rerenders won’t trigger unnecessary updates.
+export const KeyMetrics = memo(KeyMetricsComponent)
+
+export function formatNumber(num: number): string {
+  return num.toLocaleString()
 }

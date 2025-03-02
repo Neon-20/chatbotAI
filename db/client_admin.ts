@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase/browser-client"
 
-export async function getTotalMessages() {
+export async function get30daysMessages() {
   const { count: totalMessages, error: messagesError } = await supabase
     .from("messages")
     .select("*", { count: "exact", head: true })
@@ -29,6 +29,23 @@ export async function getAllActiveUsers() {
     console.error("Error fetching active users:", activeUsersError.message)
   }
   return activeUsers || 0
+}
+
+export async function getLast30DaysMessages() {
+  const thirtyDaysAgo = new Date()
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+  const thirtyDaysAgoISO = thirtyDaysAgo.toISOString()
+
+  const { count: totalMessages, error: messagesError } = await supabase
+    .from("messages")
+    .select("*", { count: "exact", head: true })
+    .gte("created_at", thirtyDaysAgoISO)
+
+  if (messagesError) {
+    console.error("Error fetching messages:", messagesError.message)
+    return 0
+  }
+  return totalMessages || 0
 }
 
 export async function getCurrentMonthMessages() {

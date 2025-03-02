@@ -14,6 +14,7 @@ import {
 } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { getCumulativeData } from "@/db/client_admin"
+import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
 export function ChartAreaCumulative() {
   // Dynamic data state replacing static data
   const [data, setData] = useState<Array<{ month: string; messages: number }>>(
@@ -30,6 +31,10 @@ export function ChartAreaCumulative() {
     }
     fetchMessages()
   }, [])
+
+  if (data.length === 0) {
+    return <ChartLoadingSkeleton />
+  }
 
   return (
     <>

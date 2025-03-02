@@ -16,12 +16,14 @@ import {
 } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { getMessages } from "@/db/client_admin"
+import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
 
 export function ChartMessagesGrowth() {
   const [isOpen, setIsOpen] = useState(false)
   const [dataWithGrowth, setDataWithGrowth] = useState<
     Array<{ month: string; total_messages: number; growth: number }>
   >([])
+  const [isLoading, setIsLoading] = useState(true)
   const { profile } = useContext(ChatbotUIContext)
 
   useEffect(() => {
@@ -32,13 +34,24 @@ export function ChartMessagesGrowth() {
 
   useEffect(() => {
     async function fetchMessages() {
-      const computedData = await getMessages()
-      if (computedData) {
-        setDataWithGrowth(computedData)
+      setIsLoading(true)
+      try {
+        const computedData = await getMessages()
+        if (computedData) {
+          setDataWithGrowth(computedData)
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error)
+      } finally {
+        setIsLoading(false)
       }
     }
     fetchMessages()
   }, [])
+
+  if (isLoading) {
+    return <ChartLoadingSkeleton />
+  }
 
   return (
     <>
