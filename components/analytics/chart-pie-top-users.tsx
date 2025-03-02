@@ -84,7 +84,7 @@ export function ChartPieTopUsers() {
         </CardContent>
       </Card>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="h-[80vh] w-[1200px] max-w-[90vw]">
+        <DialogContent className="h-[80vh] w-[800px] max-w-[90vw]">
           <DialogHeader>
             <DialogTitle>Top Users Distribution</DialogTitle>
           </DialogHeader>
@@ -95,7 +95,7 @@ export function ChartPieTopUsers() {
                 data={chartData}
                 cx="50%"
                 cy="50%"
-                outerRadius={280}
+                outerRadius={240}
                 innerRadius={100}
                 fill="#8884d8"
                 dataKey="value"
