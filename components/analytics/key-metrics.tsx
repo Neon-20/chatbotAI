@@ -8,7 +8,14 @@ import {
   get30daysMessages,
   getLast30DaysMessages
 } from "@/db/client_admin"
-import { BarChart2, MessageSquare, TrendingUp, Users } from "lucide-react"
+import {
+  BarChart2,
+  MessageSquare,
+  TrendingUp,
+  Users,
+  UserCircle
+} from "lucide-react"
+import { getAllProfiles } from "@/db/profile"
 
 type MetricsTypes = {
   title: string
@@ -24,6 +31,10 @@ const KeyMetricsComponent = () => {
 
   useEffect(() => {
     async function fetchData() {
+      // --- 1. Total Users ---
+      const profiles = await getAllProfiles()
+      const totalUsers = profiles.filter(user => user.roles === "user").length
+
       // --- 2. Total Messages ---
       const totalMessages = await get30daysMessages()
 
@@ -53,25 +64,34 @@ const KeyMetricsComponent = () => {
           iconColor: "text-white"
         },
         {
+          title: "Total Users",
+          value: totalUsers,
+          description: "Total users from May",
+          className: "bg-[#e84e0f] text-white",
+          icon: UserCircle,
+          iconColor: "text-white"
+        },
+        {
           title: "Active Users",
           value: activeUsers,
-          description: "Users active in the last 30 days",
+          description: "Users active in last 30 days",
           className: "bg-[#ffb81c] text-black",
           icon: Users,
           iconColor: "text-black"
         },
+        // e84e0f
         {
           title: "Avg. Messages/User",
           value: avgMessagesPerUser,
-          description: "Messages per active user in last 30 days",
-          className: "bg-[#e84e0f] text-white",
+          description: "Msgs/active user last 30 days",
+          className: "bg-[#443627] text-white",
           icon: BarChart2,
           iconColor: "text-white"
         },
         {
           title: "Monthly Growth",
           value: monthlyGrowthFormatted,
-          description: "Message growth in current month",
+          description: "Message growth in March",
           className: "bg-white border border-gray-200",
           icon: TrendingUp,
           iconColor: "text-black"
@@ -86,7 +106,7 @@ const KeyMetricsComponent = () => {
   if (metrics.length === 0) return null
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
       {metrics.map(metric => (
         <Card
           key={metric.title}
@@ -112,7 +132,7 @@ const KeyMetricsComponent = () => {
   )
 }
 
-// Wrap with memo so parent rerenders won’t trigger unnecessary updates.
+// Wrap with memo so parent rerenders won't trigger unnecessary updates.
 export const KeyMetrics = memo(KeyMetricsComponent)
 
 export function formatNumber(num: number): string {
