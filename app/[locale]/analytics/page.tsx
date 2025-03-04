@@ -8,6 +8,7 @@ import { KeyMetrics } from "@/components/analytics/key-metrics"
 import NewChat from "@/components/analytics/newChat"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { ChartNoAxesColumnIncreasing } from "lucide-react"
 
 export default function Page() {
   return (
@@ -40,8 +41,11 @@ export default function Page() {
               <span className="font-medium">domusAI Stats Dashboard</span>
             </div>
             <nav className="flex items-center gap-6">
-              <Link href="/analytics/feb">
-                <Button variant="secondary"> Feb Stats</Button>
+              <Link href="/feb.html" target="_blank">
+                <Button variant="ghost">
+                  <ChartNoAxesColumnIncreasing className="mr-2" size={20} />
+                  Feb Stats
+                </Button>
               </Link>
               <NewChat />
             </nav>

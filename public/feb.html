@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DomusAI Pilot Metrics - February 2025</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary: #c12e2e;
+            --secondary: #3CB371;
+            --accent: #FF7F50;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #c12e2e 0%, #d70000 100%);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .dashboard-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: #666;
+        }
+        
+        .chart-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .chart-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        .chart-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .stat-value {
+                font-size: 2rem;
+            }
+        }
+        
+        .insight-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .insight-title {
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+        
+        .data-definition {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .data-definition h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .data-definition p {
+            margin-bottom: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Custom frequency wheel */
+        .frequency-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>DomusAI Pilot Usage Metrics Dashboard</h1>
+            <p>February 2025 | Testing Environment</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Users</div>
+                <div class="stat-value">608</div>
+                <div class="stat-desc">With access to testing environment</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Active Users (January)</div>
+                <div class="stat-value">492</div>
+                <div class="stat-desc">81% engagement rate</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">High-Frequency Users</div>
+                <div class="stat-value">19%</div>
+                <div class="stat-desc">Using the tool 3+ times weekly</div>
+            </div>
+        </div>
+        
+        <div class="data-definition">
+            <h3>Definitions</h3>
+            <p><strong>User:</strong> An individual who submits a message to DomusAI, counted once per day.</p>
+            <p><strong>Active user:</strong> A user who interacts with DomusAI at least once a month.</p>
+        </div>
+        
+        <div class="chart-row">
+            <div class="chart-container">
+                <h3 class="chart-title">Monthly User Growth & Engagement</h3>
+                <div class="chart-wrapper">
+                    <canvas id="userGrowthChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3 class="chart-title">Frequency of Use (February)</h3>
+                <div class="chart-wrapper">
+                    <canvas id="frequencyPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <h3 class="chart-title">New User Acquisition in February</h3>
+            <div class="insight-box">
+                <div class="insight-title">Key Insight</div>
+                <p>Significant spikes in new user registration followed the AI speaker series events in APAC (Feb 19) and NA (Feb 25).</p>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="dailyNewUsersChart"></canvas>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Data compiled by DomusAI Analytics Team | March 2025</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Chart.js configuration
+        Chart.defaults.font.family = "'Segoe UI', sans-serif";
+        Chart.defaults.color = "#666";
+        
+        // Monthly User Growth Chart
+        const monthlyChart = new Chart(
+            document.getElementById('userGrowthChart'),
+            {
+                type: 'bar',
+                data: {
+                    labels: ['May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'Jan'],
+                    datasets: [
+                        {
+                            label: 'Active Users',
+                            data: [10, 15, 25, 35, 60, 85, 105, 135, 240],
+                            backgroundColor: '#2E86C1',
+                            order: 2
+                        },
+                        {
+                            label: 'New Users',
+                            data: [10, 8, 12, 15, 30, 40, 32, 45, 120],
+                            backgroundColor: '#FF7F50',
+                            order: 3
+                        },
+                        {
+                            label: 'Engagement Rate (%)',
+                            data: [100, 75, 80, 75, 78, 76, 73, 70, 81],
+                            type: 'line',
+                            borderColor: '#3CB371',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#3CB371',
+                            fill: false,
+                            tension: 0.2,
+                            yAxisID: 'y1',
+                            order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Users'
+                            }
+                        },
+                        y1: {
+                            position: 'right',
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Engagement Rate (%)'
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            }
+        );
+        
+        // Frequency Pie Chart
+        const frequencyChart = new Chart(
+            document.getElementById('frequencyPieChart'),
+            {
+                type: 'pie',
+                data: {
+                    labels: ['5 times a week (1%)', '3-4 times a week (18%)', '1-2 times a week (25%)', 'Fewer than once a week (56%)'],
+                    datasets: [{
+                        data: [1, 18, 25, 56],
+                        backgroundColor: [
+                            '#3498DB', // blue
+                            '#F39C12', // orange
+                            '#2ECC71', // green
+                            '#34495E'  // dark blue
+                        ],
+                        borderWidth: 1,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 15,
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label.split(' (')[0]}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        );
+        
+        // Daily New Users Chart
+        const dailyNewUsersData = {
+            labels: Array.from({length: 24}, (_, i) => `${i+4}-Feb`),
+            datasets: [{
+                label: 'New Users',
+                data: [14, 18, 7, 5, 8, 6, 3, 4, 3, 2, 10, 12, 8, 15, 14, 6, 70, 28, 25, 22, 18, 11, 84, 15],
+                backgroundColor: '#2E86C1',
+                borderColor: '#2E86C1',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.1,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        };
+        
+        // Add markers for event days
+        const annotationPlugin = {
+            id: 'eventAnnotation',
+            afterDraw(chart) {
+                const ctx = chart.ctx;
+                const xAxis = chart.scales.x;
+                const yAxis = chart.scales.y;
+                
+                // APAC Event - Feb 19th (index 15)
+                const apacX = xAxis.getPixelForValue(15);
+                const apacY = yAxis.getPixelForValue(75);
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(apacX, yAxis.top);
+                ctx.lineTo(apacX, yAxis.bottom);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(255, 99, 132, 0.5)';
+                ctx.stroke();
+                
+                ctx.fillStyle = 'rgba(255, 99, 132, 1)';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText('APAC Event', apacX - 35, yAxis.top + 15);
+                ctx.restore();
+                
+                // NA Event - Feb 25th (index 21)
+                const naX = xAxis.getPixelForValue(21);
+                const naY = yAxis.getPixelForValue(85);
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(naX, yAxis.top);
+                ctx.lineTo(naX, yAxis.bottom);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(255, 99, 132, 0.5)';
+                ctx.stroke();
+                
+                ctx.fillStyle = 'rgba(255, 99, 132, 1)';
+                ctx.font = '12px Segoe UI';
+                ctx.fillText('NA Event', naX - 30, yAxis.top + 15);
+                ctx.restore();
+            }
+        };
+        
+        const dailyNewUsersChart = new Chart(
+            document.getElementById('dailyNewUsersChart'),
+            {
+                type: 'line',
+                data: dailyNewUsersData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of New Users'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 90,
+                                minRotation: 90,
+                                callback: function(value, index) {
+                                    // Show only every 3rd label to prevent overcrowding
+                                    return index % 3 === 0 ? this.getLabelForValue(value) : '';
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [annotationPlugin]
+            }
+        );
+    </script>
+</body>
+</html>
