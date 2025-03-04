@@ -6,6 +6,8 @@ import { ChartMessagesGrowth } from "@/components/analytics/chart-messages-growt
 import { ChartPieTopUsers } from "@/components/analytics/chart-pie-top-users"
 import { KeyMetrics } from "@/components/analytics/key-metrics"
 import NewChat from "@/components/analytics/newChat"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function Page() {
   return (
@@ -38,6 +40,9 @@ export default function Page() {
               <span className="font-medium">domusAI Stats Dashboard</span>
             </div>
             <nav className="flex items-center gap-6">
+              <Link href="/analytics/feb">
+                <Button variant="secondary"> Feb Stats</Button>
+              </Link>
               <NewChat />
             </nav>
           </div>
