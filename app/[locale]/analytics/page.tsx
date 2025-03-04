@@ -41,7 +41,7 @@ export default function Page() {
               <span className="font-medium">domusAI Stats Dashboard</span>
             </div>
             <nav className="flex items-center gap-6">
-              <Link href="/feb.html" target="_blank">
+              <Link href="/analytics/feb.html" target="_blank">
                 <Button variant="ghost">
                   <ChartNoAxesColumnIncreasing className="mr-2" size={20} />
                   Feb Stats
