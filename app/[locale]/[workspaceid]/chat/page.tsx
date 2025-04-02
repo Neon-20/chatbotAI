@@ -6,6 +6,7 @@ import { ChatInput } from "@/components/chat/chat-input"
 import { ChatSettings } from "@/components/chat/chat-settings"
 import { ChatUI } from "@/components/chat/chat-ui"
 import { QuickSettings } from "@/components/chat/quick-settings"
+import NotificationBanner from "@/components/notification-banner"
 import { Brand } from "@/components/ui/brand"
 import {
   Select,
@@ -54,8 +55,18 @@ export default function ChatPage() {
             <Brand theme={theme === "dark" ? "dark" : "light"} />
           </div>
           <div className="m-2 flex w-full justify-between">
-            <div className="hidden lg:block">
+            <div className="mt-3 hidden lg:block">
               {profile?.roles === "superadmin" && <QuickSettings />}
+            </div>
+            <div className="ml-auto mt-3 flex-1">
+              <NotificationBanner
+                message="Thanks for testing DomusAI! Share your 2-min feedback to help us improve: "
+                link="https://app.pipefy.com/public/form/KXkdLmX3"
+                target="_blank"
+                rel="noopener noreferrer"
+                linkText="Here"
+                width="max-w-full"
+              />
             </div>
             <div className="m-3 flex items-center space-x-2">
               {/* <Label className="hidden lg:block">Select a Region</Label> */}
