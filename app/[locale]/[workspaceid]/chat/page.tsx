@@ -58,7 +58,7 @@ export default function ChatPage() {
             <div className="mt-3 hidden lg:block">
               {profile?.roles === "superadmin" && <QuickSettings />}
             </div>
-            <div className="ml-auto mt-3 flex-1">
+            <div className="absolute left-1/2 top-0 mt-5 w-full max-w-3xl -translate-x-1/2">
               <NotificationBanner
                 message="Thanks for testing DomusAI! Share your 2-min feedback to help us improve: "
                 link="https://app.pipefy.com/public/form/KXkdLmX3"
