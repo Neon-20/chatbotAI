@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DomusAI Pilot Metrics - February 2025</title>
+    <title>DomusAI Pilot Metrics - March 2025</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         :root {
@@ -181,25 +181,25 @@
     <div class="container">
         <div class="dashboard-header">
             <h1>DomusAI Pilot Usage Metrics Dashboard</h1>
-            <p>February 2025 | Testing Environment</p>
+            <p>March 2025 | Testing Environment</p>
         </div>
         
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Total Users</div>
-                <div class="stat-value">608</div>
+                <div class="stat-value">1798</div>
                 <div class="stat-desc">With access to testing environment</div>
             </div>
             
             <div class="stat-card">
-                <div class="stat-label">Active Users (January)</div>
-                <div class="stat-value">492</div>
-                <div class="stat-desc">81% engagement rate</div>
+                <div class="stat-label">Active Users (March)</div>
+                <div class="stat-value">1378</div>
+                <div class="stat-desc">87% engagement rate</div>
             </div>
             
             <div class="stat-card">
                 <div class="stat-label">High-Frequency Users</div>
-                <div class="stat-value">19%</div>
+                <div class="stat-value">29%</div>
                 <div class="stat-desc">Using the tool 3+ times weekly</div>
             </div>
         </div>
@@ -219,7 +219,7 @@
             </div>
             
             <div class="chart-container">
-                <h3 class="chart-title">Frequency of Use (February)</h3>
+                <h3 class="chart-title">Frequency of Use (March)</h3>
                 <div class="chart-wrapper">
                     <canvas id="frequencyPieChart"></canvas>
                 </div>
@@ -227,10 +227,10 @@
         </div>
         
         <div class="chart-container">
-            <h3 class="chart-title">New User Acquisition in February</h3>
+            <h3 class="chart-title">New User Acquisition in March</h3>
             <div class="insight-box">
                 <div class="insight-title">Key Insight</div>
-                <p>Significant spikes in new user registration followed the AI speaker series events in APAC (Feb 19) and NA (Feb 25).</p>
+                <p>A notable increase in first-time user logins to the tool was observed following the AI Speaker Series in EMEA on March 5th, as well as after the decommissioning of v1 of Domus AI on March 11th. </p>
             </div>
             <div class="chart-wrapper">
                 <canvas id="dailyNewUsersChart"></canvas>
@@ -238,7 +238,7 @@
         </div>
         
         <footer>
-            <p>Data compiled by DomusAI Analytics Team | March 2025</p>
+            <p>Data compiled by DomusAI Analytics Team | March</p>
         </footer>
     </div>
     
@@ -253,23 +253,23 @@
             {
                 type: 'bar',
                 data: {
-                    labels: ['May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'Jan'],
+                    labels: ['May-24', 'Jun-24', 'Jul-24', 'Aug-24', 'Sep-24', 'Oct-24', 'Nov-24', 'Dec-24', 'Jan-25','Feb-25','Mar-25'],
                     datasets: [
                         {
                             label: 'Active Users',
-                            data: [10, 15, 25, 35, 60, 85, 105, 135, 240],
+                            data: [9, 15, 25, 32, 59, 86, 107, 135, 241, 492, 1378],
                             backgroundColor: '#2E86C1',
                             order: 2
                         },
                         {
                             label: 'New Users',
-                            data: [10, 8, 12, 15, 30, 40, 32, 45, 120],
+                            data: [9, 11, 10, 12, 30, 37, 32, 44, 123, 300, 985],
                             backgroundColor: '#FF7F50',
                             order: 3
                         },
                         {
                             label: 'Engagement Rate (%)',
-                            data: [100, 75, 80, 75, 78, 76, 73, 70, 81],
+                            data: [100, 75, 83, 76, 82, 79, 76, 73, 78, 81, 87],
                             type: 'line',
                             borderColor: '#3CB371',
                             borderWidth: 3,
@@ -320,9 +320,9 @@
             {
                 type: 'pie',
                 data: {
-                    labels: ['5 times a week (1%)', '3-4 times a week (18%)', '1-2 times a week (25%)', 'Fewer than once a week (56%)'],
+                    labels: ['5 times a week (1%)', '3-4 times a week (28%)', '1-2 times a week (31%)', 'Fewer than once a week (40%)'],
                     datasets: [{
-                        data: [1, 18, 25, 56],
+                        data: [1, 28, 31, 40],
                         backgroundColor: [
                             '#3498DB', // blue
                             '#F39C12', // orange
@@ -358,10 +358,10 @@
         
         // Daily New Users Chart
         const dailyNewUsersData = {
-            labels: Array.from({length: 24}, (_, i) => `${i+4}-Feb`),
+            labels: Array.from({length: 31}, (_, i) => `${i+1}-Mar`),
             datasets: [{
                 label: 'New Users',
-                data: [14, 18, 7, 5, 8, 6, 3, 4, 3, 2, 10, 12, 8, 15, 14, 6, 70, 28, 25, 22, 18, 11, 84, 15],
+                data: [1, 0, 20, 11, 176, 75, 22, 0, 1, 60, 196, 86, 52, 51, 2, 1, 33, 50, 34, 41, 13, 0, 0, 28, 22, 15, 21, 21, 2, 0, 10],
                 backgroundColor: '#2E86C1',
                 borderColor: '#2E86C1',
                 borderWidth: 2,
@@ -380,9 +380,9 @@
                 const xAxis = chart.scales.x;
                 const yAxis = chart.scales.y;
                 
-                // APAC Event - Feb 19th (index 15)
-                const apacX = xAxis.getPixelForValue(15);
-                const apacY = yAxis.getPixelForValue(75);
+                // EMEA Event - Mar 5th (index 5)
+                const apacX = xAxis.getPixelForValue(4);
+                const apacY = yAxis.getPixelForValue(176);
                 
                 ctx.save();
                 ctx.beginPath();
@@ -394,12 +394,12 @@
                 
                 ctx.fillStyle = 'rgba(255, 99, 132, 1)';
                 ctx.font = '12px Segoe UI';
-                ctx.fillText('APAC Event', apacX - 35, yAxis.top + 15);
+                ctx.fillText('EMEA Event', apacX - 35, yAxis.top + 15);
                 ctx.restore();
                 
-                // NA Event - Feb 25th (index 21)
-                const naX = xAxis.getPixelForValue(21);
-                const naY = yAxis.getPixelForValue(85);
+                // Decommissioning of v1 of domusAI - Mar 25th (index 11)
+                const naX = xAxis.getPixelForValue(10);
+                const naY = yAxis.getPixelForValue(196);
                 
                 ctx.save();
                 ctx.beginPath();
@@ -411,7 +411,7 @@
                 
                 ctx.fillStyle = 'rgba(255, 99, 132, 1)';
                 ctx.font = '12px Segoe UI';
-                ctx.fillText('NA Event', naX - 30, yAxis.top + 15);
+                ctx.fillText('Decommissioning of v1 of domusAI', naX+10, yAxis.top + 15);
                 ctx.restore();
             }
         };
