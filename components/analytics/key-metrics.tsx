@@ -26,7 +26,11 @@ type MetricsTypes = {
   iconColor: string
 }[]
 
-const KeyMetricsComponent = () => {
+interface KeyMetricsProps {
+  month?: string
+}
+
+const KeyMetricsComponent = ({ month = "all" }: KeyMetricsProps) => {
   const [metrics, setMetrics] = useState<MetricsTypes>([])
 
   useEffect(() => {
@@ -36,29 +40,31 @@ const KeyMetricsComponent = () => {
       const totalUsers = profiles.filter(user => user.roles === "user").length
 
       // --- 2. Total Messages ---
-      const totalMessages = await get30daysMessages()
+      const totalMessages = await get30daysMessages(month)
 
       // --- 3. Active Users (Last 30 Days) ---
-      const activeUsers = await getAllActiveUsers()
+      const activeUsers = await getAllActiveUsers(month)
 
       // --- 4. Average Messages Per Active User ---
-      const last30DaysMessages = await getLast30DaysMessages()
+      const last30DaysMessages = await getLast30DaysMessages(month)
       const avgMessagesPerUser =
         activeUsers > 0 ? (last30DaysMessages / activeUsers).toFixed(2) : 0
 
       // Count messages in the current month
-      const currentMonthMessageCount = await getCurrentMonthMessages()
+      const currentMonthMessageCount = await getCurrentMonthMessages(month)
 
       // Count messages in the previous month
       const monthlyGrowthFormatted = await getMonthlyGrowthFormatted(
-        currentMonthMessageCount
+        currentMonthMessageCount,
+        month
       )
 
       const data = [
         {
           title: "Total Messages",
           value: totalMessages,
-          description: "All-time messages sent",
+          description:
+            month === "all" ? "All-time messages sent" : `Messages in ${month}`,
           className: "bg-[#004851] text-white",
           icon: MessageSquare,
           iconColor: "text-white"
@@ -66,7 +72,8 @@ const KeyMetricsComponent = () => {
         {
           title: "Total Users",
           value: totalUsers,
-          description: "Total users from May",
+          description:
+            month === "all" ? "Total users from May" : `Users in ${month}`,
           className: "bg-[#e84e0f] text-white",
           icon: UserCircle,
           iconColor: "text-white"
@@ -74,16 +81,21 @@ const KeyMetricsComponent = () => {
         {
           title: "Active Users",
           value: activeUsers,
-          description: "Users active in last 30 days",
+          description:
+            month === "all"
+              ? "Users active in last 30 days"
+              : `Active users in ${month}`,
           className: "bg-[#ffb81c] text-black",
           icon: Users,
           iconColor: "text-black"
         },
-        // e84e0f
         {
           title: "Avg. Messages/User",
           value: avgMessagesPerUser,
-          description: "Msgs/active user last 30 days",
+          description:
+            month === "all"
+              ? "Msgs/active user last 30 days"
+              : `Msgs/user in ${month}`,
           className: "bg-[#443627] text-white",
           icon: BarChart2,
           iconColor: "text-white"
@@ -91,7 +103,10 @@ const KeyMetricsComponent = () => {
         {
           title: "Monthly Growth",
           value: monthlyGrowthFormatted,
-          description: "Message growth in March",
+          description:
+            month === "all"
+              ? "Message growth in current month"
+              : `Growth in ${month}`,
           className: "bg-white border border-gray-200",
           icon: TrendingUp,
           iconColor: "text-black"
@@ -100,7 +115,7 @@ const KeyMetricsComponent = () => {
       setMetrics(data)
     }
     fetchData()
-  }, [])
+  }, [month])
 
   // Render nothing until the fetch completes.
   if (metrics.length === 0) return null
