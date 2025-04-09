@@ -118,34 +118,49 @@ export async function getMonthlyGrowthFormatted(
   return monthlyGrowthFormatted
 }
 
-export async function getYearMessages() {
-  const oneYearAgo = new Date()
-  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
-  const oneYearAgoISO = oneYearAgo.toISOString()
+export async function getYearMessages(month = "all") {
+  try {
+    let query = supabase
+      .from("messages")
+      .select("created_at")
+      .order("created_at", { ascending: true })
 
-  const { data: messages, error } = await supabase
-    .from("messages")
-    .select("created_at, user_id")
-    .gte("created_at", oneYearAgoISO)
+    // Apply month filter if specified
+    if (month !== "all") {
+      const startDate = new Date(`${month}-01T00:00:00Z`)
+      let endDate = new Date(startDate)
+      endDate.setMonth(endDate.getMonth() + 1)
 
-  if (error) {
-    console.error("Error fetching messages:", error.message)
-  }
-
-  const monthMap: Record<string, Set<string>> = {}
-  messages?.forEach((msg: { created_at: string; user_id: string }) => {
-    const date = new Date(msg.created_at)
-    const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
-    if (!monthMap[month]) {
-      monthMap[month] = new Set()
+      query = query
+        .gte("created_at", startDate.toISOString())
+        .lt("created_at", endDate.toISOString())
     }
-    monthMap[month].add(msg.user_id)
-  })
-  const chartActiveUsersData = Object.entries(monthMap)
-    .map(([month, users]) => ({ month, active_users: users.size }))
-    .sort((a, b) => (a.month > b.month ? 1 : -1))
 
-  return chartActiveUsersData
+    const { data, error } = await query
+
+    if (error) {
+      console.error("Error fetching messages:", error)
+      return []
+    }
+
+    const monthMap: Record<string, Set<string>> = {}
+    data?.forEach((msg: { created_at: string; user_id: string }) => {
+      const date = new Date(msg.created_at)
+      const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
+      if (!monthMap[month]) {
+        monthMap[month] = new Set()
+      }
+      monthMap[month].add(msg.user_id)
+    })
+    const chartActiveUsersData = Object.entries(monthMap)
+      .map(([month, users]) => ({ month, active_users: users.size }))
+      .sort((a, b) => (a.month > b.month ? 1 : -1))
+
+    return chartActiveUsersData
+  } catch (error) {
+    console.error("Error in getYearMessages:", error)
+    return []
+  }
 }
 
 export async function getFilesType() {
