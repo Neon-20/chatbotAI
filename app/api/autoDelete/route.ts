@@ -44,8 +44,8 @@ export async function GET() {
       return NextResponse.error()
     }
 
-    // Hard delete messages for soft-deleted chats older than 60 days
-    const { data: chatsToHardDelete, error: oldChatsError } = await supabase
+    // For data older than 60 days, nullify content instead of hard deleting
+    const { data: chatsToNullify, error: oldChatsError } = await supabase
       .from("chats")
       .select("id")
       .lt("created_at", sixtyDaysAgo.toISOString())
@@ -54,25 +54,25 @@ export async function GET() {
       .is("folder_id", null)
 
     if (oldChatsError) {
-      console.error("Error fetching chats for hard deletion:", oldChatsError)
+      console.error("Error fetching chats for nullification:", oldChatsError)
       return NextResponse.error()
     }
 
-    if (chatsToHardDelete && chatsToHardDelete.length > 0) {
-      const chatIds = chatsToHardDelete.map(chat => chat.id)
+    if (chatsToNullify && chatsToNullify.length > 0) {
+      const chatIds = chatsToNullify.map(chat => chat.id)
 
-      // Delete related messages first (foreign key constraint)
-      const { error: deleteMessagesError } = await supabase
+      // Nullify message content instead of deleting
+      const { error: nullifyMessagesError } = await supabase
         .from("messages")
-        .delete()
+        .update({ content: undefined })
         .in("chat_id", chatIds)
 
-      if (deleteMessagesError) {
-        console.error("Error deleting messages:", deleteMessagesError)
+      if (nullifyMessagesError) {
+        console.error("Error nullifying messages:", nullifyMessagesError)
         return NextResponse.error()
       }
 
-      // Delete chat_files relationships
+      // Still need to delete chat_files relationships
       const { error: deleteChatFilesError } = await supabase
         .from("chat_files")
         .delete()
@@ -83,14 +83,14 @@ export async function GET() {
         return NextResponse.error()
       }
 
-      // Finally delete the chats
-      const { error: deleteChatsError } = await supabase
+      // Nullify chat names instead of deleting chats
+      const { error: nullifyChatsError } = await supabase
         .from("chats")
-        .delete()
+        .update({ name: undefined })
         .in("id", chatIds)
 
-      if (deleteChatsError) {
-        console.error("Error during hard deletion of chats:", deleteChatsError)
+      if (nullifyChatsError) {
+        console.error("Error nullifying chats:", nullifyChatsError)
         return NextResponse.error()
       }
     }
@@ -110,7 +110,7 @@ export async function GET() {
       return NextResponse.error()
     }
 
-    const { data: filesToDelete, error: oldFilesError } = await supabase
+    const { data: filesToNullify, error: oldFilesError } = await supabase
       .from("files")
       .select("id")
       .lt("created_at", sixtyDaysAgo.toISOString())
@@ -118,20 +118,21 @@ export async function GET() {
       .in("user_id", nonSuperadminUserIds)
 
     if (oldFilesError) {
-      console.error("Error fetching files for deletion:", oldFilesError)
+      console.error("Error fetching files for nullification:", oldFilesError)
       return NextResponse.error()
     }
 
-    if (filesToDelete && filesToDelete.length > 0) {
-      const fileIds = filesToDelete.map(file => file.id)
+    if (filesToNullify && filesToNullify.length > 0) {
+      const fileIds = filesToNullify.map(file => file.id)
 
-      const { error: deleteFileItemsError } = await supabase
+      // Nullify file_items content instead of deleting
+      const { error: nullifyFileItemsError } = await supabase
         .from("file_items")
-        .delete()
+        .update({ content: undefined })
         .in("file_id", fileIds)
 
-      if (deleteFileItemsError) {
-        console.error("Error deleting file items:", deleteFileItemsError)
+      if (nullifyFileItemsError) {
+        console.error("Error nullifying file items:", nullifyFileItemsError)
         return NextResponse.error()
       }
 
@@ -148,13 +149,14 @@ export async function GET() {
         return NextResponse.error()
       }
 
-      const { error: deleteFilesError } = await supabase
+      // Nullify file names instead of deleting files
+      const { error: nullifyFilesError } = await supabase
         .from("files")
-        .delete()
+        .update({ name: undefined })
         .in("id", fileIds)
 
-      if (deleteFilesError) {
-        console.error("Error during hard deletion of files:", deleteFilesError)
+      if (nullifyFilesError) {
+        console.error("Error nullifying files:", nullifyFilesError)
         return NextResponse.error()
       }
     }
