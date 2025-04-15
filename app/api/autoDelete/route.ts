@@ -64,7 +64,7 @@ export async function GET() {
       // Nullify message content instead of deleting
       const { error: nullifyMessagesError } = await supabase
         .from("messages")
-        .update({ content: undefined })
+        .update({ content: "" })
         .in("chat_id", chatIds)
 
       if (nullifyMessagesError) {
@@ -86,7 +86,7 @@ export async function GET() {
       // Nullify chat names instead of deleting chats
       const { error: nullifyChatsError } = await supabase
         .from("chats")
-        .update({ name: undefined })
+        .update({ name: "" })
         .in("id", chatIds)
 
       if (nullifyChatsError) {
@@ -128,7 +128,7 @@ export async function GET() {
       // Nullify file_items content instead of deleting
       const { error: nullifyFileItemsError } = await supabase
         .from("file_items")
-        .update({ content: undefined })
+        .update({ content: "" })
         .in("file_id", fileIds)
 
       if (nullifyFileItemsError) {
@@ -152,7 +152,7 @@ export async function GET() {
       // Nullify file names instead of deleting files
       const { error: nullifyFilesError } = await supabase
         .from("files")
-        .update({ name: undefined })
+        .update({ name: "" })
         .in("id", fileIds)
 
       if (nullifyFilesError) {
