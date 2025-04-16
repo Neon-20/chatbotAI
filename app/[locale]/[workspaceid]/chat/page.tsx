@@ -1,5 +1,6 @@
 "use client"
 
+import { AlertDialog } from "@/components/banner/AlertDialog"
 import { ChatHelp } from "@/components/chat/chat-help"
 import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
 import { ChatInput } from "@/components/chat/chat-input"
@@ -35,6 +36,7 @@ export default function ChatPage() {
   const [region, setRegion] = useState<string | null>(
     profile?.roles === "user" ? "sweden" : localStorage.getItem("region")
   )
+  const [dialogVisible, setDialogVisible] = useState(false)
   useEffect(() => {
     if (region === null) {
       localStorage.setItem("region", "sweden")
@@ -135,6 +137,7 @@ export default function ChatPage() {
           <div className="absolute bottom-2 right-2 hidden md:block lg:bottom-4 lg:right-4">
             <ChatHelp />
           </div>
+          <AlertDialog onVisibilityChange={setDialogVisible} />
         </div>
       ) : (
         <ChatUI />
