@@ -9,8 +9,35 @@ import NewChat from "@/components/analytics/newChat"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ChartNoAxesColumnIncreasing } from "lucide-react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
+import { useState } from "react"
 
 export default function Page() {
+  const [selectedMonth, setSelectedMonth] = useState<string>("2025-05")
+
+  const months = [
+    { value: "all", label: "All Time" },
+    { value: "2024-05", label: "May 2024" },
+    { value: "2024-06", label: "Jun 2024" },
+    { value: "2024-07", label: "Jul 2024" },
+    { value: "2024-08", label: "Aug 2024" },
+    { value: "2024-09", label: "Sep 2024" },
+    { value: "2024-10", label: "Oct 2024" },
+    { value: "2024-11", label: "Nov 2024" },
+    { value: "2024-12", label: "Dec 2024" },
+    { value: "2025-01", label: "Jan 2025" },
+    { value: "2025-02", label: "Feb 2025" },
+    { value: "2025-03", label: "Mar 2025" },
+    { value: "2025-04", label: "Apr 2025" },
+    { value: "2025-05", label: "May 2025" }
+  ]
+
   return (
     <div className="min-h-screen">
       <header className="w-screen bg-[#004D4D] text-white">
@@ -53,6 +80,21 @@ export default function Page() {
         </div>
       </header>
       <main className="container mx-auto flex-1 space-y-6 p-6">
+        {/* Add month filter */}
+        <div className="mb-4 flex justify-end">
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filter by month" />
+            </SelectTrigger>
+            <SelectContent>
+              {months.map(month => (
+                <SelectItem key={month.value} value={month.value}>
+                  {month.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <KeyMetrics />
         <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <ChartMessagesGrowth />
