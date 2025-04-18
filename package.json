@@ -30,6 +30,9 @@
     "@apidevtools/json-schema-ref-parser": "^11.1.0",
     "@azure/openai": "^1.0.0-beta.8",
     "@google/generative-ai": "^0.11.4",
+    "@grafana/faro-react": "^1.17.0",
+    "@grafana/faro-web-sdk": "^1.17.0",
+    "@grafana/faro-web-tracing": "^1.17.0",
     "@hookform/resolvers": "^3.3.2",
     "@microsoft/applicationinsights-react-js": "^17.3.1",
     "@microsoft/applicationinsights-web": "^3.3.1",
@@ -106,6 +109,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@grafana/faro-webpack-plugin": "^0.5.1",
     "@next/bundle-analyzer": "^14.0.2",
     "@tailwindcss/typography": "^0.5.10",
     "@testing-library/jest-dom": "^6.2.0",
