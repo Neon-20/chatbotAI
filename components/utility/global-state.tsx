@@ -27,6 +27,7 @@ import { AssistantImage } from "@/types/images/assistant-image"
 import { VALID_ENV_KEYS } from "@/types/valid-keys"
 import { useRouter } from "next/navigation"
 import { FC, useEffect, useState } from "react"
+import { LoginTracker } from "./login-tracker"
 
 interface GlobalStateProps {
   children: React.ReactNode
@@ -323,6 +324,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setToolInUse
       }}
     >
+      {profile && <LoginTracker userId={profile.user_id} />}
       {children}
     </ChatbotUIContext.Provider>
   )

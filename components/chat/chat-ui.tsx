@@ -12,6 +12,7 @@ import useHotkey from "@/lib/hooks/use-hotkey"
 import { LLMID, MessageImage } from "@/types"
 import { useParams } from "next/navigation"
 import { FC, useContext, useEffect, useRef, useState } from "react"
+import { ChatTracker } from "../utility/chat-tracker"
 import { ChatHelp } from "./chat-help"
 import { useScroll } from "./chat-hooks/use-scroll"
 import { ChatInput } from "./chat-input"
@@ -40,7 +41,9 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
     setChatFiles,
     setShowFilesDisplay,
     setUseRetrieval,
-    setSelectedTools
+    setSelectedTools,
+    chatMessages,
+    profile
   } = useContext(ChatbotUIContext)
 
   const { handleNewChat, handleFocusChatInput } = useChatHandler()
@@ -263,6 +266,14 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
       <div className="relative w-full min-w-[300px] items-end px-2 pt-0 sm:w-[600px] sm:pt-5 md:w-[700px] lg:w-[700px] xl:w-[800px]">
         <ChatInput />
       </div>
+
+      {profile && selectedChat && (
+        <ChatTracker
+          messages={chatMessages.map(cm => cm.message)}
+          userId={profile.user_id}
+          chatId={selectedChat.id}
+        />
+      )}
 
       <div className="mb-2 flex justify-center space-x-2">
         {/* <TermsAndConditions />
