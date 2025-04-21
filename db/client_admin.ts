@@ -204,29 +204,63 @@ export async function getMessages(selectedMonth?: string) {
     console.error("Error fetching messages:", error.message)
     return
   }
-  const monthlyMap: Record<string, number> = {}
-  data?.forEach(msg => {
-    const date = new Date(msg.created_at)
-    const month = `${date.getFullYear()}-${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}`
-    monthlyMap[month] = (monthlyMap[month] || 0) + 1
-  })
-  const sortedMonths = Object.keys(monthlyMap).sort()
-  const monthlyData = sortedMonths.map(month => ({
-    month,
-    total_messages: monthlyMap[month]
-  }))
-  const computedData = monthlyData.map((item, index) => {
-    if (index === 0) return { ...item, growth: 0 }
-    const previous = monthlyData[index - 1].total_messages
-    const growth =
-      previous > 0
-        ? Math.round(((item.total_messages - previous) / previous) * 100)
-        : 0
-    return { ...item, growth }
-  })
-  return computedData
+
+  // If a specific month is selected, show day-by-day data
+  if (selectedMonth && selectedMonth !== "all") {
+    const dailyMap: Record<string, number> = {}
+    data?.forEach(msg => {
+      const date = new Date(msg.created_at)
+      const day = `${date.getFullYear()}-${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`
+      dailyMap[day] = (dailyMap[day] || 0) + 1
+    })
+
+    const sortedDays = Object.keys(dailyMap).sort()
+    const dailyData = sortedDays.map(day => ({
+      day,
+      total_messages: dailyMap[day]
+    }))
+
+    const computedData = dailyData.map((item, index) => {
+      if (index === 0) return { ...item, growth: 0 }
+      const previous = dailyData[index - 1].total_messages
+      const growth =
+        previous > 0
+          ? Math.round(((item.total_messages - previous) / previous) * 100)
+          : 0
+      return { ...item, growth, month: item.day } // Include month field for compatibility
+    })
+    return computedData
+  }
+  // Otherwise, group by month as before
+  else {
+    const monthlyMap: Record<string, number> = {}
+    data?.forEach(msg => {
+      const date = new Date(msg.created_at)
+      const month = `${date.getFullYear()}-${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}`
+      monthlyMap[month] = (monthlyMap[month] || 0) + 1
+    })
+
+    const sortedMonths = Object.keys(monthlyMap).sort()
+    const monthlyData = sortedMonths.map(month => ({
+      month,
+      total_messages: monthlyMap[month]
+    }))
+
+    const computedData = monthlyData.map((item, index) => {
+      if (index === 0) return { ...item, growth: 0 }
+      const previous = monthlyData[index - 1].total_messages
+      const growth =
+        previous > 0
+          ? Math.round(((item.total_messages - previous) / previous) * 100)
+          : 0
+      return { ...item, growth }
+    })
+    return computedData
+  }
 }
 
 export async function getCumulativeData(selectedMonth?: string) {
@@ -240,21 +274,45 @@ export async function getCumulativeData(selectedMonth?: string) {
     console.error("Error fetching messages:", error.message)
     return
   }
-  const monthlyMap: Record<string, number> = {}
-  messages?.forEach((msg: { created_at: string }) => {
-    const date = new Date(msg.created_at)
-    const month = `${date.getFullYear()}-${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}`
-    monthlyMap[month] = (monthlyMap[month] || 0) + 1
-  })
-  const sortedMonths = Object.keys(monthlyMap).sort()
-  let cumulative = 0
-  const cumulativeData = sortedMonths.map(month => {
-    cumulative += monthlyMap[month]
-    return { month, messages: cumulative }
-  })
-  return cumulativeData
+
+  // If a specific month is selected, show day-by-day cumulative data
+  if (selectedMonth && selectedMonth !== "all") {
+    const dailyMap: Record<string, number> = {}
+    messages?.forEach((msg: { created_at: string }) => {
+      const date = new Date(msg.created_at)
+      const day = `${date.getFullYear()}-${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`
+      dailyMap[day] = (dailyMap[day] || 0) + 1
+    })
+
+    const sortedDays = Object.keys(dailyMap).sort()
+    let cumulative = 0
+    const cumulativeData = sortedDays.map(day => {
+      cumulative += dailyMap[day]
+      return { month: day, messages: cumulative } // Use 'month' key for compatibility
+    })
+    return cumulativeData
+  }
+  // Otherwise, group by month as before
+  else {
+    const monthlyMap: Record<string, number> = {}
+    messages?.forEach((msg: { created_at: string }) => {
+      const date = new Date(msg.created_at)
+      const month = `${date.getFullYear()}-${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}`
+      monthlyMap[month] = (monthlyMap[month] || 0) + 1
+    })
+
+    const sortedMonths = Object.keys(monthlyMap).sort()
+    let cumulative = 0
+    const cumulativeData = sortedMonths.map(month => {
+      cumulative += monthlyMap[month]
+      return { month, messages: cumulative }
+    })
+    return cumulativeData
+  }
 }
 
 export async function getTopUsers(selectedMonth?: string) {
