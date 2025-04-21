@@ -42,7 +42,14 @@ export function ChartMessagesGrowth({
       try {
         const computedData = await getMessages(selectedMonth)
         if (computedData) {
-          setDataWithGrowth(computedData)
+          // Transform data to ensure it matches the expected format
+          const formattedData = computedData.map(item => ({
+            month:
+              "month" in item ? item.month : (item as any).day || "Unknown",
+            total_messages: item.total_messages,
+            growth: item.growth
+          }))
+          setDataWithGrowth(formattedData)
         }
       } catch (error) {
         console.error("Error fetching messages:", error)
