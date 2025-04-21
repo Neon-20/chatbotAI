@@ -22,17 +22,17 @@ import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
 
 type FileTypeData = Array<{ type: string; count: number }>
 
-export function ChartFileTypes() {
+export function ChartFileTypes({ selectedMonth }: { selectedMonth?: string }) {
   const [isOpen, setIsOpen] = useState(false)
   const [fileTypeData, setFileTypeData] = useState<FileTypeData>()
 
   useEffect(() => {
     async function fetchFileTypeData() {
-      const fileTypeData = await getFilesType()
+      const fileTypeData = await getFilesType(selectedMonth)
       setFileTypeData(fileTypeData)
     }
     fetchFileTypeData()
-  }, [])
+  }, [selectedMonth])
 
   if (!fileTypeData) {
     return <ChartLoadingSkeleton />
