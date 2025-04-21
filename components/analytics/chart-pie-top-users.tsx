@@ -22,7 +22,11 @@ const COLORS = [
   "var(--ad-gray-300)"
 ]
 
-export function ChartPieTopUsers() {
+export function ChartPieTopUsers({
+  selectedMonth
+}: {
+  selectedMonth?: string
+}) {
   const [chartData, setChartData] = useState<
     Array<{ name: string; value: number }>
   >([])
@@ -31,11 +35,11 @@ export function ChartPieTopUsers() {
 
   useEffect(() => {
     async function fetchData() {
-      const topUsers = await getTopUsers()
+      const topUsers = await getTopUsers(selectedMonth)
       if (topUsers) setChartData(topUsers)
     }
     fetchData()
-  }, [])
+  }, [selectedMonth])
 
   if (chartData.length === 0) {
     return <ChartLoadingSkeleton />
