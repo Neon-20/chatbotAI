@@ -22,16 +22,20 @@ import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
 
 type ActiveUsersData = Array<{ month: string; active_users: number }>
 
-export function ChartActiveUsers() {
+export function ChartActiveUsers({
+  selectedMonth
+}: {
+  selectedMonth?: string
+}) {
   const [isOpen, setIsOpen] = useState(false)
   const [chartData, setChartData] = useState<ActiveUsersData>([])
   useEffect(() => {
     async function fetchChartData() {
-      const chartActiveUsersData = await getYearMessages()
+      const chartActiveUsersData = await getYearMessages(selectedMonth)
       setChartData(chartActiveUsersData)
     }
     fetchChartData()
-  }, [])
+  }, [selectedMonth])
 
   if (chartData.length === 0) {
     return <ChartLoadingSkeleton />

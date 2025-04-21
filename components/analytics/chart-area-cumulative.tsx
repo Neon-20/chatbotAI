@@ -15,7 +15,12 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { getCumulativeData } from "@/db/client_admin"
 import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
-export function ChartAreaCumulative() {
+
+export function ChartAreaCumulative({
+  selectedMonth
+}: {
+  selectedMonth?: string
+}) {
   // Dynamic data state replacing static data
   const [data, setData] = useState<Array<{ month: string; messages: number }>>(
     []
@@ -24,13 +29,13 @@ export function ChartAreaCumulative() {
 
   useEffect(() => {
     async function fetchMessages() {
-      const cumulativeData = await getCumulativeData()
+      const cumulativeData = await getCumulativeData(selectedMonth)
       if (cumulativeData) {
         setData(cumulativeData)
       }
     }
     fetchMessages()
-  }, [])
+  }, [selectedMonth])
 
   if (data.length === 0) {
     return <ChartLoadingSkeleton />

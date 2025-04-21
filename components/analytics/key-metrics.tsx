@@ -26,7 +26,7 @@ type MetricsTypes = {
   iconColor: string
 }[]
 
-const KeyMetricsComponent = () => {
+const KeyMetricsComponent = ({ selectedMonth }: { selectedMonth?: string }) => {
   const [metrics, setMetrics] = useState<MetricsTypes>([])
 
   useEffect(() => {
@@ -36,22 +36,24 @@ const KeyMetricsComponent = () => {
       const totalUsers = profiles.filter(user => user.roles === "user").length
 
       // --- 2. Total Messages ---
-      const totalMessages = await get30daysMessages()
+      const totalMessages = await get30daysMessages(selectedMonth)
 
       // --- 3. Active Users (Last 30 Days) ---
-      const activeUsers = await getAllActiveUsers()
+      const activeUsers = await getAllActiveUsers(selectedMonth)
 
       // --- 4. Average Messages Per Active User ---
-      const last30DaysMessages = await getLast30DaysMessages()
+      const last30DaysMessages = await getLast30DaysMessages(selectedMonth)
       const avgMessagesPerUser =
         activeUsers > 0 ? (last30DaysMessages / activeUsers).toFixed(2) : 0
 
       // Count messages in the current month
-      const currentMonthMessageCount = await getCurrentMonthMessages()
+      const currentMonthMessageCount =
+        await getCurrentMonthMessages(selectedMonth)
 
       // Count messages in the previous month
       const monthlyGrowthFormatted = await getMonthlyGrowthFormatted(
-        currentMonthMessageCount
+        currentMonthMessageCount,
+        selectedMonth
       )
 
       const data = [
@@ -100,7 +102,7 @@ const KeyMetricsComponent = () => {
       setMetrics(data)
     }
     fetchData()
-  }, [])
+  }, [selectedMonth])
 
   // Render nothing until the fetch completes.
   if (metrics.length === 0) return null

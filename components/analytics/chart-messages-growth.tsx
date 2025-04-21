@@ -18,7 +18,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { getMessages } from "@/db/client_admin"
 import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
 
-export function ChartMessagesGrowth() {
+export function ChartMessagesGrowth({
+  selectedMonth
+}: {
+  selectedMonth?: string
+}) {
   const [isOpen, setIsOpen] = useState(false)
   const [dataWithGrowth, setDataWithGrowth] = useState<
     Array<{ month: string; total_messages: number; growth: number }>
@@ -36,7 +40,7 @@ export function ChartMessagesGrowth() {
     async function fetchMessages() {
       setIsLoading(true)
       try {
-        const computedData = await getMessages()
+        const computedData = await getMessages(selectedMonth)
         if (computedData) {
           setDataWithGrowth(computedData)
         }
@@ -47,7 +51,7 @@ export function ChartMessagesGrowth() {
       }
     }
     fetchMessages()
-  }, [])
+  }, [selectedMonth])
 
   if (isLoading) {
     return <ChartLoadingSkeleton />

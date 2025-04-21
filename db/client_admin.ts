@@ -1,9 +1,23 @@
 import { supabase } from "@/lib/supabase/browser-client"
 
-export async function get30daysMessages() {
-  const { count: totalMessages, error: messagesError } = await supabase
+// Helper to get date range for a month string (YYYY-MM)
+function getMonthRange(month: string) {
+  if (!month || month === "all") return {}
+  const [year, m] = month.split("-").map(Number)
+  const start = new Date(year, m - 1, 1)
+  const end = new Date(year, m, 1)
+  return { start: start.toISOString(), end: end.toISOString() }
+}
+
+export async function get30daysMessages(selectedMonth?: string) {
+  let query = supabase
     .from("messages")
     .select("*", { count: "exact", head: true })
+  if (selectedMonth && selectedMonth !== "all") {
+    const { start, end } = getMonthRange(selectedMonth)
+    query = query.gte("created_at", start).lt("created_at", end)
+  }
+  const { count: totalMessages, error: messagesError } = await query
   if (messagesError) {
     console.error("Error fetching messages:", messagesError.message)
     return 0
@@ -11,36 +25,39 @@ export async function get30daysMessages() {
   return totalMessages || 0
 }
 
-export async function getAllActiveUsers() {
-  const thirtyDaysAgo = new Date()
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-  const thirtyDaysAgoISO = thirtyDaysAgo.toISOString()
-
-  const { data: activeUsersData, error: activeUsersError } = await supabase
-    .from("messages")
-    .select("user_id")
-    .gte("created_at", thirtyDaysAgoISO)
-
+export async function getAllActiveUsers(selectedMonth?: string) {
+  let query = supabase.from("messages").select("user_id")
+  if (selectedMonth && selectedMonth !== "all") {
+    const { start, end } = getMonthRange(selectedMonth)
+    query = query.gte("created_at", start).lt("created_at", end)
+  } else {
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+    query = query.gte("created_at", thirtyDaysAgo.toISOString())
+  }
+  const { data: activeUsersData, error: activeUsersError } = await query
   const activeUsers = activeUsersData
     ? new Set(activeUsersData.map(message => message.user_id)).size
     : 0
-
   if (activeUsersError) {
     console.error("Error fetching active users:", activeUsersError.message)
   }
   return activeUsers || 0
 }
 
-export async function getLast30DaysMessages() {
-  const thirtyDaysAgo = new Date()
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-  const thirtyDaysAgoISO = thirtyDaysAgo.toISOString()
-
-  const { count: totalMessages, error: messagesError } = await supabase
+export async function getLast30DaysMessages(selectedMonth?: string) {
+  let query = supabase
     .from("messages")
     .select("*", { count: "exact", head: true })
-    .gte("created_at", thirtyDaysAgoISO)
-
+  if (selectedMonth && selectedMonth !== "all") {
+    const { start, end } = getMonthRange(selectedMonth)
+    query = query.gte("created_at", start).lt("created_at", end)
+  } else {
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+    query = query.gte("created_at", thirtyDaysAgo.toISOString())
+  }
+  const { count: totalMessages, error: messagesError } = await query
   if (messagesError) {
     console.error("Error fetching messages:", messagesError.message)
     return 0
@@ -48,56 +65,67 @@ export async function getLast30DaysMessages() {
   return totalMessages || 0
 }
 
-export async function getCurrentMonthMessages() {
-  const today = new Date()
-  const firstDayOfCurrentMonth = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    1
-  )
-  const firstDayOfCurrentMonthISO = firstDayOfCurrentMonth.toISOString()
-  const {
-    data: currentMonthMessages,
-    error: currentMonthError,
-    count: currentMonthCount
-  } = await supabase
+export async function getCurrentMonthMessages(selectedMonth?: string) {
+  let query = supabase
     .from("messages")
     .select("*", { count: "exact", head: true })
-    .gte("created_at", firstDayOfCurrentMonthISO)
-
+  if (selectedMonth && selectedMonth !== "all") {
+    const { start, end } = getMonthRange(selectedMonth)
+    query = query.gte("created_at", start).lt("created_at", end)
+  } else {
+    const today = new Date()
+    const firstDayOfCurrentMonth = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1
+    )
+    query = query.gte("created_at", firstDayOfCurrentMonth.toISOString())
+  }
+  const { count: currentMonthCount, error: currentMonthError } = await query
   if (currentMonthError) {
     console.error(
       "Error fetching current month messages:",
       currentMonthError.message
     )
   }
-  const currentMonthMessageCount = currentMonthCount || 0
-  return currentMonthMessageCount
+  return currentMonthCount || 0
 }
 
 export async function getMonthlyGrowthFormatted(
-  currentMonthMessageCount: number
+  currentMonthMessageCount: number,
+  selectedMonth?: string
 ) {
-  const today = new Date()
-  const firstDayOfCurrentMonth = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    1
-  )
-  const firstDayOfPreviousMonth = new Date(
-    today.getFullYear(),
-    today.getMonth() - 1,
-    1
-  )
-  const firstDayOfCurrentMonthISO = firstDayOfCurrentMonth.toISOString()
-  const firstDayOfPreviousMonthISO = firstDayOfPreviousMonth.toISOString()
-  const { error: previousMonthError, count: previousMonthCount } =
+  let previousMonthStart: string | undefined,
+    previousMonthEnd: string | undefined
+  if (selectedMonth && selectedMonth !== "all") {
+    const [year, m] = selectedMonth.split("-").map(Number)
+    const prevMonth = m === 1 ? 12 : m - 1
+    const prevYear = m === 1 ? year - 1 : year
+    const prevStart = new Date(prevYear, prevMonth - 1, 1)
+    const prevEnd = new Date(prevYear, prevMonth, 1)
+    previousMonthStart = prevStart.toISOString()
+    previousMonthEnd = prevEnd.toISOString()
+  } else {
+    const today = new Date()
+    const firstDayOfCurrentMonth = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1
+    )
+    const firstDayOfPreviousMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() - 1,
+      1
+    )
+    previousMonthStart = firstDayOfPreviousMonth.toISOString()
+    previousMonthEnd = firstDayOfCurrentMonth.toISOString()
+  }
+  const { count: previousMonthCount, error: previousMonthError } =
     await supabase
       .from("messages")
       .select("*", { count: "exact", head: true })
-      .gte("created_at", firstDayOfPreviousMonthISO)
-      .lt("created_at", firstDayOfCurrentMonthISO) // Less than the start of the current month
-
+      .gte("created_at", previousMonthStart)
+      .lt("created_at", previousMonthEnd)
   if (previousMonthError) {
     console.error(
       "Error fetching previous month messages:",
@@ -105,7 +133,6 @@ export async function getMonthlyGrowthFormatted(
     )
   }
   const previousMonthMessageCount = previousMonthCount || 0
-  // Calculate monthly growth
   let monthlyGrowth = 0
   if (previousMonthMessageCount > 0) {
     monthlyGrowth =
@@ -113,25 +140,23 @@ export async function getMonthlyGrowthFormatted(
         previousMonthMessageCount) *
       100
   }
-  const monthlyGrowthFormatted = monthlyGrowth.toFixed(2) + "%" // Format as percentage
-
-  return monthlyGrowthFormatted
+  return monthlyGrowth.toFixed(2) + "%"
 }
 
-export async function getYearMessages() {
-  const oneYearAgo = new Date()
-  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
-  const oneYearAgoISO = oneYearAgo.toISOString()
-
-  const { data: messages, error } = await supabase
-    .from("messages")
-    .select("created_at, user_id")
-    .gte("created_at", oneYearAgoISO)
-
+export async function getYearMessages(selectedMonth?: string) {
+  let query = supabase.from("messages").select("created_at, user_id")
+  if (selectedMonth && selectedMonth !== "all") {
+    const { start, end } = getMonthRange(selectedMonth)
+    query = query.gte("created_at", start).lt("created_at", end)
+  } else {
+    const oneYearAgo = new Date()
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
+    query = query.gte("created_at", oneYearAgo.toISOString())
+  }
+  const { data: messages, error } = await query
   if (error) {
     console.error("Error fetching messages:", error.message)
   }
-
   const monthMap: Record<string, Set<string>> = {}
   messages?.forEach((msg: { created_at: string; user_id: string }) => {
     const date = new Date(msg.created_at)
@@ -144,40 +169,41 @@ export async function getYearMessages() {
   const chartActiveUsersData = Object.entries(monthMap)
     .map(([month, users]) => ({ month, active_users: users.size }))
     .sort((a, b) => (a.month > b.month ? 1 : -1))
-
   return chartActiveUsersData
 }
 
-export async function getFilesType() {
-  const { data: files, error: filesErr } = await supabase
-    .from("files")
-    .select("type")
-
+export async function getFilesType(selectedMonth?: string) {
+  let query = supabase.from("files").select("type, created_at")
+  if (selectedMonth && selectedMonth !== "all") {
+    const { start, end } = getMonthRange(selectedMonth)
+    query = query.gte("created_at", start).lt("created_at", end)
+  }
+  const { data: files, error: filesErr } = await query
   if (filesErr) {
     console.error("Error fetching file types:", filesErr.message)
   }
-
   const counts: Record<string, number> = {}
   files?.forEach(row => {
     const type = row.type || "Other"
     counts[type] = (counts[type] || 0) + 1
   })
-
   const fileTypeData = Object.entries(counts)
     .map(([type, count]) => ({ type, count }))
     .sort((a, b) => b.count - a.count)
-
   return fileTypeData
 }
-export async function getMessages() {
-  // Fetch all messages with created_at
-  const { data, error } = await supabase.from("messages").select("created_at")
+
+export async function getMessages(selectedMonth?: string) {
+  let query = supabase.from("messages").select("created_at")
+  if (selectedMonth && selectedMonth !== "all") {
+    const { start, end } = getMonthRange(selectedMonth)
+    query = query.gte("created_at", start).lt("created_at", end)
+  }
+  const { data, error } = await query
   if (error) {
     console.error("Error fetching messages:", error.message)
     return
   }
-
-  // Group messages by month (format YYYY-MM)
   const monthlyMap: Record<string, number> = {}
   data?.forEach(msg => {
     const date = new Date(msg.created_at)
@@ -186,15 +212,11 @@ export async function getMessages() {
       .padStart(2, "0")}`
     monthlyMap[month] = (monthlyMap[month] || 0) + 1
   })
-
-  // Convert to sorted array
   const sortedMonths = Object.keys(monthlyMap).sort()
   const monthlyData = sortedMonths.map(month => ({
     month,
     total_messages: monthlyMap[month]
   }))
-
-  // Calculate growth percentages
   const computedData = monthlyData.map((item, index) => {
     if (index === 0) return { ...item, growth: 0 }
     const previous = monthlyData[index - 1].total_messages
@@ -204,20 +226,20 @@ export async function getMessages() {
         : 0
     return { ...item, growth }
   })
-
   return computedData
 }
 
-export async function getCumulativeData() {
-  // Fetch messages with created_at field
-  const { data: messages, error } = await supabase
-    .from("messages")
-    .select("created_at")
+export async function getCumulativeData(selectedMonth?: string) {
+  let query = supabase.from("messages").select("created_at")
+  if (selectedMonth && selectedMonth !== "all") {
+    const { start, end } = getMonthRange(selectedMonth)
+    query = query.gte("created_at", start).lt("created_at", end)
+  }
+  const { data: messages, error } = await query
   if (error) {
     console.error("Error fetching messages:", error.message)
     return
   }
-  // Group messages by month
   const monthlyMap: Record<string, number> = {}
   messages?.forEach((msg: { created_at: string }) => {
     const date = new Date(msg.created_at)
@@ -226,7 +248,6 @@ export async function getCumulativeData() {
       .padStart(2, "0")}`
     monthlyMap[month] = (monthlyMap[month] || 0) + 1
   })
-  // Sort months and compute cumulative count
   const sortedMonths = Object.keys(monthlyMap).sort()
   let cumulative = 0
   const cumulativeData = sortedMonths.map(month => {
@@ -236,8 +257,13 @@ export async function getCumulativeData() {
   return cumulativeData
 }
 
-export async function getTopUsers() {
-  const { data, error } = await supabase.from("messages").select("user_id")
+export async function getTopUsers(selectedMonth?: string) {
+  let query = supabase.from("messages").select("user_id, created_at")
+  if (selectedMonth && selectedMonth !== "all") {
+    const { start, end } = getMonthRange(selectedMonth)
+    query = query.gte("created_at", start).lt("created_at", end)
+  }
+  const { data, error } = await query
   if (error) {
     console.error("Error fetching messages:", error.message)
     return
@@ -247,14 +273,12 @@ export async function getTopUsers() {
     const user = row.user_id || "Unknown"
     userCounts[user] = (userCounts[user] || 0) + 1
   })
-  // Build sorted array
   const usersArray = Object.entries(userCounts)
     .map(([user, count], index) => ({
       name: `User ${index + 1}`,
       value: count
     }))
     .sort((a, b) => b.value - a.value)
-  // Top 5 and rest as "Others"
   const topUsers = usersArray.slice(0, 5)
   const othersTotal = usersArray
     .slice(5)
