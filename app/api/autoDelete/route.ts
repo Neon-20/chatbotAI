@@ -110,6 +110,40 @@ export async function GET() {
       return NextResponse.error()
     }
 
+    const { data: filesOlderThan30Days, error: oldFiles30DaysError } =
+      await supabase
+        .from("files")
+        .select("id")
+        .lt("created_at", thirtyDaysAgo.toISOString())
+        .is("folder_id", null)
+        .in("user_id", nonSuperadminUserIds)
+
+    if (oldFiles30DaysError) {
+      console.error(
+        "Error fetching files older than 30 days:",
+        oldFiles30DaysError
+      )
+      return NextResponse.error()
+    }
+
+    // Delete file_workspaces for files older than 30 days
+    if (filesOlderThan30Days && filesOlderThan30Days.length > 0) {
+      const fileIds30Days = filesOlderThan30Days.map(file => file.id)
+
+      const { error: deleteFileWorkspaces30DaysError } = await supabase
+        .from("file_workspaces")
+        .delete()
+        .in("file_id", fileIds30Days)
+
+      if (deleteFileWorkspaces30DaysError) {
+        console.error(
+          "Error deleting file_workspaces for 30-day old files:",
+          deleteFileWorkspaces30DaysError
+        )
+        return NextResponse.error()
+      }
+    }
+
     const { data: filesToNullify, error: oldFilesError } = await supabase
       .from("files")
       .select("id")
@@ -143,7 +177,7 @@ export async function GET() {
 
       if (deleteFileWorkspacesError) {
         console.error(
-          "Error deleting file workspaces:",
+          "Error deleting file workspaces for 60-day old files:",
           deleteFileWorkspacesError
         )
         return NextResponse.error()
