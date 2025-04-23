@@ -21,7 +21,10 @@ export async function GET() {
 
     if (userError) {
       console.error("Error fetching non-superadmin users:", userError)
-      return NextResponse.error()
+      return NextResponse.json({
+        success: false,
+        message: "Error fetching non-superadmin users."
+      })
     }
 
     const nonSuperadminUserIds = nonSuperadminUsers.map(user => user.user_id)
@@ -41,7 +44,10 @@ export async function GET() {
 
     if (softDeleteChatsError) {
       console.error("Soft deletion of chats error:", softDeleteChatsError)
-      return NextResponse.error()
+      return NextResponse.json({
+        success: false,
+        message: "Error soft deleting chats."
+      })
     }
 
     // For data older than 60 days, nullify content instead of hard deleting
@@ -55,7 +61,10 @@ export async function GET() {
 
     if (oldChatsError) {
       console.error("Error fetching chats for nullification:", oldChatsError)
-      return NextResponse.error()
+      return NextResponse.json({
+        success: false,
+        message: "Error fetching chats for nullification."
+      })
     }
 
     if (chatsToNullify && chatsToNullify.length > 0) {
@@ -69,7 +78,10 @@ export async function GET() {
 
       if (nullifyMessagesError) {
         console.error("Error nullifying messages:", nullifyMessagesError)
-        return NextResponse.error()
+        return NextResponse.json({
+          success: false,
+          message: "Error nullifying messages."
+        })
       }
 
       // Still need to delete chat_files relationships
@@ -80,7 +92,10 @@ export async function GET() {
 
       if (deleteChatFilesError) {
         console.error("Error deleting chat_files:", deleteChatFilesError)
-        return NextResponse.error()
+        return NextResponse.json({
+          success: false,
+          message: "Error deleting chat_files."
+        })
       }
 
       // Nullify chat names instead of deleting chats
@@ -91,7 +106,10 @@ export async function GET() {
 
       if (nullifyChatsError) {
         console.error("Error nullifying chats:", nullifyChatsError)
-        return NextResponse.error()
+        return NextResponse.json({
+          success: false,
+          message: "Error nullifying chats."
+        })
       }
     }
 
@@ -107,7 +125,10 @@ export async function GET() {
 
     if (softDeleteFilesError) {
       console.error("Soft deletion of files error:", softDeleteFilesError)
-      return NextResponse.error()
+      return NextResponse.json({
+        success: false,
+        message: "Error soft deleting files."
+      })
     }
 
     const { data: filesOlderThan30Days, error: oldFiles30DaysError } =
@@ -123,7 +144,10 @@ export async function GET() {
         "Error fetching files older than 30 days:",
         oldFiles30DaysError
       )
-      return NextResponse.error()
+      return NextResponse.json({
+        success: false,
+        message: "Error fetching files older than 30 days."
+      })
     }
 
     // Delete file_workspaces for files older than 30 days
@@ -140,7 +164,10 @@ export async function GET() {
           "Error deleting file_workspaces for 30-day old files:",
           deleteFileWorkspaces30DaysError
         )
-        return NextResponse.error()
+        return NextResponse.json({
+          success: false,
+          message: "Error deleting file_workspaces for 30-day old files."
+        })
       }
     }
 
@@ -153,7 +180,10 @@ export async function GET() {
 
     if (oldFilesError) {
       console.error("Error fetching files for nullification:", oldFilesError)
-      return NextResponse.error()
+      return NextResponse.json({
+        success: false,
+        message: "Error fetching files for nullification."
+      })
     }
 
     if (filesToNullify && filesToNullify.length > 0) {
@@ -167,7 +197,10 @@ export async function GET() {
 
       if (nullifyFileItemsError) {
         console.error("Error nullifying file items:", nullifyFileItemsError)
-        return NextResponse.error()
+        return NextResponse.json({
+          success: false,
+          message: "Error nullifying file items."
+        })
       }
 
       const { error: deleteFileWorkspacesError } = await supabase
@@ -180,7 +213,10 @@ export async function GET() {
           "Error deleting file workspaces for 60-day old files:",
           deleteFileWorkspacesError
         )
-        return NextResponse.error()
+        return NextResponse.json({
+          success: false,
+          message: "Error deleting file workspaces for 60-day old files."
+        })
       }
 
       // Nullify file names instead of deleting files
@@ -191,7 +227,10 @@ export async function GET() {
 
       if (nullifyFilesError) {
         console.error("Error nullifying files:", nullifyFilesError)
-        return NextResponse.error()
+        return NextResponse.json({
+          success: false,
+          message: "Error nullifying files."
+        })
       }
     }
 
@@ -201,6 +240,10 @@ export async function GET() {
     })
   } catch (err: any) {
     console.error("Auto-delete job failed:", err)
-    return NextResponse.error()
+    return NextResponse.json({
+      success: false,
+      message: "An error occurred during the auto-delete job.",
+      error: err.message
+    })
   }
 }

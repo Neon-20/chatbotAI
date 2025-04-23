@@ -102,7 +102,9 @@ export const createTempMessages = (
       updated_at: "",
       user_id: ""
     },
-    fileItems: []
+    fileItems: [],
+    content: messageContent,
+    role: "user"
   }
 
   let tempAssistantChatMessage: ChatMessage = {
@@ -119,7 +121,9 @@ export const createTempMessages = (
       updated_at: "",
       user_id: ""
     },
-    fileItems: []
+    fileItems: [],
+    content: messageContent,
+    role: "user"
   }
 
   let newMessages = []
@@ -332,7 +336,9 @@ export const processResponse = async (
                   ...chatMessage.message,
                   content: fullText
                 },
-                fileItems: chatMessage.fileItems
+                fileItems: chatMessage.fileItems,
+                content: fullText,
+                role: chatMessage.role
               }
 
               return updatedChatMessage
@@ -498,11 +504,15 @@ export const handleCreateMessages = async (
       ...chatMessages,
       {
         message: updatedMessage,
-        fileItems: []
+        fileItems: [],
+        content: updatedMessage.content,
+        role: updatedMessage.role
       },
       {
         message: createdMessages[1],
-        fileItems: retrievedFileItems.map(fileItem => fileItem.id)
+        fileItems: retrievedFileItems.map(fileItem => fileItem.id),
+        content: createdMessages[1].content,
+        role: createdMessages[1].role
       }
     ]
 
