@@ -3,8 +3,20 @@ import { NextResponse } from "next/server"
 
 export const runtime = "edge"
 
+// Helper function to process arrays in batches
+const processBatches = <T>(array: T[], batchSize: number): T[][] => {
+  const batches: T[][] = []
+  for (let i = 0; i < array.length; i += batchSize) {
+    batches.push(array.slice(i, i + batchSize))
+  }
+  return batches
+}
+
 export async function GET() {
   const supabase = createClient()
+  const userBatchSize = 20
+  const chatBatchSize = 20
+  const fileBatchSize = 20
   try {
     // Timeframes for data cleanup
     const thirtyDaysAgo = new Date()
@@ -29,17 +41,17 @@ export async function GET() {
 
     const nonSuperadminUserIds = nonSuperadminUsers.map(user => user.user_id)
 
-    const batchSize = 1
-    const totalBatches = Math.ceil(nonSuperadminUserIds.length / batchSize)
+    const userBatches = processBatches(nonSuperadminUserIds, userBatchSize)
+    const totalUserBatches = userBatches.length
 
     console.log(
-      `Processing ${nonSuperadminUserIds.length} users in ${totalBatches} batches of ${batchSize}`
+      `Processing ${nonSuperadminUserIds.length} users in ${totalUserBatches} batches of ${userBatchSize}`
     )
 
-    for (let i = 0; i < nonSuperadminUserIds.length; i += batchSize) {
-      const userIdBatch = nonSuperadminUserIds.slice(i, i + batchSize)
+    for (let batchIndex = 0; batchIndex < userBatches.length; batchIndex++) {
+      const userIdBatch = userBatches[batchIndex]
       console.log(
-        `Processing batch ${Math.floor(i / batchSize) + 1}/${totalBatches} with ${userIdBatch.length} users`
+        `Processing batch ${batchIndex + 1}/${totalUserBatches} with ${userIdBatch.length} users`
       )
       const { error: softDeleteChatsError } = await supabase
         .from("chats")
@@ -54,12 +66,12 @@ export async function GET() {
 
       if (softDeleteChatsError) {
         console.error(
-          `Soft deletion of chats error for batch ${Math.floor(i / batchSize) + 1}:`,
+          `Soft deletion of chats error for batch ${batchIndex + 1}:`,
           softDeleteChatsError
         )
         return NextResponse.json({
           success: false,
-          message: `Error soft deleting chats in batch ${Math.floor(i / batchSize) + 1}.`
+          message: `Error soft deleting chats in batch ${batchIndex + 1}.`
         })
       }
 
@@ -74,67 +86,82 @@ export async function GET() {
 
       if (oldChatsError) {
         console.error(
-          `Error fetching chats for nullification in batch ${Math.floor(i / batchSize) + 1}:`,
+          `Error fetching chats for nullification in batch ${batchIndex + 1}:`,
           oldChatsError
         )
         return NextResponse.json({
           success: false,
-          message: `Error fetching chats for nullification in batch ${Math.floor(i / batchSize) + 1}.`
+          message: `Error fetching chats for nullification in batch ${batchIndex + 1}.`
         })
       }
 
       if (chatsToNullify && chatsToNullify.length > 0) {
         const chatIds = chatsToNullify.map(chat => chat.id)
 
-        // Nullify message content instead of deleting
-        const { error: nullifyMessagesError } = await supabase
-          .from("messages")
-          .update({ content: "" })
-          .in("chat_id", chatIds)
+        // Process chat IDs in batches
 
-        if (nullifyMessagesError) {
-          console.error(
-            `Error nullifying messages in batch ${Math.floor(i / batchSize) + 1}:`,
-            nullifyMessagesError
+        const chatIdBatches = processBatches(chatIds, chatBatchSize)
+
+        for (
+          let chatBatchIndex = 0;
+          chatBatchIndex < chatIdBatches.length;
+          chatBatchIndex++
+        ) {
+          const currentChatBatch = chatIdBatches[chatBatchIndex]
+          console.log(
+            `Processing chat batch ${chatBatchIndex + 1}/${chatIdBatches.length} with ${currentChatBatch.length} chats`
           )
-          return NextResponse.json({
-            success: false,
-            message: `Error nullifying messages in batch ${Math.floor(i / batchSize) + 1}.`
-          })
-        }
 
-        // Still need to delete chat_files relationships
-        const { error: deleteChatFilesError } = await supabase
-          .from("chat_files")
-          .delete()
-          .in("chat_id", chatIds)
+          // Nullify message content instead of deleting
+          const { error: nullifyMessagesError } = await supabase
+            .from("messages")
+            .update({ content: "" })
+            .in("chat_id", currentChatBatch)
 
-        if (deleteChatFilesError) {
-          console.error(
-            `Error deleting chat_files in batch ${Math.floor(i / batchSize) + 1}:`,
-            deleteChatFilesError
-          )
-          return NextResponse.json({
-            success: false,
-            message: `Error deleting chat_files in batch ${Math.floor(i / batchSize) + 1}.`
-          })
-        }
+          if (nullifyMessagesError) {
+            console.error(
+              `Error nullifying messages in user batch ${batchIndex + 1}, chat batch ${chatBatchIndex + 1}:`,
+              nullifyMessagesError
+            )
+            return NextResponse.json({
+              success: false,
+              message: `Error nullifying messages in user batch ${batchIndex + 1}, chat batch ${chatBatchIndex + 1}.`
+            })
+          }
 
-        // Nullify chat names instead of deleting chats
-        const { error: nullifyChatsError } = await supabase
-          .from("chats")
-          .update({ name: "" })
-          .in("id", chatIds)
+          // Still need to delete chat_files relationships
+          const { error: deleteChatFilesError } = await supabase
+            .from("chat_files")
+            .delete()
+            .in("chat_id", currentChatBatch)
 
-        if (nullifyChatsError) {
-          console.error(
-            `Error nullifying chats in batch ${Math.floor(i / batchSize) + 1}:`,
-            nullifyChatsError
-          )
-          return NextResponse.json({
-            success: false,
-            message: `Error nullifying chats in batch ${Math.floor(i / batchSize) + 1}.`
-          })
+          if (deleteChatFilesError) {
+            console.error(
+              `Error deleting chat_files in user batch ${batchIndex + 1}, chat batch ${chatBatchIndex + 1}:`,
+              deleteChatFilesError
+            )
+            return NextResponse.json({
+              success: false,
+              message: `Error deleting chat_files in user batch ${batchIndex + 1}, chat batch ${chatBatchIndex + 1}.`
+            })
+          }
+
+          // Nullify chat names instead of deleting chats
+          const { error: nullifyChatsError } = await supabase
+            .from("chats")
+            .update({ name: "" })
+            .in("id", currentChatBatch)
+
+          if (nullifyChatsError) {
+            console.error(
+              `Error nullifying chats in user batch ${batchIndex + 1}, chat batch ${chatBatchIndex + 1}:`,
+              nullifyChatsError
+            )
+            return NextResponse.json({
+              success: false,
+              message: `Error nullifying chats in user batch ${batchIndex + 1}, chat batch ${chatBatchIndex + 1}.`
+            })
+          }
         }
       }
 
@@ -150,12 +177,12 @@ export async function GET() {
 
       if (softDeleteFilesError) {
         console.error(
-          `Soft deletion of files error in batch ${Math.floor(i / batchSize) + 1}:`,
+          `Soft deletion of files error in batch ${batchIndex + 1}:`,
           softDeleteFilesError
         )
         return NextResponse.json({
           success: false,
-          message: `Error soft deleting files in batch ${Math.floor(i / batchSize) + 1}.`
+          message: `Error soft deleting files in batch ${batchIndex + 1}.`
         })
       }
 
@@ -169,12 +196,12 @@ export async function GET() {
 
       if (oldFiles30DaysError) {
         console.error(
-          `Error fetching files older than 30 days in batch ${Math.floor(i / batchSize) + 1}:`,
+          `Error fetching files older than 30 days in batch ${batchIndex + 1}:`,
           oldFiles30DaysError
         )
         return NextResponse.json({
           success: false,
-          message: `Error fetching files older than 30 days in batch ${Math.floor(i / batchSize) + 1}.`
+          message: `Error fetching files older than 30 days in batch ${batchIndex + 1}.`
         })
       }
 
@@ -182,20 +209,35 @@ export async function GET() {
       if (filesOlderThan30Days && filesOlderThan30Days.length > 0) {
         const fileIds30Days = filesOlderThan30Days.map(file => file.id)
 
-        const { error: deleteFileWorkspaces30DaysError } = await supabase
-          .from("file_workspaces")
-          .delete()
-          .in("file_id", fileIds30Days)
+        // Process 30-day files in batches
 
-        if (deleteFileWorkspaces30DaysError) {
-          console.error(
-            `Error deleting file_workspaces for 30-day old files in batch ${Math.floor(i / batchSize) + 1}:`,
-            deleteFileWorkspaces30DaysError
+        const fileIds30DayBatches = processBatches(fileIds30Days, fileBatchSize)
+
+        for (
+          let fileBatchIndex = 0;
+          fileBatchIndex < fileIds30DayBatches.length;
+          fileBatchIndex++
+        ) {
+          const currentFileBatch = fileIds30DayBatches[fileBatchIndex]
+          console.log(
+            `Processing 30-day files batch ${fileBatchIndex + 1}/${fileIds30DayBatches.length} with ${currentFileBatch.length} files`
           )
-          return NextResponse.json({
-            success: false,
-            message: `Error deleting file_workspaces for 30-day old files in batch ${Math.floor(i / batchSize) + 1}.`
-          })
+
+          const { error: deleteFileWorkspaces30DaysError } = await supabase
+            .from("file_workspaces")
+            .delete()
+            .in("file_id", currentFileBatch)
+
+          if (deleteFileWorkspaces30DaysError) {
+            console.error(
+              `Error deleting file_workspaces for 30-day old files in user batch ${batchIndex + 1}, file batch ${fileBatchIndex + 1}:`,
+              deleteFileWorkspaces30DaysError
+            )
+            return NextResponse.json({
+              success: false,
+              message: `Error deleting file_workspaces for 30-day old files in user batch ${batchIndex + 1}, file batch ${fileBatchIndex + 1}.`
+            })
+          }
         }
       }
 
@@ -208,66 +250,81 @@ export async function GET() {
 
       if (oldFilesError) {
         console.error(
-          `Error fetching files for nullification in batch ${Math.floor(i / batchSize) + 1}:`,
+          `Error fetching files for nullification in batch ${batchIndex + 1}:`,
           oldFilesError
         )
         return NextResponse.json({
           success: false,
-          message: `Error fetching files for nullification in batch ${Math.floor(i / batchSize) + 1}.`
+          message: `Error fetching files for nullification in batch ${batchIndex + 1}.`
         })
       }
 
       if (filesToNullify && filesToNullify.length > 0) {
         const fileIds = filesToNullify.map(file => file.id)
 
-        // Nullify file_items content instead of deleting
-        const { error: nullifyFileItemsError } = await supabase
-          .from("file_items")
-          .update({ content: "" })
-          .in("file_id", fileIds)
+        // Process 60-day files in batches
 
-        if (nullifyFileItemsError) {
-          console.error(
-            `Error nullifying file items in batch ${Math.floor(i / batchSize) + 1}:`,
-            nullifyFileItemsError
+        const fileIdBatches = processBatches(fileIds, fileBatchSize)
+
+        for (
+          let fileBatchIndex = 0;
+          fileBatchIndex < fileIdBatches.length;
+          fileBatchIndex++
+        ) {
+          const currentFileBatch = fileIdBatches[fileBatchIndex]
+          console.log(
+            `Processing 60-day files batch ${fileBatchIndex + 1}/${fileIdBatches.length} with ${currentFileBatch.length} files`
           )
-          return NextResponse.json({
-            success: false,
-            message: `Error nullifying file items in batch ${Math.floor(i / batchSize) + 1}.`
-          })
-        }
 
-        const { error: deleteFileWorkspacesError } = await supabase
-          .from("file_workspaces")
-          .delete()
-          .in("file_id", fileIds)
+          // Nullify file_items content instead of deleting
+          const { error: nullifyFileItemsError } = await supabase
+            .from("file_items")
+            .update({ content: "" })
+            .in("file_id", currentFileBatch)
 
-        if (deleteFileWorkspacesError) {
-          console.error(
-            `Error deleting file workspaces for 60-day old files in batch ${Math.floor(i / batchSize) + 1}:`,
-            deleteFileWorkspacesError
-          )
-          return NextResponse.json({
-            success: false,
-            message: `Error deleting file workspaces for 60-day old files in batch ${Math.floor(i / batchSize) + 1}.`
-          })
-        }
+          if (nullifyFileItemsError) {
+            console.error(
+              `Error nullifying file items in user batch ${batchIndex + 1}, file batch ${fileBatchIndex + 1}:`,
+              nullifyFileItemsError
+            )
+            return NextResponse.json({
+              success: false,
+              message: `Error nullifying file items in user batch ${batchIndex + 1}, file batch ${fileBatchIndex + 1}.`
+            })
+          }
 
-        // Nullify file names instead of deleting files
-        const { error: nullifyFilesError } = await supabase
-          .from("files")
-          .update({ name: "" })
-          .in("id", fileIds)
+          const { error: deleteFileWorkspacesError } = await supabase
+            .from("file_workspaces")
+            .delete()
+            .in("file_id", currentFileBatch)
 
-        if (nullifyFilesError) {
-          console.error(
-            `Error nullifying files in batch ${Math.floor(i / batchSize) + 1}:`,
-            nullifyFilesError
-          )
-          return NextResponse.json({
-            success: false,
-            message: `Error nullifying files in batch ${Math.floor(i / batchSize) + 1}.`
-          })
+          if (deleteFileWorkspacesError) {
+            console.error(
+              `Error deleting file workspaces for 60-day old files in user batch ${batchIndex + 1}, file batch ${fileBatchIndex + 1}:`,
+              deleteFileWorkspacesError
+            )
+            return NextResponse.json({
+              success: false,
+              message: `Error deleting file workspaces for 60-day old files in user batch ${batchIndex + 1}, file batch ${fileBatchIndex + 1}.`
+            })
+          }
+
+          // Nullify file names instead of deleting files
+          const { error: nullifyFilesError } = await supabase
+            .from("files")
+            .update({ name: "" })
+            .in("id", currentFileBatch)
+
+          if (nullifyFilesError) {
+            console.error(
+              `Error nullifying files in user batch ${batchIndex + 1}, file batch ${fileBatchIndex + 1}:`,
+              nullifyFilesError
+            )
+            return NextResponse.json({
+              success: false,
+              message: `Error nullifying files in user batch ${batchIndex + 1}, file batch ${fileBatchIndex + 1}.`
+            })
+          }
         }
       }
     }
