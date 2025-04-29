@@ -269,7 +269,7 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
 
       {profile && selectedChat && (
         <ChatTracker
-          messages={chatMessages.map(cm => cm.message)}
+          messages={chatMessages}
           userId={profile.user_id}
           chatId={selectedChat.id}
         />
