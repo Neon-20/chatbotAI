@@ -249,6 +249,25 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
         <div className="max-w-[200px] truncate sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] xl:max-w-[700px]">
           {selectedChat?.name || "Chat"}
         </div>
+        <WithTooltip
+          side="top"
+          delayDuration={200}
+          display={<div>Chat-date</div>}
+          trigger={
+            <div className="ml-4 text-sm text-gray-500">
+              {selectedChat?.created_at
+                ? `(${new Date(selectedChat.created_at).toLocaleDateString(
+                    "en-GB",
+                    {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric"
+                    }
+                  )})`
+                : ""}
+            </div>
+          }
+        />
       </div>
 
       <div
