@@ -1,14 +1,22 @@
 import { IconBolt } from "@tabler/icons-react"
 import { useContext, useState } from "react"
+import { ChatMessage } from "@/types/chat-message"
 import { ChatbotUIContext } from "@/context/context"
 import { initialSuggestions } from "@/lib/suggestions/custom-suggestions"
 import { defaultSuggestion } from "@/lib/suggestion"
 import { motion } from "framer-motion"
 
-function SuggestionTiles() {
-  // Access the ChatbotUIContext to set userInput directly and trigger prompt picker
-  const { setUserInput, setIsPromptPickerOpen, setSlashCommand } =
-    useContext(ChatbotUIContext)
+function SuggestionTiles({
+  handleSendMessage
+}: {
+  handleSendMessage: (
+    suggestion: string,
+    chatMessages: ChatMessage[],
+    arg2: boolean
+  ) => void
+}) {
+  // Access the ChatbotUIContext to set userInput directly and trigger send
+  const { chatMessages, setUserInput } = useContext(ChatbotUIContext)
 
   // Create a static array of suggestions by combining all available suggestion sets
   // We'll take 6 suggestions total - prioritizing the default suggestions
@@ -52,14 +60,12 @@ function SuggestionTiles() {
                 key={index}
                 className="relative flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-black/80 px-3 py-2 text-gray-800 shadow-sm backdrop-blur-md dark:text-gray-200"
                 onClick={() => {
-                  // Extract a keyword from the suggestion to use as a search term
-                  const searchTerm =
-                    suggestion.split(" ")[1] || suggestion.split(" ")[0]
-
-                  // Set the input to "/" and open the prompt picker with the search term
-                  setUserInput("/")
-                  setIsPromptPickerOpen(true)
-                  setSlashCommand(searchTerm.toLowerCase())
+                  // First set the user input to the suggestion text
+                  setUserInput(suggestion)
+                  // Then trigger the send message function
+                  setTimeout(() => {
+                    handleSendMessage(suggestion, chatMessages, false)
+                  }, 100) // Small delay to ensure UI updates
                 }}
                 whileHover={{
                   scale: 1.01,

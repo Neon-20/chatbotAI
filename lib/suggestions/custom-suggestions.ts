@@ -3,7 +3,7 @@
 
 // Initial suggestions shown when the chat starts
 export const initialSuggestions = [
-  "What career opportunities are available at Alter Domus?",
+  "How can I help you today?",
   "Tell me about your product features",
   "What's new in the latest update?",
   "How do I get started with this app?",

@@ -58,8 +58,14 @@ export default function ChatPage() {
             <div className="-mt-24">
               <Brand theme={theme === "dark" ? "dark" : "light"} />
             </div>
-            <div className="mt-14 w-full max-w-3xl px-4">
-              <SuggestionTiles />
+            <div className="mt-10 w-full max-w-3xl px-4">
+              <SuggestionTiles
+                handleSendMessage={() => {
+                  handleFocusChatInput()
+                  // This would typically send the message, but we're just focusing the input
+                  // In a real implementation, you'd connect this to your chat handler
+                }}
+              />
             </div>
           </div>
           <div className="m-2 flex w-full justify-between">
