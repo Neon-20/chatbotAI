@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard"
-import { IconCheck, IconCopy, IconDownload } from "@tabler/icons-react"
-import { FC, memo } from "react"
+import { IconCheck, IconCopy, IconDownload, IconQuote } from "@tabler/icons-react"
+import { FC, memo, useRef, useState, useEffect, useContext } from "react"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism"
+import { WithTooltip } from "../ui/with-tooltip"
+import { ChatbotUIContext } from "@/context/context"
 
 interface MessageCodeBlockProps {
   language: string
@@ -52,6 +54,11 @@ export const generateRandomString = (length: number, lowercase = false) => {
 export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
   ({ language, value }) => {
     const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 })
+    const { userInput, setUserInput } = useContext(ChatbotUIContext)
+
+    const [selectedText, setSelectedText] = useState<string>("");
+    const [selectionPosition, setSelectionPosition] = useState<{ x: number; y: number } | null>(null);
+    const codeBlockRef = useRef<HTMLDivElement>(null);
 
     const downloadAsFile = () => {
       if (typeof window === "undefined") {
@@ -85,8 +92,62 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
       copyToClipboard(value)
     }
 
+    const handleTextSelection = () => {
+      const selection = window.getSelection();
+      if (selection && selection.toString().trim().length > 0) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+
+        // Get the selected text
+        const text = selection.toString().trim();
+        setSelectedText(text);
+
+        // Calculate position for the quote icon
+        if (codeBlockRef.current) {
+          const containerRect = codeBlockRef.current.getBoundingClientRect();
+          setSelectionPosition({
+            x: rect.left - containerRect.left + rect.width / 2,
+            y: rect.top - containerRect.top
+          });
+        }
+      } else {
+        // Clear selection when nothing is selected
+        setSelectedText("");
+        setSelectionPosition(null);
+      }
+    };
+
+    // Clear selection when clicking outside
+    useEffect(() => {
+      const handleClickOutside = (e: MouseEvent) => {
+        if (codeBlockRef.current && !codeBlockRef.current.contains(e.target as Node)) {
+          setSelectedText("");
+          setSelectionPosition(null);
+        }
+      };
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, []);
+
+    const handleQuoteClick = () => {
+      // Add the selected text as a code block to the user input
+      const quotedText = `\`\`\`${language}\n${selectedText}\n\`\`\`\n\n`;
+      setUserInput(prevInput => {
+        // If there's already content, add a newline before adding the quote
+        if (prevInput.trim()) {
+          return `${prevInput}\n\n${quotedText}`;
+        }
+        return quotedText;
+      });
+      setSelectedText("");
+      setSelectionPosition(null);
+    };
+
     return (
-      <div className="codeblock relative w-full bg-zinc-950 font-sans">
+      <div className="codeblock text-selection-active relative w-full bg-zinc-950 font-sans" ref={codeBlockRef} onMouseUp={handleTextSelection}>
         <div className="flex w-full items-center justify-between bg-zinc-700 px-4 text-white">
           <span className="text-xs lowercase">{language}</span>
           <div className="flex items-center space-x-1">
@@ -109,6 +170,28 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
             </Button>
           </div>
         </div>
+        {selectedText && selectionPosition && (
+          <div
+            className="text-selection-quote"
+            style={{
+              left: `${selectionPosition.x}px`,
+              top: `${selectionPosition.y - 40}px`
+            }}
+          >
+            <WithTooltip
+              delayDuration={500}
+              side="top"
+              display={<div>Quote selected code</div>}
+              trigger={
+                <IconQuote
+                  className="cursor-pointer hover:opacity-50"
+                  size={16}
+                  onClick={handleQuoteClick}
+                />
+              }
+            />
+          </div>
+        )}
         <SyntaxHighlighter
           language={language}
           style={oneDark}

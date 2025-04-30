@@ -1,9 +1,10 @@
-import React, { FC } from "react"
+import React, { FC, useRef, useState, useEffect } from "react"
 import remarkGfm from "remark-gfm"
 import remarkMath from "remark-math"
 import { MessageCodeBlock } from "./message-codeblock"
 import { MessageMarkdownMemoized } from "./message-markdown-memoized"
 import rehypeKatex from "rehype-katex"
+import { TextSelectionQuote } from "./text-selection-quote"
 
 interface MessageMarkdownProps {
   content: string
@@ -18,12 +19,67 @@ const replaceMathDelimiters = (content: string) => {
 }
 
 export const MessageMarkdown: FC<MessageMarkdownProps> = ({ content }) => {
+  const [selectedText, setSelectedText] = useState<string>("");
+  const [selectionPosition, setSelectionPosition] = useState<{ x: number; y: number } | null>(null);
+  const markdownRef = useRef<HTMLDivElement>(null);
+
+  const handleTextSelection = () => {
+    const selection = window.getSelection();
+    if (selection && selection.toString().trim().length > 0) {
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+
+      // Get the selected text
+      const text = selection.toString().trim();
+      setSelectedText(text);
+
+      // Calculate position for the quote icon
+      if (markdownRef.current) {
+        const containerRect = markdownRef.current.getBoundingClientRect();
+        setSelectionPosition({
+          x: rect.left - containerRect.left + rect.width / 2,
+          y: rect.top - containerRect.top
+        });
+      }
+    } else {
+      // Clear selection when nothing is selected
+      setSelectedText("");
+      setSelectionPosition(null);
+    }
+  };
+
+  // Clear selection when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (markdownRef.current && !markdownRef.current.contains(e.target as Node)) {
+        setSelectedText("");
+        setSelectionPosition(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <MessageMarkdownMemoized
-      className="prose dark:prose-invert prose-p:leading-relaxed prose-pre:p-0 min-w-full space-y-6 break-words"
-      remarkPlugins={[remarkGfm, remarkMath]}
-      rehypePlugins={[rehypeKatex]}
-      components={{
+    <div ref={markdownRef} className="text-selection-active relative" onMouseUp={handleTextSelection}>
+      {selectedText && selectionPosition && (
+        <TextSelectionQuote
+          selectedText={selectedText}
+          position={selectionPosition}
+          onClose={() => {
+            setSelectedText("");
+            setSelectionPosition(null);
+          }}
+        />
+      )}
+      <MessageMarkdownMemoized
+        className="prose dark:prose-invert prose-p:leading-relaxed prose-pre:p-0 min-w-full space-y-6 break-words"
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeKatex]}
+        components={{
         p({ children }) {
           return <p className="mb-2 last:mb-0">{children}</p>
         },
@@ -75,5 +131,6 @@ export const MessageMarkdown: FC<MessageMarkdownProps> = ({ content }) => {
     >
       {replaceMathDelimiters(content)}
     </MessageMarkdownMemoized>
+    </div>
   )
 }
