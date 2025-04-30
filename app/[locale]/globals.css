@@ -176,3 +176,16 @@
   animation: fadeIn 0.2s ease-out;
 }
 
+/* Highlighted text styles */
+.highlighted-text {
+  background-color: rgba(231, 76, 60, 0.2); /* Reddish orange with transparency */
+  border-radius: 2px;
+  padding: 2px 0;
+  position: relative;
+}
+
+/* For dark mode */
+.dark .highlighted-text {
+  background-color: rgba(231, 76, 60, 0.3); /* Slightly more opaque for dark mode */
+}
+

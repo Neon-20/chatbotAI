@@ -58,6 +58,7 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
 
     const [selectedText, setSelectedText] = useState<string>("");
     const [selectionPosition, setSelectionPosition] = useState<{ x: number; y: number } | null>(null);
+    const [highlightedElement, setHighlightedElement] = useState<HTMLElement | null>(null);
     const codeBlockRef = useRef<HTMLDivElement>(null);
 
     const downloadAsFile = () => {
@@ -92,6 +93,21 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
       copyToClipboard(value)
     }
 
+    // Function to remove any existing highlights
+    const removeHighlights = () => {
+      if (highlightedElement) {
+        highlightedElement.classList.remove('highlighted-text');
+        setHighlightedElement(null);
+      }
+    };
+
+    // Function to clear the selection
+    const clearSelection = () => {
+      setSelectedText("");
+      setSelectionPosition(null);
+      removeHighlights();
+    };
+
     const handleTextSelection = () => {
       const selection = window.getSelection();
       if (selection && selection.toString().trim().length > 0) {
@@ -102,18 +118,47 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
         const text = selection.toString().trim();
         setSelectedText(text);
 
-        // Calculate position for the quote icon
-        if (codeBlockRef.current) {
-          const containerRect = codeBlockRef.current.getBoundingClientRect();
-          setSelectionPosition({
-            x: rect.left - containerRect.left + rect.width / 2,
-            y: rect.top - containerRect.top
-          });
+        // For code blocks, we'll highlight the parent element of the selection
+        // since we can't easily wrap the selection in a span due to the syntax highlighting
+        let currentNode = range.startContainer;
+
+        // Find the closest element node
+        while (currentNode.nodeType !== Node.ELEMENT_NODE && currentNode.parentElement) {
+          currentNode = currentNode.parentElement;
+        }
+
+        // Remove any existing highlights
+        removeHighlights();
+
+        // Add highlight class to the element
+        if (currentNode.nodeType === Node.ELEMENT_NODE) {
+          const element = currentNode as HTMLElement;
+          element.classList.add('highlighted-text');
+          setHighlightedElement(element);
+
+          // Calculate position for the quote icon - top right corner
+          if (codeBlockRef.current) {
+            const containerRect = codeBlockRef.current.getBoundingClientRect();
+            const elementRect = element.getBoundingClientRect();
+
+            setSelectionPosition({
+              x: elementRect.right - containerRect.left - 10, // 10px offset from right edge
+              y: elementRect.top - containerRect.top - 5 // 5px above the top
+            });
+          }
+        } else {
+          // Fallback if we can't find an element to highlight
+          if (codeBlockRef.current) {
+            const containerRect = codeBlockRef.current.getBoundingClientRect();
+            setSelectionPosition({
+              x: rect.right - containerRect.left - 10,
+              y: rect.top - containerRect.top - 5
+            });
+          }
         }
       } else {
         // Clear selection when nothing is selected
-        setSelectedText("");
-        setSelectionPosition(null);
+        clearSelection();
       }
     };
 
@@ -121,14 +166,20 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
     useEffect(() => {
       const handleClickOutside = (e: MouseEvent) => {
         if (codeBlockRef.current && !codeBlockRef.current.contains(e.target as Node)) {
-          setSelectedText("");
-          setSelectionPosition(null);
+          clearSelection();
         }
       };
 
       document.addEventListener("mousedown", handleClickOutside);
       return () => {
         document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, []);
+
+    // Clean up highlights when component unmounts
+    useEffect(() => {
+      return () => {
+        removeHighlights();
       };
     }, []);
 
@@ -142,8 +193,7 @@ export const MessageCodeBlock: FC<MessageCodeBlockProps> = memo(
         }
         return quotedText;
       });
-      setSelectedText("");
-      setSelectionPosition(null);
+      clearSelection();
     };
 
     return (
