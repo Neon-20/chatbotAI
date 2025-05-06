@@ -260,6 +260,10 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
 
         <ChatMessages />
 
+        <div className="text-muted-foreground py-2 text-center text-xs">
+          Messages that are 30 days older are <b>archived</b> automatically.
+        </div>
+
         <div ref={messagesEndRef} />
       </div>
 

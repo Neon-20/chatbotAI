@@ -14,9 +14,9 @@ const processBatches = <T>(array: T[], batchSize: number): T[][] => {
 
 export async function GET() {
   const supabase = createClient()
-  const userBatchSize = 20
-  const chatBatchSize = 20
-  const fileBatchSize = 20
+  const userBatchSize = 15
+  const chatBatchSize = 15
+  const fileBatchSize = 15
   try {
     // Timeframes for data cleanup
     const thirtyDaysAgo = new Date()
