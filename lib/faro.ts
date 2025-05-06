@@ -54,10 +54,21 @@ export const logError = (error: Error, attributes?: Record<string, any>) => {
 export const startTrace = (name: string, attributes?: Record<string, any>) => {
   const faro = getFaro()
   if (faro) {
-    return faro.api.pushTraces({
-      name: name,
-      attributes: attributes
+    const traceId = Math.random().toString(36).substring(2, 15)
+    faro.api.pushEvent(name, {
+      traceId,
+      ...attributes
     })
+    return {
+      traceId,
+      end: () => {
+        faro.api.pushEvent(`${name}_end`, {
+          traceId,
+          duration: performance.now().toString(),
+          ...attributes
+        })
+      }
+    }
   }
   return null
 }
