@@ -1,32 +1,16 @@
 import { IconBolt } from "@tabler/icons-react"
 import { useContext, useState } from "react"
-import { ChatMessage } from "@/types/chat-message"
 import { ChatbotUIContext } from "@/context/context"
-import { initialSuggestions } from "@/lib/suggestions/custom-suggestions"
-import { defaultSuggestion } from "@/lib/suggestion"
+import { suggestionTilesContent } from "@/lib/suggestions/suggestion-tiles-content"
 import { motion } from "framer-motion"
 
-function SuggestionTiles({
-  handleSendMessage
-}: {
-  handleSendMessage: (
-    suggestion: string,
-    chatMessages: ChatMessage[],
-    arg2: boolean
-  ) => void
-}) {
-  // Access the ChatbotUIContext to set userInput directly and trigger send
-  const { chatMessages, setUserInput } = useContext(ChatbotUIContext)
+function SuggestionTiles() {
+  // Access the ChatbotUIContext to set userInput directly and trigger the prompt dialog
+  const { setUserInput, setIsPromptPickerOpen, setSlashCommand } =
+    useContext(ChatbotUIContext)
 
-  // Create a static array of suggestions by combining all available suggestion sets
-  // We'll take 6 suggestions total - prioritizing the default suggestions
-  const staticSuggestions = [
-    ...defaultSuggestion,
-    ...initialSuggestions.slice(0, Math.max(0, 6 - defaultSuggestion.length))
-  ].slice(0, 6)
-
-  // Use static suggestions
-  const [suggestions] = useState<string[]>(staticSuggestions)
+  // Use the dedicated suggestion tiles content
+  const [suggestions] = useState<string[]>(suggestionTilesContent)
 
   return (
     <div className="w-full">
@@ -62,10 +46,15 @@ function SuggestionTiles({
                 onClick={() => {
                   // First set the user input to the suggestion text
                   setUserInput(suggestion)
-                  // Then trigger the send message function
-                  setTimeout(() => {
-                    handleSendMessage(suggestion, chatMessages, false)
-                  }, 100) // Small delay to ensure UI updates
+
+                  // Open the prompt dialog
+                  setIsPromptPickerOpen(true)
+
+                  // Set an empty slash command to show all prompts
+                  setSlashCommand("")
+
+                  // Alternatively, you can directly send the message
+                  // handleSendMessage(suggestion, chatMessages, false)
                 }}
                 whileHover={{
                   scale: 1.01,
