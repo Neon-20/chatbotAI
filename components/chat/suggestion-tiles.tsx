@@ -1,16 +1,112 @@
-import { IconBolt } from "@tabler/icons-react"
-import { useContext, useState } from "react"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { TextareaAutosize } from "@/components/ui/textarea-autosize"
 import { ChatbotUIContext } from "@/context/context"
 import { suggestionTilesContent } from "@/lib/suggestions/suggestion-tiles-content"
+import { Tables } from "@/supabase/types"
+import { IconBolt } from "@tabler/icons-react"
 import { motion } from "framer-motion"
+import { useContext, useState } from "react"
 
 function SuggestionTiles() {
-  // Access the ChatbotUIContext to set userInput directly and trigger the prompt dialog
-  const { setUserInput, setIsPromptPickerOpen, setSlashCommand } =
-    useContext(ChatbotUIContext)
+  const { setUserInput } = useContext(ChatbotUIContext)
 
-  // Use the dedicated suggestion tiles content
-  const [suggestions] = useState<string[]>(suggestionTilesContent)
+  const [showPromptVariables, setShowPromptVariables] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
+  const [promptVariables, setPromptVariables] = useState<
+    {
+      promptId: string
+      name: string
+      value: string
+    }[]
+  >([])
+  const [selectedPrompt, setSelectedPrompt] =
+    useState<Tables<"prompts"> | null>(null)
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setUserInput(suggestion)
+  }
+
+  const handlePromptSelection = (suggestionContent: string) => {
+    const testPrompt: Tables<"prompts"> = {
+      id: "test-prompt-id",
+      user_id: "test-user",
+      name: "Test Prompt",
+      content: suggestionContent,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      sharing: "private",
+      public: false,
+      folder_id: null
+    }
+
+    // Check directly for variables in the content
+    const regex = /\{\{.*?\}\}/g
+    const matches = suggestionContent.match(regex)
+
+    console.log("Variable matches:", matches)
+
+    if (matches && matches.length > 0) {
+      // Found variables, show dialog
+      const newPromptVariables = matches.map(match => ({
+        promptId: testPrompt.id,
+        name: match.replace(/\{\{|\}\}/g, ""),
+        value: ""
+      }))
+
+      console.log("Setting prompt variables:", newPromptVariables)
+
+      setPromptVariables(newPromptVariables)
+      setSelectedPrompt(testPrompt)
+      setShowPromptVariables(true)
+    } else {
+      // No variables, just use as input
+      handleSuggestionClick(suggestionContent)
+    }
+  }
+
+  const handleKeydownPromptVariables = (
+    e: React.KeyboardEvent<HTMLDivElement>
+  ) => {
+    if (!isTyping && e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmitPromptVariables()
+    }
+  }
+
+  const handleSubmitPromptVariables = () => {
+    if (!selectedPrompt) return
+
+    const newPromptContent = promptVariables.reduce(
+      (prevContent, variable) =>
+        prevContent.replace(
+          new RegExp(`\\{\\{${variable.name}\\}\\}`, "g"),
+          variable.value
+        ),
+      selectedPrompt.content || ""
+    )
+
+    // Instead of using handleSelectPrompt with a prompt object,
+    // just use the processed content directly
+    setUserInput(newPromptContent)
+
+    setShowPromptVariables(false)
+    setPromptVariables([])
+    setSelectedPrompt(null)
+  }
+
+  const handleCancelPromptVariables = () => {
+    setShowPromptVariables(false)
+    setPromptVariables([])
+    setSelectedPrompt(null)
+  }
 
   return (
     <div className="w-full">
@@ -18,7 +114,6 @@ function SuggestionTiles() {
         className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl shadow-lg"
         style={{ boxSizing: "border-box" }}
       >
-        {/* AlterDomus orange-red border for the card container */}
         <div className="absolute inset-0 overflow-hidden rounded-2xl">
           <div
             className="animate-border-flow absolute inset-0 rounded-2xl"
@@ -30,8 +125,6 @@ function SuggestionTiles() {
             }}
           />
         </div>
-
-        {/* Inner content container with padding to show the border */}
         <div className="relative z-10 m-[4px] rounded-xl bg-white/95 p-5 dark:bg-gray-800/95">
           <div className="mb-4 flex flex-col items-center justify-center">
             <h3 className="text-muted-foreground mb-2 text-center text-sm font-medium dark:text-gray-300">
@@ -39,23 +132,11 @@ function SuggestionTiles() {
             </h3>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {suggestions.map((suggestion, index) => (
+            {suggestionTilesContent.map((suggestion, index) => (
               <motion.div
                 key={index}
                 className="relative flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-black/80 px-3 py-2 text-gray-800 shadow-sm backdrop-blur-md dark:text-gray-200"
-                onClick={() => {
-                  // First set the user input to the suggestion text
-                  setUserInput(suggestion)
-
-                  // Open the prompt dialog
-                  setIsPromptPickerOpen(true)
-
-                  // Set an empty slash command to show all prompts
-                  setSlashCommand("")
-
-                  // Alternatively, you can directly send the message
-                  // handleSendMessage(suggestion, chatMessages, false)
-                }}
+                onClick={() => handlePromptSelection(suggestion.content)}
                 whileHover={{
                   scale: 1.01,
                   boxShadow:
@@ -93,7 +174,7 @@ function SuggestionTiles() {
                     }}
                   />
                   <div className="line-clamp-2 text-center text-sm font-medium text-white">
-                    {suggestion}
+                    {suggestion.name}
                   </div>
                 </div>
               </motion.div>
@@ -101,6 +182,56 @@ function SuggestionTiles() {
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={showPromptVariables}
+        onOpenChange={isOpen => {
+          console.log("Dialog open state changed to:", isOpen)
+          setShowPromptVariables(isOpen)
+        }}
+      >
+        <DialogContent onKeyDown={handleKeydownPromptVariables}>
+          <DialogHeader>
+            <DialogTitle>Enter Prompt Variables</DialogTitle>
+          </DialogHeader>
+
+          <div className="mt-2 space-y-6">
+            {promptVariables.map((variable, index) => (
+              <div key={index} className="flex flex-col space-y-2">
+                <Label>{variable.name}</Label>
+
+                <TextareaAutosize
+                  placeholder={`Enter a value for ${variable.name}...`}
+                  value={variable.value}
+                  onValueChange={value => {
+                    const newPromptVariables = [...promptVariables]
+                    newPromptVariables[index].value = value
+                    setPromptVariables(newPromptVariables)
+                  }}
+                  minRows={3}
+                  maxRows={5}
+                  onCompositionStart={() => setIsTyping(true)}
+                  onCompositionEnd={() => setIsTyping(false)}
+                />
+              </div>
+            ))}
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCancelPromptVariables}
+            >
+              Cancel
+            </Button>
+
+            <Button size="sm" onClick={handleSubmitPromptVariables}>
+              Submit
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
