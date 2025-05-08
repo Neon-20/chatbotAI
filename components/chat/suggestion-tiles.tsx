@@ -219,8 +219,8 @@ function SuggestionTiles() {
         </div>
         <div className="relative z-10 m-[4px] rounded-xl bg-white/95 p-5 dark:bg-gray-800/95">
           <div className="mb-4 flex flex-col items-center justify-center">
-            <h3 className="text-muted-foreground mb-2 text-center text-sm font-medium dark:text-gray-300">
-              What would you like to know?
+            <h3 className="text-md mb-2 text-center font-medium text-slate-800 dark:text-gray-300">
+              What would you like to do today?
             </h3>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
