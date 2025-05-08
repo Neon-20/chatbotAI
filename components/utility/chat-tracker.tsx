@@ -24,8 +24,8 @@ export function ChatTracker({
       logEvent("chat_message_sent", {
         userId,
         chatId,
-        messageRole: latestMessage.role,
-        messageLength: latestMessage.content.length,
+        messageRole: latestMessage.message.role,
+        messageLength: latestMessage.message.content.length,
         timestamp: new Date().toISOString()
       })
     }

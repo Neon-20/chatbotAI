@@ -53,6 +53,7 @@ export const logError = (error: Error, attributes?: Record<string, any>) => {
 // Helper function to start a custom trace
 export const startTrace = (name: string, attributes?: Record<string, any>) => {
   const faro = getFaro()
+
   if (faro) {
     const traceId = Math.random().toString(36).substring(2, 15)
     faro.api.pushEvent(name, {
@@ -66,6 +67,7 @@ export const startTrace = (name: string, attributes?: Record<string, any>) => {
           traceId,
           duration: performance.now().toString(),
           ...attributes
+          // Add any additional attributes you want to track
         })
       }
     }
