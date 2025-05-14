@@ -34,7 +34,7 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
   const searchParams = useSearchParams()
   const tabValue = searchParams.get("tab") || "chats"
 
-  const { handleSelectDeviceFile } = useSelectFileHandler()
+  const { handleSelectDeviceFile, filesToAccept } = useSelectFileHandler()
 
   const [contentType, setContentType] = useState<ContentType>(
     tabValue as ContentType
@@ -45,15 +45,56 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
   const onFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
 
-    const files = event.dataTransfer.files
-    const file = files[0]
+    const droppedFiles = event.dataTransfer.files
 
-    if (file.type === "application/zip") {
-      toast.error("Zip files are not supported.")
-    } else {
-      handleSelectDeviceFile(file)
+    if (droppedFiles.length === 0) {
+      toast.error("Please drop one or more valid files.", {
+        duration: 2000,
+        position: "top-center",
+        icon: "🚫"
+      })
+      setIsDragging(false)
+      return
     }
 
+    for (const file of Array.from(droppedFiles)) {
+      if (file.type === "application/zip") {
+        toast.error(`Zip file "${file.name}" is not supported.`)
+        continue // Skip to the next file
+      }
+
+      if (filesToAccept) {
+        const acceptedTypesArray = filesToAccept.split(",").map(t => t.trim())
+        let isFileTypeSupported = false
+        for (const acceptedType of acceptedTypesArray) {
+          if (acceptedType.endsWith("/*")) {
+            const baseType = acceptedType.slice(0, -2)
+            if (file.type.startsWith(baseType + "/")) {
+              isFileTypeSupported = true
+              break
+            }
+          } else {
+            if (file.type === acceptedType) {
+              isFileTypeSupported = true
+              break
+            }
+          }
+        }
+
+        if (isFileTypeSupported) {
+          handleSelectDeviceFile(file) // Process this valid file
+        } else {
+          toast.error(
+            `File "${file.name}" has an unsupported type (${file.type}).`
+          )
+        }
+      } else {
+        toast.error(
+          "File acceptance criteria not available. Cannot process files."
+        )
+        break // Stop processing further files if criteria is missing
+      }
+    }
     setIsDragging(false)
   }
 
