@@ -4,7 +4,9 @@ import {
   processJSON,
   processMarkdown,
   processPdf,
-  processTxt
+  processTxt,
+  processXlsx
+  // processPptx
 } from "@/lib/retrieval/processing"
 import { checkApiKey, getServerProfile } from "@/lib/server/server-chat-helpers"
 import { Database } from "@/supabase/types"
@@ -54,8 +56,8 @@ export async function POST(req: Request) {
     if (fileError)
       throw new Error(`Failed to retrieve file: ${fileError.message}`)
 
-    const fileBuffer = Buffer.from(await file.arrayBuffer())
-    const blob = new Blob([fileBuffer])
+    const arrayBuffer = await file.arrayBuffer()
+    const blob = new Blob([arrayBuffer])
     const fileExtension = fileMetadata.name.split(".").pop()?.toLowerCase()
 
     if (embeddingsProvider === "openai") {
@@ -91,6 +93,13 @@ export async function POST(req: Request) {
       case "txt":
         chunks = await processTxt(blob)
         break
+      case "xlsx":
+      case "xls": // Handle .xls with the same processor as .xlsx
+        chunks = await processXlsx(blob)
+        break
+      // case "pptx":
+      //   chunks = await processPptx(blob)
+      //   break
       default:
         return new NextResponse("Unsupported file type", {
           status: 400

@@ -4,6 +4,8 @@ export * from "./json"
 export * from "./md"
 export * from "./pdf"
 export * from "./txt"
+export * from "./xlsx"
+// export * from "./pptx"
 
 export const CHUNK_SIZE = 4000
 export const CHUNK_OVERLAP = 200

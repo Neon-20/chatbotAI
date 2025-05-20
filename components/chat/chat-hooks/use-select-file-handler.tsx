@@ -2,7 +2,7 @@ import { ChatbotUIContext } from "@/context/context"
 import { createDocXFile, createFile } from "@/db/files"
 import { LLM_LIST } from "@/lib/models/llm/llm-list"
 import mammoth from "mammoth"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState, useCallback } from "react"
 import { toast } from "sonner"
 
 export const ACCEPTED_FILE_TYPES = [
@@ -11,7 +11,10 @@ export const ACCEPTED_FILE_TYPES = [
   "application/json",
   "text/markdown",
   "application/pdf",
-  "text/plain"
+  "text/plain",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation"
 ].join(",")
 
 export const useSelectFileHandler = () => {
@@ -28,11 +31,7 @@ export const useSelectFileHandler = () => {
 
   const [filesToAccept, setFilesToAccept] = useState(ACCEPTED_FILE_TYPES)
 
-  useEffect(() => {
-    handleFilesToAccept()
-  }, [chatSettings?.model])
-
-  const handleFilesToAccept = () => {
+  const handleFilesToAccept = useCallback(() => {
     const model = chatSettings?.model
     const FULL_MODEL = LLM_LIST.find(llm => llm.modelId === model)
 
@@ -43,7 +42,11 @@ export const useSelectFileHandler = () => {
         ? `${ACCEPTED_FILE_TYPES},image/*`
         : ACCEPTED_FILE_TYPES
     )
-  }
+  }, [chatSettings?.model, setFilesToAccept])
+
+  useEffect(() => {
+    handleFilesToAccept()
+  }, [handleFilesToAccept])
 
   const handleSelectDeviceFile = async (file: File) => {
     if (!profile || !selectedWorkspace || !chatSettings) return
@@ -63,11 +66,30 @@ export const useSelectFileHandler = () => {
           simplifiedFileType = "pdf"
         } else if (
           simplifiedFileType.includes(
-            "vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-              "docx"
-          )
+            "vnd.openxmlformats-officedocument.wordprocessingml.document"
+          ) ||
+          simplifiedFileType.includes("docx")
         ) {
           simplifiedFileType = "docx"
+        } else if (
+          simplifiedFileType.includes("vnd.ms-excel") ||
+          simplifiedFileType.includes("xls")
+        ) {
+          simplifiedFileType = "xls"
+        } else if (
+          simplifiedFileType.includes(
+            "vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          ) ||
+          simplifiedFileType.includes("xlsx")
+        ) {
+          simplifiedFileType = "xlsx"
+        } else if (
+          simplifiedFileType.includes(
+            "vnd.openxmlformats-officedocument.presentationml.presentation"
+          ) ||
+          simplifiedFileType.includes("pptx")
+        ) {
+          simplifiedFileType = "pptx"
         }
 
         setNewMessageFiles(prev => [
@@ -83,9 +105,9 @@ export const useSelectFileHandler = () => {
         // Handle docx files
         if (
           file.type.includes(
-            "vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-              "docx"
-          )
+            "vnd.openxmlformats-officedocument.wordprocessingml.document"
+          ) ||
+          file.type.includes("docx")
         ) {
           const arrayBuffer = await file.arrayBuffer()
           const result = await mammoth.extractRawText({
