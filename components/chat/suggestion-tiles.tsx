@@ -201,123 +201,129 @@ function SuggestionTiles() {
   }
 
   return (
-    <div className="w-full">
-      <div
-        className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl shadow-lg"
-        style={{ boxSizing: "border-box" }}
-      >
-        <div className="absolute inset-0 overflow-hidden rounded-2xl">
-          <div
-            className="animate-border-flow absolute inset-0 rounded-2xl"
-            style={{
-              background:
-                "linear-gradient(90deg, #e84315, #e84315, #FF6B00, #e84315, #e84315)",
-              backgroundSize: "300% 100%",
-              zIndex: 0
-            }}
-          />
-        </div>
-        <div className="relative z-10 m-[4px] rounded-xl bg-white/95 p-5 dark:bg-gray-800/95">
-          <div className="mb-4 flex flex-col items-center justify-center">
-            <h3 className="text-md mb-2 text-center font-medium text-slate-800 dark:text-gray-300">
-              What would you like to do today?
-            </h3>
+    <motion.div
+      style={{ transition: "all 0.2s ease-out" }}
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      <div className="w-full">
+        <div
+          className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl shadow-lg"
+          style={{ boxSizing: "border-box" }}
+        >
+          <div className="absolute inset-0 overflow-hidden rounded-2xl">
+            <div
+              className="animate-border-flow absolute inset-0 rounded-2xl"
+              style={{
+                background:
+                  "linear-gradient(90deg, #e84315, #e84315, #FF6B00, #e84315, #e84315)",
+                backgroundSize: "300% 100%",
+                zIndex: 0
+              }}
+            />
           </div>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {suggestionTilesContent.map((suggestion, index) => (
-              <motion.div
-                key={index}
-                className="relative flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-black/80 px-3 py-2 text-gray-800 shadow-sm backdrop-blur-md dark:text-gray-200"
-                onClick={() => handlePromptSelection(suggestion.content)}
-                whileHover={{
-                  scale: 1.01,
-                  boxShadow:
-                    "0 2px 8px -1px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.05)"
-                }}
-                whileTap={{ scale: 0.98 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 400,
-                  damping: 17
-                }}
-              >
-                {/* AlterDomus orange-red border effect */}
-                <div className="absolute inset-0 overflow-hidden rounded-xl p-[2px]">
-                  <div
-                    className="animate-border-flow absolute inset-0 rounded-xl"
-                    style={{
-                      background:
-                        "linear-gradient(90deg, #e84315, #e84315, #FF6B00, #e84315, #e84315)",
-                      backgroundSize: "300% 100%",
-                      opacity: 0.8,
-                      zIndex: -1
+          <div className="relative z-10 m-[4px] rounded-xl bg-white/95 p-5 dark:bg-gray-800/95">
+            <div className="mb-4 flex flex-col items-center justify-center">
+              <h3 className="text-md mb-2 text-center font-medium text-slate-800 dark:text-gray-300">
+                What would you like to do today?
+              </h3>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {suggestionTilesContent.map((suggestion, index) => (
+                <motion.div
+                  key={index}
+                  className="relative flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-black/80 px-3 py-2 text-gray-800 shadow-sm backdrop-blur-md dark:text-gray-200"
+                  onClick={() => handlePromptSelection(suggestion.content)}
+                  whileHover={{
+                    scale: 1.06,
+                    boxShadow:
+                      "0 2px 8px -1px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.05)"
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 17
+                  }}
+                >
+                  {/* AlterDomus orange-red border effect */}
+                  <div className="absolute inset-0 overflow-hidden rounded-xl p-[2px]">
+                    <div
+                      className="animate-border-flow absolute inset-0 rounded-xl"
+                      style={{
+                        background:
+                          "linear-gradient(90deg, #e84315, #e84315, #FF6B00, #e84315, #e84315)",
+                        backgroundSize: "300% 100%",
+                        opacity: 0.8,
+                        zIndex: -1
+                      }}
+                    />
+                  </div>
+
+                  {/* Content */}
+                  <div className="z-10 flex w-full items-center justify-center space-x-2">
+                    {getIconComponent(suggestion.iconName)}
+                    <div className="line-clamp-2 text-center text-sm font-medium text-white">
+                      {suggestion.name}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <Dialog
+          open={showPromptVariables}
+          onOpenChange={isOpen => {
+            console.log("Dialog open state changed to:", isOpen)
+            setShowPromptVariables(isOpen)
+          }}
+        >
+          <DialogContent onKeyDown={handleKeydownPromptVariables}>
+            <DialogHeader>
+              <DialogTitle>Enter Prompt Variables</DialogTitle>
+            </DialogHeader>
+
+            <div className="mt-2 space-y-6">
+              {promptVariables.map((variable, index) => (
+                <div key={index} className="flex flex-col space-y-2">
+                  <Label>{variable.name}</Label>
+
+                  <TextareaAutosize
+                    placeholder={`Enter a value for ${variable.name}...`}
+                    value={variable.value}
+                    onValueChange={value => {
+                      const newPromptVariables = [...promptVariables]
+                      newPromptVariables[index].value = value
+                      setPromptVariables(newPromptVariables)
                     }}
+                    minRows={3}
+                    maxRows={5}
+                    onCompositionStart={() => setIsTyping(true)}
+                    onCompositionEnd={() => setIsTyping(false)}
                   />
                 </div>
+              ))}
+            </div>
 
-                {/* Content */}
-                <div className="z-10 flex w-full items-center justify-center space-x-2">
-                  {getIconComponent(suggestion.iconName)}
-                  <div className="line-clamp-2 text-center text-sm font-medium text-white">
-                    {suggestion.name}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+            <DialogFooter>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCancelPromptVariables}
+              >
+                Cancel
+              </Button>
+
+              <Button size="sm" onClick={handleSubmitPromptVariables}>
+                Submit
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
-
-      <Dialog
-        open={showPromptVariables}
-        onOpenChange={isOpen => {
-          console.log("Dialog open state changed to:", isOpen)
-          setShowPromptVariables(isOpen)
-        }}
-      >
-        <DialogContent onKeyDown={handleKeydownPromptVariables}>
-          <DialogHeader>
-            <DialogTitle>Enter Prompt Variables</DialogTitle>
-          </DialogHeader>
-
-          <div className="mt-2 space-y-6">
-            {promptVariables.map((variable, index) => (
-              <div key={index} className="flex flex-col space-y-2">
-                <Label>{variable.name}</Label>
-
-                <TextareaAutosize
-                  placeholder={`Enter a value for ${variable.name}...`}
-                  value={variable.value}
-                  onValueChange={value => {
-                    const newPromptVariables = [...promptVariables]
-                    newPromptVariables[index].value = value
-                    setPromptVariables(newPromptVariables)
-                  }}
-                  minRows={3}
-                  maxRows={5}
-                  onCompositionStart={() => setIsTyping(true)}
-                  onCompositionEnd={() => setIsTyping(false)}
-                />
-              </div>
-            ))}
-          </div>
-
-          <DialogFooter>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleCancelPromptVariables}
-            >
-              Cancel
-            </Button>
-
-            <Button size="sm" onClick={handleSubmitPromptVariables}>
-              Submit
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+    </motion.div>
   )
 }
 

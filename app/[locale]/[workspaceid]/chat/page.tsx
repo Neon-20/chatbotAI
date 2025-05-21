@@ -64,7 +64,7 @@ export default function ChatPage() {
           </div>
           <div className="m-2 flex w-full justify-between">
             <div className="mt-3 hidden lg:block">
-              {profile?.roles === "superadmin" && <QuickSettings />}
+              {profile?.roles !== "user" && <QuickSettings />}
             </div>
             <div className="absolute left-1/2 top-0 mt-5 w-full max-w-3xl -translate-x-1/2">
               <NotificationBanner
@@ -76,30 +76,9 @@ export default function ChatPage() {
                 width="max-w-full"
               />
             </div>
-            <div className="m-3 flex items-center space-x-2">
-              {/* <Label className="hidden lg:block">Select a Region</Label> */}
-              {profile?.roles === "user" ? (
-                <Select
-                  value={region ?? undefined}
-                  onValueChange={handleRegionChange}
-                  open={false}
-                >
-                  <SelectTrigger className="lg:w-[150px]">
-                    <SelectValue placeholder="Your Region" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="sweden" className="cursor-pointer">
-                      Sweden
-                    </SelectItem>
-                    <SelectItem value="uksouth" className="cursor-pointer">
-                      Uk South
-                    </SelectItem>
-                    <SelectItem value="switzerland" className="cursor-pointer">
-                      Switzerland
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              ) : (
+            {profile?.roles !== "user" && (
+              <div className="m-3 flex items-center space-x-2">
+                {/* <Label className="hidden lg:block">Select a Region</Label> */}
                 <WithTooltip
                   side="top"
                   delayDuration={0}
@@ -129,9 +108,9 @@ export default function ChatPage() {
                     </Select>
                   }
                 />
-              )}
-              <ChatSettings disabled={profile?.roles === "user"} />
-            </div>
+                <ChatSettings disabled={false} />
+              </div>
+            )}
           </div>
 
           <div className="flex grow flex-col items-center justify-center" />
