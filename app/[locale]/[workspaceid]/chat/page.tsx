@@ -66,7 +66,7 @@ export default function ChatPage() {
             <div className="mt-3 hidden lg:block">
               {profile?.roles !== "user" && <QuickSettings />}
             </div>
-            <div className="absolute left-1/2 top-0 mt-5 w-full max-w-3xl -translate-x-1/2">
+            {/* <div className="absolute left-1/2 top-0 mt-5 w-full max-w-3xl -translate-x-1/2">
               <NotificationBanner
                 message="Thanks for testing DomusAI! Share your 2-min feedback to help us improve: "
                 link="https://app.pipefy.com/public/form/KXkdLmX3"
@@ -75,7 +75,7 @@ export default function ChatPage() {
                 linkText="Here"
                 width="max-w-full"
               />
-            </div>
+            </div> */}
             <div className="m-3 flex items-center space-x-2">
               {profile?.roles !== "user" && (
                 <>
