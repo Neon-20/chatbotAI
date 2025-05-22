@@ -76,41 +76,46 @@ export default function ChatPage() {
                 width="max-w-full"
               />
             </div>
-            {profile?.roles !== "user" && (
-              <div className="m-3 flex items-center space-x-2">
-                {/* <Label className="hidden lg:block">Select a Region</Label> */}
-                <WithTooltip
-                  side="top"
-                  delayDuration={0}
-                  display={<div>Select your deployment region</div>}
-                  trigger={
-                    <Select
-                      value={region ?? undefined}
-                      onValueChange={handleRegionChange}
-                    >
-                      <SelectTrigger className="lg:w-[150px]">
-                        <SelectValue placeholder="Your Region" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="sweden" className="cursor-pointer">
-                          Sweden
-                        </SelectItem>
-                        <SelectItem value="uksouth" className="cursor-pointer">
-                          Uk South
-                        </SelectItem>
-                        <SelectItem
-                          value="switzerland"
-                          className="cursor-pointer"
-                        >
-                          Switzerland
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  }
-                />
-                <ChatSettings disabled={false} />
-              </div>
-            )}
+            <div className="m-3 flex items-center space-x-2">
+              {profile?.roles !== "user" && (
+                <>
+                  {/* <Label className="hidden lg:block">Select a Region</Label> */}
+                  <WithTooltip
+                    side="top"
+                    delayDuration={0}
+                    display={<div>Select your deployment region</div>}
+                    trigger={
+                      <Select
+                        value={region ?? undefined}
+                        onValueChange={handleRegionChange}
+                      >
+                        <SelectTrigger className="lg:w-[150px]">
+                          <SelectValue placeholder="Your Region" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sweden" className="cursor-pointer">
+                            Sweden
+                          </SelectItem>
+                          <SelectItem
+                            value="uksouth"
+                            className="cursor-pointer"
+                          >
+                            Uk South
+                          </SelectItem>
+                          <SelectItem
+                            value="switzerland"
+                            className="cursor-pointer"
+                          >
+                            Switzerland
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    }
+                  />
+                </>
+              )}
+              <ChatSettings disabled={true} />
+            </div>
           </div>
 
           <div className="flex grow flex-col items-center justify-center" />
