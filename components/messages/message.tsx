@@ -191,17 +191,6 @@ export const Message: FC<MessageProps> = ({
       onKeyDown={handleKeyDown}
     >
       <div className="relative flex w-full flex-col p-6 sm:w-[550px] sm:px-0 md:w-[650px] lg:w-[650px] xl:w-[700px]">
-        <div className="absolute right-5 top-7 sm:right-0">
-          <MessageActions
-            onCopy={handleCopy}
-            onEdit={handleStartEdit}
-            isAssistant={message.role === "assistant"}
-            isLast={isLast}
-            isEditing={isEditing}
-            isHovering={isHovering}
-            onRegenerate={handleRegenerate}
-          />
-        </div>
         <div className="space-y-3">
           {message.role === "system" ? (
             <div className="flex items-center space-x-4">
@@ -409,6 +398,20 @@ export const Message: FC<MessageProps> = ({
             )
           })}
         </div>
+
+        {/* Message Actions - positioned below the message content */}
+        <div className="mt-3 flex justify-start">
+          <MessageActions
+            onCopy={handleCopy}
+            onEdit={handleStartEdit}
+            isAssistant={message.role === "assistant"}
+            isLast={isLast}
+            isEditing={isEditing}
+            isHovering={isHovering}
+            onRegenerate={handleRegenerate}
+          />
+        </div>
+
         {isEditing && (
           <div className="mt-4 flex justify-center space-x-2">
             <Button size="sm" onClick={handleSendEdit}>
