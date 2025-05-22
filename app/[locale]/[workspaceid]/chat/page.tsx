@@ -114,7 +114,7 @@ export default function ChatPage() {
                   />
                 </>
               )}
-              <ChatSettings disabled={true} />
+              <ChatSettings disabled={profile?.roles === "user"} />
             </div>
           </div>
 
