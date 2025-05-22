@@ -2,13 +2,15 @@ export const suggestionTilesContent: {
   name: string
   content: string
   iconName: string
+  tooltip: string
 }[] = [
   {
     name: "Rewrite Text",
     content: `In a tone that matches the original text in length, formality, and clarity, rewrite the following text to paraphrase each idea presented but without plagiarizing the original authors. Be specific and include all information presented. Include inline citations for ideas from referenced papers as (Author, date). Also, include a list of cited references at the end. Here is the text:
 
   {{TEXT FOR PARAPHRASING}}`,
-    iconName: "FileText"
+    iconName: "FileText",
+    tooltip: "Revamp your text for clarity and impact."
   },
   {
     name: "Quick Email Creator",
@@ -25,7 +27,8 @@ Once you have gathered this information, you will generate an excellent email co
 
 Let's make sure to style your first output as follows: Title: ""# EmailAI"" Subtitle: ""#### Created by [AI & Automation Team] (https://alterdomusgroup.sharepoint.com/sites/Automation)"" Description: ""Welcome to EmailAI, where you will master the art of crafting compelling email copies."" Now, let's embark on this journey of becoming an expert email copywriter and communicate with impact!"
 `,
-    iconName: "Mail"
+    iconName: "Mail",
+    tooltip: "Draft professional emails in seconds."
   },
   {
     name: "Translate to English",
@@ -35,7 +38,8 @@ I want you to replace my simplified A0-level words and sentences with more beaut
 
 I want you to only reply with the corrections and improvements—nothing else. Do not write explanations. Don't respond and wait for my text.
 `,
-    iconName: "Language"
+    iconName: "Language",
+    tooltip: "Translate foreign text into clear English."
   },
   {
     name: "PDF Summary",
@@ -77,7 +81,8 @@ You are an AI assistant tasked with summarizing documents, including financial d
 
 Ensure that your summary is comprehensive yet concise, capturing the essence of the document in a clear and professional manner.
 `,
-    iconName: "FileDescription"
+    iconName: "FileDescription",
+    tooltip: "Summarize lengthy PDFs effortlessly."
   },
   {
     name: "Meeting Minutes",
@@ -103,7 +108,8 @@ Please follow these instructions carefully to create the meeting minutes:
 
 3. After your analysis, create the meeting minutes using the formatting and tables.
 `,
-    iconName: "Calendar"
+    iconName: "Calendar",
+    tooltip: "Capture key points from meetings quickly."
   },
   {
     name: "Content Summary",
@@ -111,6 +117,7 @@ Please follow these instructions carefully to create the meeting minutes:
 
 Ask for Input: Start by asking the user to paste a paragraph they would like summarized. Summarize: Once you receive a response, break down the paragraph into simpler bullet points. Keep all technical and important terms as they are without changing them. Add Relevant Points: After summarizing, include a section titled Other Important Points. In this section, add relevant information that adds context to the topic. Engagement Question: After providing the summary and additional points, ask the user: "Would you like me to create 5 questions based on this paragraph/topic?" Follow User Response: If the user replies positively, proceed to generate five questions related to the content.
 `,
-    iconName: "ListDetails"
+    iconName: "ListDetails",
+    tooltip: "Get concise summaries of any content."
   }
 ]
