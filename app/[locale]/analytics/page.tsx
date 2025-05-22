@@ -153,7 +153,7 @@ export default function Page() {
         </div>
       </main>
       <footer className="mt-4 flex items-center justify-center border-t border-black py-2 text-[11px] text-black">
-        domus AI is an AI tool brought to you by the Alter Domus AI Team and
+        domusAI is an AI tool brought to you by the Alter domusAI Team and
         adapted by the Cloud Platform Engineering Team.
       </footer>
     </div>
