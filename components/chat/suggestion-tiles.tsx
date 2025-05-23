@@ -24,9 +24,11 @@ import {
 } from "@tabler/icons-react"
 import { motion } from "framer-motion"
 import { useContext, useState } from "react"
+import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
 
 function SuggestionTiles() {
-  const { setUserInput } = useContext(ChatbotUIContext)
+  const { setUserInput, chatMessages } = useContext(ChatbotUIContext)
+  const { handleSendMessage } = useChatHandler()
 
   const [showPromptVariables, setShowPromptVariables] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
@@ -123,10 +125,6 @@ function SuggestionTiles() {
     }
   }
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setUserInput(suggestion)
-  }
-
   const handlePromptSelection = (suggestionContent: string) => {
     const testPrompt: Tables<"prompts"> = {
       id: "test-prompt-id",
@@ -160,8 +158,10 @@ function SuggestionTiles() {
       setSelectedPrompt(testPrompt)
       setShowPromptVariables(true)
     } else {
-      // No variables, just use as input
-      handleSuggestionClick(suggestionContent)
+      // No variables, auto-submit the message
+      setUserInput(suggestionContent)
+      // Auto-submit the message
+      handleSendMessage(suggestionContent, chatMessages, false)
     }
   }
 
@@ -186,9 +186,9 @@ function SuggestionTiles() {
       selectedPrompt.content || ""
     )
 
-    // Instead of using handleSelectPrompt with a prompt object,
-    // just use the processed content directly
+    // Set the user input and auto-submit the message
     setUserInput(newPromptContent)
+    handleSendMessage(newPromptContent, chatMessages, false)
 
     setShowPromptVariables(false)
     setPromptVariables([])
