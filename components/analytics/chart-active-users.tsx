@@ -15,10 +15,12 @@ import {
   Tooltip,
   Line
 } from "recharts"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { getYearMessages } from "@/db/client_admin"
 import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
+import { ChatbotUIContext } from "@/context/context"
+import { redirect } from "next/navigation"
 
 type ActiveUsersData = Array<{ month: string; active_users: number }>
 
@@ -29,15 +31,31 @@ export function ChartActiveUsers({
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [chartData, setChartData] = useState<ActiveUsersData>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const { profile } = useContext(ChatbotUIContext)
+
+  useEffect(() => {
+    if (profile?.roles !== "superadmin") {
+      redirect("/login")
+    }
+  }, [profile])
+
   useEffect(() => {
     async function fetchChartData() {
-      const chartActiveUsersData = await getYearMessages(selectedMonth)
-      setChartData(chartActiveUsersData)
+      setIsLoading(true)
+      try {
+        const chartActiveUsersData = await getYearMessages(selectedMonth)
+        setChartData(chartActiveUsersData || [])
+      } catch (error) {
+        console.error("Error fetching active users data:", error)
+      } finally {
+        setIsLoading(false)
+      }
     }
     fetchChartData()
   }, [selectedMonth])
 
-  if (chartData.length === 0) {
+  if (isLoading) {
     return <ChartLoadingSkeleton />
   }
 

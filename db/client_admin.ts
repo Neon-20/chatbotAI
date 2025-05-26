@@ -156,20 +156,44 @@ export async function getYearMessages(selectedMonth?: string) {
   const { data: messages, error } = await query
   if (error) {
     console.error("Error fetching messages:", error.message)
+    return []
   }
-  const monthMap: Record<string, Set<string>> = {}
-  messages?.forEach((msg: { created_at: string; user_id: string }) => {
-    const date = new Date(msg.created_at)
-    const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
-    if (!monthMap[month]) {
-      monthMap[month] = new Set()
-    }
-    monthMap[month].add(msg.user_id)
-  })
-  const chartActiveUsersData = Object.entries(monthMap)
-    .map(([month, users]) => ({ month, active_users: users.size }))
-    .sort((a, b) => (a.month > b.month ? 1 : -1))
-  return chartActiveUsersData
+
+  // If a specific month is selected, show day-by-day data
+  if (selectedMonth && selectedMonth !== "all") {
+    const dailyMap: Record<string, Set<string>> = {}
+    messages?.forEach((msg: { created_at: string; user_id: string }) => {
+      const date = new Date(msg.created_at)
+      const day = `${date.getFullYear()}-${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`
+      if (!dailyMap[day]) {
+        dailyMap[day] = new Set()
+      }
+      dailyMap[day].add(msg.user_id)
+    })
+
+    const chartActiveUsersData = Object.entries(dailyMap)
+      .map(([day, users]) => ({ month: day, active_users: users.size }))
+      .sort((a, b) => (a.month > b.month ? 1 : -1))
+    return chartActiveUsersData
+  }
+  // Otherwise, group by month as before
+  else {
+    const monthMap: Record<string, Set<string>> = {}
+    messages?.forEach((msg: { created_at: string; user_id: string }) => {
+      const date = new Date(msg.created_at)
+      const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
+      if (!monthMap[month]) {
+        monthMap[month] = new Set()
+      }
+      monthMap[month].add(msg.user_id)
+    })
+    const chartActiveUsersData = Object.entries(monthMap)
+      .map(([month, users]) => ({ month, active_users: users.size }))
+      .sort((a, b) => (a.month > b.month ? 1 : -1))
+    return chartActiveUsersData
+  }
 }
 
 export async function getFilesType(selectedMonth?: string) {

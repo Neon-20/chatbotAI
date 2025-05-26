@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import {
   Bar,
   BarChart,
@@ -19,22 +19,39 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { getFilesType } from "@/db/client_admin"
 import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
+import { ChatbotUIContext } from "@/context/context"
+import { redirect } from "next/navigation"
 
 type FileTypeData = Array<{ type: string; count: number }>
 
 export function ChartFileTypes({ selectedMonth }: { selectedMonth?: string }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [fileTypeData, setFileTypeData] = useState<FileTypeData>()
+  const [fileTypeData, setFileTypeData] = useState<FileTypeData>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const { profile } = useContext(ChatbotUIContext)
+
+  useEffect(() => {
+    if (profile?.roles !== "superadmin") {
+      redirect("/login")
+    }
+  }, [profile])
 
   useEffect(() => {
     async function fetchFileTypeData() {
-      const fileTypeData = await getFilesType(selectedMonth)
-      setFileTypeData(fileTypeData)
+      setIsLoading(true)
+      try {
+        const data = await getFilesType(selectedMonth)
+        setFileTypeData(data || [])
+      } catch (error) {
+        console.error("Error fetching file type data:", error)
+      } finally {
+        setIsLoading(false)
+      }
     }
     fetchFileTypeData()
   }, [selectedMonth])
 
-  if (!fileTypeData) {
+  if (isLoading) {
     return <ChartLoadingSkeleton />
   }
 
