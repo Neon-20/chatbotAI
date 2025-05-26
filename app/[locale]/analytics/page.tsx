@@ -22,7 +22,7 @@ import {
   SelectValue
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import { CalendarIcon } from "lucide-react"
+import { FilterIcon } from "lucide-react"
 import { useState } from "react"
 
 export default function Page() {
@@ -86,46 +86,62 @@ export default function Page() {
               <span className="font-medium">domusAI Stats Dashboard</span>
             </div>
             <nav className="flex items-center gap-6">
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="ghost">
-                    <CalendarIcon className="mr-2" size={20} />
-                    Filter by Month
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
-                  <DialogHeader>
-                    <DialogTitle className="text-xl">Select Month</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid grid-cols-3 gap-4 py-4">
-                    {months.map(month => (
-                      <Button
-                        key={month.value}
-                        variant={
-                          selectedMonth === month.value ? "default" : "outline"
-                        }
-                        className={cn(
-                          "h-12 justify-start",
-                          selectedMonth === month.value &&
-                            "bg-primary text-primary-foreground"
-                        )}
-                        onClick={() => {
-                          setSelectedMonth(month.value)
-                          setIsDialogOpen(false)
-                        }}
-                      >
-                        {month.label}
-                      </Button>
-                    ))}
-                  </div>
-                </DialogContent>
-              </Dialog>
               <NewChat />
             </nav>
           </div>
         </div>
       </header>
       <main className="container mx-auto flex-1 space-y-6 p-6">
+        {/* Filter Section */}
+        <div className="mb-6 flex justify-end">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 border-gray-200 bg-white shadow-sm"
+              >
+                <FilterIcon className="size-4" />
+                Filter by Month
+                {selectedMonth && selectedMonth !== "all" && (
+                  <span className="ml-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800">
+                    {
+                      months
+                        .find(m => m.value === selectedMonth)
+                        ?.label.split(" ")[0]
+                    }
+                  </span>
+                )}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle className="text-xl">Select Month</DialogTitle>
+              </DialogHeader>
+              <div className="grid grid-cols-3 gap-4 py-4">
+                {months.map(month => (
+                  <Button
+                    key={month.value}
+                    variant={
+                      selectedMonth === month.value ? "default" : "outline"
+                    }
+                    className={cn(
+                      "h-12 justify-start",
+                      selectedMonth === month.value &&
+                        "bg-primary text-primary-foreground"
+                    )}
+                    onClick={() => {
+                      setSelectedMonth(month.value)
+                      setIsDialogOpen(false)
+                    }}
+                  >
+                    {month.label}
+                  </Button>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+
         {/* Add month filter dropdown (keeping this for mobile compatibility) */}
         <div className="mb-4 flex justify-end md:hidden">
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
