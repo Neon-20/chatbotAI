@@ -4,17 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   getAllActiveUsers,
   getCurrentMonthMessages,
-  getMonthlyGrowthFormatted,
   get30daysMessages,
   getLast30DaysMessages
 } from "@/db/client_admin"
-import {
-  BarChart2,
-  MessageSquare,
-  TrendingUp,
-  Users,
-  UserCircle
-} from "lucide-react"
+import { BarChart2, MessageSquare, Users, UserCircle } from "lucide-react"
 import { getAllProfiles } from "@/db/profile"
 
 type MetricsTypes = {
@@ -44,17 +37,9 @@ const KeyMetricsComponent = ({ selectedMonth }: { selectedMonth?: string }) => {
       // --- 4. Average Messages Per Active User ---
       const last30DaysMessages = await getLast30DaysMessages(selectedMonth)
       const avgMessagesPerUser =
-        activeUsers > 0 ? (last30DaysMessages / activeUsers).toFixed(2) : 0
-
-      // Count messages in the current month
+        activeUsers > 0 ? (last30DaysMessages / activeUsers).toFixed(2) : 0 // Count messages in the current month
       const currentMonthMessageCount =
         await getCurrentMonthMessages(selectedMonth)
-
-      // Count messages in the previous month
-      const monthlyGrowthFormatted = await getMonthlyGrowthFormatted(
-        currentMonthMessageCount,
-        selectedMonth
-      )
 
       const data = [
         {
@@ -89,14 +74,6 @@ const KeyMetricsComponent = ({ selectedMonth }: { selectedMonth?: string }) => {
           className: "bg-[#443627] text-white",
           icon: BarChart2,
           iconColor: "text-white"
-        },
-        {
-          title: "Monthly Growth",
-          value: monthlyGrowthFormatted,
-          description: "Message growth in March",
-          className: "bg-white border border-gray-200",
-          icon: TrendingUp,
-          iconColor: "text-black"
         }
       ]
       setMetrics(data)
@@ -106,9 +83,8 @@ const KeyMetricsComponent = ({ selectedMonth }: { selectedMonth?: string }) => {
 
   // Render nothing until the fetch completes.
   if (metrics.length === 0) return null
-
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {metrics.map(metric => (
         <Card
           key={metric.title}

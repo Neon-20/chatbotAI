@@ -1,7 +1,7 @@
 "use client"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { getTopUsers } from "@/db/client_admin"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import {
   Cell,
   Legend,
@@ -12,6 +12,8 @@ import {
 } from "recharts"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
+import { ChatbotUIContext } from "@/context/context"
+import { redirect } from "next/navigation"
 
 const COLORS = [
   "var(--ad-teal)",
@@ -32,16 +34,31 @@ export function ChartPieTopUsers({
   >([])
   // Add dialog open state
   const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const { profile } = useContext(ChatbotUIContext)
+
+  useEffect(() => {
+    if (profile?.roles !== "superadmin") {
+      redirect("/login")
+    }
+  }, [profile])
 
   useEffect(() => {
     async function fetchData() {
-      const topUsers = await getTopUsers(selectedMonth)
-      if (topUsers) setChartData(topUsers)
+      setIsLoading(true)
+      try {
+        const topUsers = await getTopUsers(selectedMonth)
+        if (topUsers) setChartData(topUsers)
+      } catch (error) {
+        console.error("Error fetching top users data:", error)
+      } finally {
+        setIsLoading(false)
+      }
     }
     fetchData()
   }, [selectedMonth])
 
-  if (chartData.length === 0) {
+  if (isLoading) {
     return <ChartLoadingSkeleton />
   }
 

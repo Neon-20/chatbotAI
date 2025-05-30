@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { supabase } from "@/lib/supabase/browser-client"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import {
   Area,
   AreaChart,
@@ -15,6 +15,8 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { getCumulativeData } from "@/db/client_admin"
 import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
+import { ChatbotUIContext } from "@/context/context"
+import { redirect } from "next/navigation"
 
 export function ChartAreaCumulative({
   selectedMonth
@@ -25,19 +27,34 @@ export function ChartAreaCumulative({
   const [data, setData] = useState<Array<{ month: string; messages: number }>>(
     []
   )
-  const [isOpen, setIsOpen] = useState(false) // added state for dialog
+  const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const { profile } = useContext(ChatbotUIContext)
+
+  useEffect(() => {
+    if (profile?.roles !== "superadmin") {
+      redirect("/login")
+    }
+  }, [profile])
 
   useEffect(() => {
     async function fetchMessages() {
-      const cumulativeData = await getCumulativeData(selectedMonth)
-      if (cumulativeData) {
-        setData(cumulativeData)
+      setIsLoading(true)
+      try {
+        const cumulativeData = await getCumulativeData(selectedMonth)
+        if (cumulativeData) {
+          setData(cumulativeData)
+        }
+      } catch (error) {
+        console.error("Error fetching cumulative data:", error)
+      } finally {
+        setIsLoading(false)
       }
     }
     fetchMessages()
   }, [selectedMonth])
 
-  if (data.length === 0) {
+  if (isLoading) {
     return <ChartLoadingSkeleton />
   }
 
