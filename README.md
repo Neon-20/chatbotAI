@@ -111,3 +111,7 @@ npm run dev
 - Mistral AI
 - Local Ollama support
 
+
+## models
+: AZURE_GPT_41_MINI_NAME="sweden-gpt-4.1-mini"
+
