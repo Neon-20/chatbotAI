@@ -32,6 +32,11 @@ export async function POST(request: Request) {
       throw new Error(error.message)
     }
 
+    // Log when Sweden GPT-4.1 Mini is being used with custom models
+    if (chatSettings.model === "sweden-gpt-4.1-mini") {
+      console.log("🇸🇪 Using Sweden GPT-4.1 Mini model via Custom API")
+    }
+
     const custom = new OpenAI({
       apiKey: customModel.api_key || "",
       baseURL: customModel.base_url

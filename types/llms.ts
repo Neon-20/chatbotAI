@@ -16,6 +16,7 @@ export type OpenAILLMID =
   | "o1" // O1
   | "o1-mini" // O1 Mini
   | "o3-mini" // O3 Mini
+  | "sweden-gpt-4.1-mini" // Sweden GPT-4.1 Mini
 
 // Google Models
 export type GoogleLLMID =

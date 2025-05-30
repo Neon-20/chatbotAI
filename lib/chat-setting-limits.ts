@@ -162,6 +162,12 @@ export const CHAT_SETTING_LIMITS: Record<LLMID, ChatSettingLimits> = {
     MAX_TOKEN_OUTPUT_LENGTH: 100000,
     MAX_CONTEXT_LENGTH: 200000
   },
+  "sweden-gpt-4.1-mini": {
+    MIN_TEMPERATURE: 0.0,
+    MAX_TEMPERATURE: 2.0,
+    MAX_TOKEN_OUTPUT_LENGTH: 4096,
+    MAX_CONTEXT_LENGTH: 128000
+  },
 
   // PERPLEXITY MODELS
   "pplx-7b-online": {

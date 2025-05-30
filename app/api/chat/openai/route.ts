@@ -19,6 +19,11 @@ export async function POST(request: Request) {
 
     checkApiKey(profile.openai_api_key, "OpenAI")
 
+    // Log when Sweden GPT-4.1 Mini is being used
+    if (chatSettings.model === "sweden-gpt-4.1-mini") {
+      console.log("🇸🇪 Using Sweden GPT-4.1 Mini model via OpenAI API")
+    }
+
     const openai = new OpenAI({
       apiKey: profile.openai_api_key || "",
       organization: profile.openai_organization_id

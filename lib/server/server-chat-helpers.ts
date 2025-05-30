@@ -64,6 +64,7 @@ function addApiKeysToProfile(
     [VALID_ENV_KEYS.AZURE_GPT_45_TURBO_NAME]: "azure_openai_45_turbo_id",
     [VALID_ENV_KEYS.AZURE_GPT_4o_NAME]: "azure_openai_4o_id",
     [VALID_ENV_KEYS.AZURE_GPT_4o_MINI_NAME]: "azure_openai_4o_mini_id",
+    [VALID_ENV_KEYS.AZURE_GPT_41_MINI_NAME]: "azure_openai_41_mini_id",
     [VALID_ENV_KEYS.AZURE_o1_PREVIEW_NAME]: "azure_openai_o1_preview_id",
     [VALID_ENV_KEYS.AZURE_o1_NAME]: "azure_openai_o1_id",
     [VALID_ENV_KEYS.AZURE_o1_MINI_NAME]: "azure_openai_o1_mini_id",

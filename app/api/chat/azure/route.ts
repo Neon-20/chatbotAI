@@ -34,6 +34,11 @@ export async function POST(request: NextRequest) {
             DEPLOYMENT_ID = (profile.azure_openai_4o_mini_europe_id ||
               "") as string
             break
+          case "sweden-gpt-4.1-mini":
+            console.log("🇸🇪 Using Sweden GPT-4.1 Mini model in UK South region")
+            DEPLOYMENT_ID = (profile.azure_openai_4o_mini_europe_id ||
+              "") as string
+            break
           default:
             return new Response(
               JSON.stringify({ message: "Model not found" }),
@@ -61,6 +66,12 @@ export async function POST(request: NextRequest) {
             break
           case "o1-preview":
             DEPLOYMENT_ID = String(profile.azure_openai_o1_preview_id) || ""
+            break
+          case "sweden-gpt-4.1-mini":
+            console.log(
+              "🇸🇪 Using Sweden GPT-4.1 Mini model in Switzerland region"
+            )
+            DEPLOYMENT_ID = String(profile.azure_openai_4o_mini_swiss_id) || ""
             break
           default:
             return new Response(
@@ -95,6 +106,10 @@ export async function POST(request: NextRequest) {
             break
           case "o3-mini":
             DEPLOYMENT_ID = String(profile.azure_openai_o3_mini_id) || ""
+            break
+          case "sweden-gpt-4.1-mini":
+            console.log("🇸🇪 Using Sweden GPT-4.1 Mini model in Sweden region")
+            DEPLOYMENT_ID = String(profile.azure_openai_41_mini_id) || ""
             break
           default:
             return new Response(

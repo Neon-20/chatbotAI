@@ -92,11 +92,27 @@ const GPT4oMini: LLM = {
   }
 }
 
+const SwedenGPT41Mini: LLM = {
+  modelId: "sweden-gpt-4.1-mini",
+  modelName: "GPT-4.1 Mini (Advanced)",
+  provider: "openai",
+  hostedId: "sweden-gpt-4.1-mini",
+  platformLink: OPENAI_PLATORM_LINK,
+  imageInput: true,
+  pricing: {
+    currency: "USD",
+    unit: "1M tokens",
+    inputCost: 0.15,
+    outputCost: 0.6
+  }
+}
+
 export const OPENAI_LLM_LIST: LLM[] = [
   GPT4oMini,
   GPT4o,
   o1Preview,
   o1,
   o1Mini,
-  o3Mini
+  o3Mini,
+  SwedenGPT41Mini
 ]
