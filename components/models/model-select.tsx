@@ -63,7 +63,16 @@ export const ModelSelect: FC<ModelSelectProps> = ({
     ...availableLocalModels,
     ...availableOpenRouterModels
   ]
-  if (profile?.roles !== "superadmin" && profile?.roles !== "admin") {
+
+  // Filter models based on user role
+  if (profile?.roles === "user") {
+    // Users with "user" role can only access these two specific models
+    allModels = allModels.filter(
+      model =>
+        model.modelId === "gpt-4o-mini" ||
+        model.modelId === "sweden-gpt-4.1-mini"
+    )
+  } else if (profile?.roles !== "superadmin" && profile?.roles !== "admin") {
     allModels = allModels.filter(model => model.modelId !== "o1-preview")
   }
 
@@ -107,7 +116,6 @@ export const ModelSelect: FC<ModelSelectProps> = ({
             ref={triggerRef}
             className="flex items-center justify-between"
             variant="ghost"
-            disabled={profile?.roles === "user"}
           >
             <div className="flex items-center">
               {selectedModel ? (
@@ -136,71 +144,98 @@ export const ModelSelect: FC<ModelSelectProps> = ({
         style={{ width: triggerRef.current?.offsetWidth }}
         align="start"
       >
-        <Tabs value={tab} onValueChange={(value: any) => setTab(value)}>
-          {availableLocalModels.length > 0 && (
-            <TabsList defaultValue="hosted" className="grid grid-cols-2">
-              <TabsTrigger value="hosted">Hosted</TabsTrigger>
-
-              <TabsTrigger value="local">Local</TabsTrigger>
-            </TabsList>
-          )}
-        </Tabs>
-
-        <Input
-          ref={inputRef}
-          className="w-full"
-          placeholder="Search models..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-
-        <div className="max-h-[300px] overflow-auto">
-          {Object.entries(groupedModels).map(([provider, models]) => {
-            const filteredModels = models
-              .filter(model => {
-                if (tab === "hosted") return model.provider !== "ollama"
-                if (tab === "local") return model.provider === "ollama"
-                if (tab === "openrouter") return model.provider === "openrouter"
-              })
-              .filter(model =>
-                model.modelName.toLowerCase().includes(search.toLowerCase())
-              )
-              .sort((a, b) => a.provider.localeCompare(b.provider))
-
-            if (filteredModels.length === 0) return null
-
-            return (
-              <div key={provider}>
-                <div className="mb-1 ml-2 text-xs font-bold tracking-wide opacity-50">
-                  {provider === "openai" && profile.use_azure_openai
-                    ? "AZURE OPENAI"
-                    : provider.toLocaleUpperCase()}
+        {/* Simplified dropdown for users with limited model access */}
+        {profile?.roles === "user" ? (
+          <div className="min-w-[200px] space-y-1">
+            {allModels.map(model => (
+              <div
+                key={model.modelId}
+                className="hover:bg-accent flex cursor-pointer items-center space-x-3 rounded-md p-3 transition-colors"
+                onClick={() => handleSelectModel(model.modelId)}
+              >
+                <div className="flex w-4 items-center justify-center">
+                  {selectedModelId === model.modelId && (
+                    <IconCheck className="text-primary" size={16} />
+                  )}
                 </div>
-
-                <div className="mb-4">
-                  {filteredModels.map(model => {
-                    return (
-                      <div
-                        key={model.modelId}
-                        className="flex items-center space-x-1"
-                      >
-                        {selectedModelId === model.modelId && (
-                          <IconCheck className="ml-2" size={32} />
-                        )}
-
-                        <ModelOption
-                          key={model.modelId}
-                          model={model}
-                          onSelect={() => handleSelectModel(model.modelId)}
-                        />
-                      </div>
-                    )
-                  })}
+                <ModelIcon provider={model.provider} width={20} height={20} />
+                <div className="flex-1 text-sm font-medium">
+                  {model.modelName}
                 </div>
               </div>
-            )
-          })}
-        </div>
+            ))}
+          </div>
+        ) : (
+          /* Full dropdown for admin/developer/superadmin users */
+          <>
+            <Tabs value={tab} onValueChange={(value: any) => setTab(value)}>
+              {availableLocalModels.length > 0 && (
+                <TabsList defaultValue="hosted" className="grid grid-cols-2">
+                  <TabsTrigger value="hosted">Hosted</TabsTrigger>
+
+                  <TabsTrigger value="local">Local</TabsTrigger>
+                </TabsList>
+              )}
+            </Tabs>
+
+            <Input
+              ref={inputRef}
+              className="w-full"
+              placeholder="Search models..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+
+            <div className="max-h-[300px] overflow-auto">
+              {Object.entries(groupedModels).map(([provider, models]) => {
+                const filteredModels = models
+                  .filter(model => {
+                    if (tab === "hosted") return model.provider !== "ollama"
+                    if (tab === "local") return model.provider === "ollama"
+                    if (tab === "openrouter")
+                      return model.provider === "openrouter"
+                  })
+                  .filter(model =>
+                    model.modelName.toLowerCase().includes(search.toLowerCase())
+                  )
+                  .sort((a, b) => a.provider.localeCompare(b.provider))
+
+                if (filteredModels.length === 0) return null
+
+                return (
+                  <div key={provider}>
+                    <div className="mb-1 ml-2 text-xs font-bold tracking-wide opacity-50">
+                      {provider === "openai" && profile.use_azure_openai
+                        ? "AZURE OPENAI"
+                        : provider.toLocaleUpperCase()}
+                    </div>
+
+                    <div className="mb-4">
+                      {filteredModels.map(model => {
+                        return (
+                          <div
+                            key={model.modelId}
+                            className="flex items-center space-x-1"
+                          >
+                            {selectedModelId === model.modelId && (
+                              <IconCheck className="ml-2" size={32} />
+                            )}
+
+                            <ModelOption
+                              key={model.modelId}
+                              model={model}
+                              onSelect={() => handleSelectModel(model.modelId)}
+                            />
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   )
