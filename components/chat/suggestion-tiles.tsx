@@ -1,13 +1,17 @@
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog"
 import { TextareaAutosize } from "@/components/ui/textarea-autosize"
-import { FancyTooltip } from "@/components/ui/fancy-tooltip"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip"
 import { ChatbotUIContext } from "@/context/context"
 import { suggestionTilesContent } from "@/lib/suggestions/suggestion-tiles-content"
 import { Tables } from "@/supabase/types"
 import {
   IconBolt,
-  IconFileText,
   IconMail,
   IconLanguage,
   IconFileDescription,
@@ -15,7 +19,7 @@ import {
   IconListDetails,
   IconWriting
 } from "@tabler/icons-react"
-import { motion } from "framer-motion"
+
 import { useContext, useState } from "react"
 import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
 
@@ -33,80 +37,23 @@ function SuggestionTiles() {
   const getIconComponent = (iconName: string) => {
     switch (iconName) {
       case "FileText":
-        return (
-          <IconWriting
-            size={16}
-            className="shrink-0"
-            style={{
-              color: "#FFFFFF",
-              filter: "drop-shadow(0 0 2px rgba(255, 255, 255, 0.5))"
-            }}
-          />
-        )
+        return <IconWriting size={16} className="shrink-0 text-white" />
       case "Mail":
-        return (
-          <IconMail
-            size={16}
-            className="shrink-0"
-            style={{
-              color: "#FFFFFF",
-              filter: "drop-shadow(0 0 2px rgba(255, 255, 255, 0.5))"
-            }}
-          />
-        )
+        return <IconMail size={16} className="shrink-0 text-white" />
       case "Language":
-        return (
-          <IconLanguage
-            size={16}
-            className="shrink-0"
-            style={{
-              color: "#FFFFFF",
-              filter: "drop-shadow(0 0 2px rgba(255, 255, 255, 0.5))"
-            }}
-          />
-        )
+        return <IconLanguage size={16} className="shrink-0 text-white" />
       case "FileDescription":
-        return (
-          <IconFileDescription
-            size={16}
-            className="shrink-0"
-            style={{
-              color: "#FFFFFF",
-              filter: "drop-shadow(0 0 2px rgba(255, 255, 255, 0.5))"
-            }}
-          />
-        )
+        return <IconFileDescription size={16} className="shrink-0 text-white" />
       case "Calendar":
-        return (
-          <IconCalendar
-            size={16}
-            className="shrink-0"
-            style={{
-              color: "#FFFFFF",
-              filter: "drop-shadow(0 0 2px rgba(255, 255, 255, 0.5))"
-            }}
-          />
-        )
+        return <IconCalendar size={16} className="shrink-0 text-white" />
       case "ListDetails":
-        return (
-          <IconListDetails
-            size={16}
-            className="shrink-0"
-            style={{
-              color: "#FFFFFF",
-              filter: "drop-shadow(0 0 2px rgba(255, 255, 255, 0.5))"
-            }}
-          />
-        )
+        return <IconListDetails size={16} className="shrink-0 text-white" />
       default:
         return (
           <IconBolt
             size={16}
             className="shrink-0"
-            style={{
-              color: "#FF7300",
-              filter: "drop-shadow(0 0 2px rgba(255, 115, 0, 0.5))"
-            }}
+            style={{ color: "#FF7300" }}
           />
         )
     }
@@ -181,11 +128,7 @@ function SuggestionTiles() {
   }
 
   return (
-    <motion.div
-      style={{ transition: "all 0.2s ease-out" }}
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-    >
+    <div>
       <div className="w-full">
         <div
           className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl shadow-lg"
@@ -193,7 +136,7 @@ function SuggestionTiles() {
         >
           <div className="absolute inset-0 overflow-hidden rounded-2xl">
             <div
-              className="animate-border-flow absolute inset-0 rounded-2xl"
+              className="absolute inset-0 rounded-2xl"
               style={{
                 background:
                   "linear-gradient(90deg, #e84315, #e84315, #FF6B00, #e84315, #e84315)",
@@ -209,55 +152,51 @@ function SuggestionTiles() {
               </h3>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {suggestionTilesContent.map((suggestion, index) => (
-                <FancyTooltip
-                  key={index}
-                  content={<p>{suggestion.tooltip}</p>}
-                  side="top"
-                  delayDuration={300}
-                  className="max-w-[220px] text-center"
-                >
-                  <motion.div
-                    className="relative flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-black/80 px-3 py-2 text-gray-800 shadow-sm backdrop-blur-md dark:text-gray-200"
-                    onClick={() =>
-                      handlePromptSelection(suggestion.content, suggestion.name)
-                    }
-                    whileHover={{
-                      scale: 1.06,
-                      boxShadow:
-                        "0 2px 8px -1px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.05)"
-                    }}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 400,
-                      damping: 17
-                    }}
-                  >
-                    {/* AlterDomus orange-red border effect */}
-                    <div className="absolute inset-0 overflow-hidden rounded-xl p-[2px]">
+              <TooltipProvider delayDuration={300}>
+                {suggestionTilesContent.map((suggestion, index) => (
+                  <Tooltip key={index}>
+                    <TooltipTrigger asChild>
                       <div
-                        className="animate-border-flow absolute inset-0 rounded-xl"
-                        style={{
-                          background:
-                            "linear-gradient(90deg, #e84315, #e84315, #FF6B00, #e84315, #e84315)",
-                          backgroundSize: "300% 100%",
-                          opacity: 0.8,
-                          zIndex: -1
-                        }}
-                      />
-                    </div>
+                        className="relative flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-black/80 px-3 py-2 text-gray-800 shadow-sm backdrop-blur-md transition-colors hover:bg-black/90 dark:text-gray-200"
+                        onClick={() =>
+                          handlePromptSelection(
+                            suggestion.content,
+                            suggestion.name
+                          )
+                        }
+                      >
+                        {/* AlterDomus orange-red border effect */}
+                        <div className="absolute inset-0 overflow-hidden rounded-xl p-[2px]">
+                          <div
+                            className="absolute inset-0 rounded-xl"
+                            style={{
+                              background:
+                                "linear-gradient(90deg, #e84315, #e84315, #FF6B00, #e84315, #e84315)",
+                              backgroundSize: "300% 100%",
+                              opacity: 0.8,
+                              zIndex: -1
+                            }}
+                          />
+                        </div>
 
-                    {/* Content */}
-                    <div className="z-10 flex w-full items-center justify-center space-x-2">
-                      {getIconComponent(suggestion.iconName)}
-                      <div className="line-clamp-2 text-center text-sm font-medium text-white">
-                        {suggestion.name}
+                        {/* Content */}
+                        <div className="z-10 flex w-full items-center justify-center space-x-2">
+                          {getIconComponent(suggestion.iconName)}
+                          <div className="line-clamp-2 text-center text-sm font-medium text-white">
+                            {suggestion.name}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </motion.div>
-                </FancyTooltip>
-              ))}
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="top"
+                      className="max-w-[220px] border border-gray-300 bg-white text-center text-black shadow-lg"
+                    >
+                      <p>{suggestion.tooltip}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+              </TooltipProvider>
             </div>
           </div>
         </div>
@@ -324,7 +263,7 @@ function SuggestionTiles() {
           </DialogContent>
         </Dialog>
       </div>
-    </motion.div>
+    </div>
   )
 }
 
