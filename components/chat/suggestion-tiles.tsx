@@ -1,12 +1,5 @@
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
+import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog"
 import { TextareaAutosize } from "@/components/ui/textarea-autosize"
 import { FancyTooltip } from "@/components/ui/fancy-tooltip"
 import { ChatbotUIContext } from "@/context/context"
@@ -32,13 +25,7 @@ function SuggestionTiles() {
 
   const [showPromptVariables, setShowPromptVariables] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
-  const [promptVariables, setPromptVariables] = useState<
-    {
-      promptId: string
-      name: string
-      value: string
-    }[]
-  >([])
+  const [promptContent, setPromptContent] = useState("")
   const [selectedPrompt, setSelectedPrompt] =
     useState<Tables<"prompts"> | null>(null)
 
@@ -125,11 +112,14 @@ function SuggestionTiles() {
     }
   }
 
-  const handlePromptSelection = (suggestionContent: string) => {
+  const handlePromptSelection = (
+    suggestionContent: string,
+    suggestionName: string
+  ) => {
     const testPrompt: Tables<"prompts"> = {
       id: "test-prompt-id",
       user_id: "test-user",
-      name: "Test Prompt",
+      name: suggestionName,
       content: suggestionContent,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -146,16 +136,8 @@ function SuggestionTiles() {
 
     if (matches && matches.length > 0) {
       // Found variables, show dialog
-      const newPromptVariables = matches.map(match => ({
-        promptId: testPrompt.id,
-        name: match.replace(/\{\{|\}\}/g, ""),
-        value: ""
-      }))
-
-      console.log("Setting prompt variables:", newPromptVariables)
-
-      setPromptVariables(newPromptVariables)
       setSelectedPrompt(testPrompt)
+      setPromptContent("")
       setShowPromptVariables(true)
     } else {
       // No variables, auto-submit the message
@@ -175,29 +157,26 @@ function SuggestionTiles() {
   }
 
   const handleSubmitPromptVariables = () => {
-    if (!selectedPrompt) return
+    if (!selectedPrompt || !promptContent.trim()) return
 
-    const newPromptContent = promptVariables.reduce(
-      (prevContent, variable) =>
-        prevContent.replace(
-          new RegExp(`\\{\\{${variable.name}\\}\\}`, "g"),
-          variable.value
-        ),
-      selectedPrompt.content || ""
-    )
+    // Replace all variable placeholders with the user's content
+    const regex = /\{\{.*?\}\}/g
+    const newPromptContent =
+      selectedPrompt.content?.replace(regex, promptContent.trim()) ||
+      promptContent
 
     // Set the user input and auto-submit the message
     setUserInput(newPromptContent)
     handleSendMessage(newPromptContent, chatMessages, false)
 
     setShowPromptVariables(false)
-    setPromptVariables([])
+    setPromptContent("")
     setSelectedPrompt(null)
   }
 
   const handleCancelPromptVariables = () => {
     setShowPromptVariables(false)
-    setPromptVariables([])
+    setPromptContent("")
     setSelectedPrompt(null)
   }
 
@@ -240,7 +219,9 @@ function SuggestionTiles() {
                 >
                   <motion.div
                     className="relative flex h-12 w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-black/80 px-3 py-2 text-gray-800 shadow-sm backdrop-blur-md dark:text-gray-200"
-                    onClick={() => handlePromptSelection(suggestion.content)}
+                    onClick={() =>
+                      handlePromptSelection(suggestion.content, suggestion.name)
+                    }
                     whileHover={{
                       scale: 1.06,
                       boxShadow:
@@ -288,43 +269,55 @@ function SuggestionTiles() {
             setShowPromptVariables(isOpen)
           }}
         >
-          <DialogContent onKeyDown={handleKeydownPromptVariables}>
-            <DialogHeader>
-              <DialogTitle>Enter Prompt Variables</DialogTitle>
-            </DialogHeader>
-
-            <div className="mt-2 space-y-6">
-              {promptVariables.map((variable, index) => (
-                <div key={index} className="flex flex-col space-y-2">
-                  <Label>{variable.name}</Label>
-
-                  <TextareaAutosize
-                    placeholder={`Enter a value for ${variable.name}...`}
-                    value={variable.value}
-                    onValueChange={value => {
-                      const newPromptVariables = [...promptVariables]
-                      newPromptVariables[index].value = value
-                      setPromptVariables(newPromptVariables)
-                    }}
-                    minRows={3}
-                    maxRows={5}
-                    onCompositionStart={() => setIsTyping(true)}
-                    onCompositionEnd={() => setIsTyping(false)}
-                  />
-                </div>
-              ))}
+          <DialogContent
+            onKeyDown={handleKeydownPromptVariables}
+            className="gap-0 overflow-hidden p-0 sm:max-w-md"
+          >
+            {/* Red Header */}
+            <div className="border-b bg-red-600 px-6 py-4 text-white">
+              <h2 className="text-lg font-semibold leading-none tracking-tight">
+                {selectedPrompt?.name || "Enter Text for Rephrasing"}
+              </h2>
             </div>
 
-            <DialogFooter>
+            {/* Content */}
+            <div className="space-y-4 p-6">
+              {/* Description */}
+              <div>
+                <p className="text-muted-foreground text-sm">
+                  Please provide your content for rephrasing
+                </p>
+              </div>
+
+              {/* Text Area */}
+              <div className="space-y-2">
+                <TextareaAutosize
+                  placeholder="Type or paste your text here..."
+                  value={promptContent}
+                  onValueChange={setPromptContent}
+                  minRows={6}
+                  maxRows={10}
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground flex min-h-[120px] w-full resize-none rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                  onCompositionStart={() => setIsTyping(true)}
+                  onCompositionEnd={() => setIsTyping(false)}
+                />
+              </div>
+            </div>
+
+            {/* Footer */}
+            <DialogFooter className="bg-muted/50 border-t px-6 py-4">
               <Button
-                variant="ghost"
-                size="sm"
+                variant="outline"
                 onClick={handleCancelPromptVariables}
+                className="mr-2"
               >
                 Cancel
               </Button>
-
-              <Button size="sm" onClick={handleSubmitPromptVariables}>
+              <Button
+                onClick={handleSubmitPromptVariables}
+                className="bg-red-600 text-white hover:bg-red-700"
+                disabled={!promptContent.trim()}
+              >
                 Submit
               </Button>
             </DialogFooter>
