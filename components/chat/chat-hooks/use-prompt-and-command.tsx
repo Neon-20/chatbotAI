@@ -5,7 +5,7 @@ import { getAssistantToolsByAssistantId } from "@/db/assistant-tools"
 import { getCollectionFilesByCollectionId } from "@/db/collection-files"
 import { Tables } from "@/supabase/types"
 import { LLMID } from "@/types"
-import { useContext } from "react"
+import { useContext, useCallback, useMemo } from "react"
 
 export const usePromptAndCommand = () => {
   const {
@@ -29,41 +29,100 @@ export const usePromptAndCommand = () => {
     setChatFiles
   } = useContext(ChatbotUIContext)
 
-  const handleInputChange = (value: string) => {
-    const atTextRegex = /@([^ ]*)$/
-    const slashTextRegex = /\/([^ ]*)$/
-    const hashtagTextRegex = /#([^ ]*)$/
-    const toolTextRegex = /!([^ ]*)$/
-    const atMatch = value.match(atTextRegex)
-    const slashMatch = value.match(slashTextRegex)
-    const hashtagMatch = value.match(hashtagTextRegex)
-    const toolMatch = value.match(toolTextRegex)
+  // Memoize regex patterns to avoid recreating them on every call
+  const regexPatterns = useMemo(
+    () => ({
+      atTextRegex: /@([^ ]*)$/,
+      slashTextRegex: /\/([^ ]*)$/,
+      hashtagTextRegex: /#([^ ]*)$/,
+      toolTextRegex: /!([^ ]*)$/
+    }),
+    []
+  )
 
-    if (atMatch) {
-      setIsAssistantPickerOpen(true)
-      setAtCommand(atMatch[1])
-    } else if (slashMatch) {
-      setIsPromptPickerOpen(true)
-      setSlashCommand(slashMatch[1])
-    } else if (hashtagMatch) {
-      setIsFilePickerOpen(true)
-      setHashtagCommand(hashtagMatch[1])
-    } else if (toolMatch) {
-      setIsToolPickerOpen(true)
-      setToolCommand(toolMatch[1])
-    } else {
-      setIsPromptPickerOpen(false)
-      setIsFilePickerOpen(false)
-      setIsToolPickerOpen(false)
-      setIsAssistantPickerOpen(false)
-      setSlashCommand("")
-      setHashtagCommand("")
-      setToolCommand("")
-      setAtCommand("")
-    }
+  const handleInputChange = useCallback(
+    (value: string) => {
+      // Update input immediately for UI responsiveness
+      setUserInput(value)
 
-    setUserInput(value)
-  }
+      // Only process commands if the value ends with a special character
+      const lastChar = value.slice(-1)
+      if (
+        !["@", "/", "#", "!"].includes(lastChar) &&
+        !value.match(/[@/#!][^ ]*$/)
+      ) {
+        // Reset all pickers if no command pattern is found
+        setIsPromptPickerOpen(false)
+        setIsFilePickerOpen(false)
+        setIsToolPickerOpen(false)
+        setIsAssistantPickerOpen(false)
+        setSlashCommand("")
+        setHashtagCommand("")
+        setToolCommand("")
+        setAtCommand("")
+        return
+      }
+
+      const { atTextRegex, slashTextRegex, hashtagTextRegex, toolTextRegex } =
+        regexPatterns
+      const atMatch = value.match(atTextRegex)
+      const slashMatch = value.match(slashTextRegex)
+      const hashtagMatch = value.match(hashtagTextRegex)
+      const toolMatch = value.match(toolTextRegex)
+
+      if (atMatch) {
+        setIsAssistantPickerOpen(true)
+        setAtCommand(atMatch[1])
+        // Close other pickers
+        setIsPromptPickerOpen(false)
+        setIsFilePickerOpen(false)
+        setIsToolPickerOpen(false)
+      } else if (slashMatch) {
+        setIsPromptPickerOpen(true)
+        setSlashCommand(slashMatch[1])
+        // Close other pickers
+        setIsAssistantPickerOpen(false)
+        setIsFilePickerOpen(false)
+        setIsToolPickerOpen(false)
+      } else if (hashtagMatch) {
+        setIsFilePickerOpen(true)
+        setHashtagCommand(hashtagMatch[1])
+        // Close other pickers
+        setIsPromptPickerOpen(false)
+        setIsAssistantPickerOpen(false)
+        setIsToolPickerOpen(false)
+      } else if (toolMatch) {
+        setIsToolPickerOpen(true)
+        setToolCommand(toolMatch[1])
+        // Close other pickers
+        setIsPromptPickerOpen(false)
+        setIsFilePickerOpen(false)
+        setIsAssistantPickerOpen(false)
+      } else {
+        // Reset all pickers
+        setIsPromptPickerOpen(false)
+        setIsFilePickerOpen(false)
+        setIsToolPickerOpen(false)
+        setIsAssistantPickerOpen(false)
+        setSlashCommand("")
+        setHashtagCommand("")
+        setToolCommand("")
+        setAtCommand("")
+      }
+    },
+    [
+      regexPatterns,
+      setUserInput,
+      setIsPromptPickerOpen,
+      setIsFilePickerOpen,
+      setIsToolPickerOpen,
+      setIsAssistantPickerOpen,
+      setSlashCommand,
+      setHashtagCommand,
+      setToolCommand,
+      setAtCommand
+    ]
+  )
 
   const handleSelectPrompt = (prompt: Tables<"prompts">) => {
     setIsPromptPickerOpen(false)

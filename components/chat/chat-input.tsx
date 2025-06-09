@@ -11,7 +11,15 @@ import {
   IconWriting
 } from "@tabler/icons-react"
 import Image from "next/image"
-import { FC, useContext, useEffect, useRef, useState } from "react"
+import {
+  FC,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  memo
+} from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { Input } from "../ui/input"
@@ -35,7 +43,7 @@ import {
 
 interface ChatInputProps {}
 
-export const ChatInput: FC<ChatInputProps> = ({}) => {
+const ChatInputComponent: FC<ChatInputProps> = ({}) => {
   const { t } = useTranslation()
 
   useHotkey("l", () => {
@@ -43,6 +51,8 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
   })
 
   const [isTyping, setIsTyping] = useState<boolean>(false)
+  const [localInput, setLocalInput] = useState<string>("")
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const {
     isAssistantPickerOpen,
@@ -88,17 +98,54 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Debounced input handler to prevent excessive re-renders
+  const debouncedInputChange = useCallback(
+    (value: string) => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current)
+      }
+
+      debounceTimeoutRef.current = setTimeout(() => {
+        handleInputChange(value)
+      }, 100) // 100ms debounce
+    },
+    [handleInputChange]
+  )
+
+  // Immediate input handler for UI responsiveness
+  const handleImmediateInputChange = useCallback(
+    (value: string) => {
+      setLocalInput(value)
+      debouncedInputChange(value)
+    },
+    [debouncedInputChange]
+  )
+
   useEffect(() => {
     setTimeout(() => {
       handleFocusChatInput()
     }, 200) // FIX: hacky
-  }, [selectedPreset, selectedAssistant])
+  }, [selectedPreset, selectedAssistant, handleFocusChatInput])
+
+  // Sync local input with context input
+  useEffect(() => {
+    setLocalInput(userInput)
+  }, [userInput])
+
+  // Cleanup debounce timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (!isTyping && event.key === "Enter" && !event.shiftKey) {
       event.preventDefault()
       setIsPromptPickerOpen(false)
-      handleSendMessage(userInput, chatMessages, false)
+      handleSendMessage(localInput, chatMessages, false)
     }
 
     // Consolidate conditions to avoid TypeScript error
@@ -122,6 +169,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
       }
     }
 
+    // Use shift+ctrl+up and shift+ctrl+down to navigate through chat history
     if (event.key === "ArrowUp" && event.shiftKey && event.ctrlKey) {
       event.preventDefault()
       setNewMessageContentToPreviousUserMessage()
@@ -130,27 +178,6 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     if (event.key === "ArrowDown" && event.shiftKey && event.ctrlKey) {
       event.preventDefault()
       setNewMessageContentToNextUserMessage()
-    }
-
-    //use shift+ctrl+up and shift+ctrl+down to navigate through chat history
-    if (event.key === "ArrowUp" && event.shiftKey && event.ctrlKey) {
-      event.preventDefault()
-      setNewMessageContentToPreviousUserMessage()
-    }
-
-    if (event.key === "ArrowDown" && event.shiftKey && event.ctrlKey) {
-      event.preventDefault()
-      setNewMessageContentToNextUserMessage()
-    }
-
-    if (
-      isAssistantPickerOpen &&
-      (event.key === "Tab" ||
-        event.key === "ArrowUp" ||
-        event.key === "ArrowDown")
-    ) {
-      event.preventDefault()
-      setFocusAssistant(!focusAssistant)
     }
   }
 
@@ -283,8 +310,8 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
             // `Ask anything. Type "@" for assistants, "/" for prompts, "#" for files, and "!" for tools.`
             `Ask anything. Type @  /  #  !`
           )}
-          onValueChange={handleInputChange}
-          value={userInput}
+          onValueChange={handleImmediateInputChange}
+          value={localInput}
           minRows={1}
           maxRows={18}
           onKeyDown={handleKeyDown}
@@ -321,13 +348,13 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
             <IconSend
               className={cn(
                 "bg-primary text-secondary rounded p-1",
-                !userInput && "cursor-not-allowed opacity-50"
+                !localInput && "cursor-not-allowed opacity-50"
               )}
               onClick={() => {
-                if (!userInput) return
+                if (!localInput) return
                 const appInsights = getAppInsights()
                 appInsights.trackEvent({ name: "Chat buttonClicked" })
-                handleSendMessage(userInput, chatMessages, false)
+                handleSendMessage(localInput, chatMessages, false)
               }}
               size={30}
             />
@@ -345,3 +372,6 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     </>
   )
 }
+
+// Export memoized component to prevent unnecessary re-renders
+export const ChatInput = memo(ChatInputComponent)
