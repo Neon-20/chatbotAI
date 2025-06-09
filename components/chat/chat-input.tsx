@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import {
   IconBolt,
   IconCirclePlus,
+  IconMessagePlus,
   IconPlayerStopFilled,
   IconSend,
   IconWriting
@@ -72,7 +73,8 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     chatInputRef,
     handleSendMessage,
     handleStopMessage,
-    handleFocusChatInput
+    handleFocusChatInput,
+    handleNewChat
   } = useChatHandler()
 
   const { handleInputChange } = usePromptAndCommand()
@@ -258,9 +260,25 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
           />
         </>
 
+        {/* New Chat Icon */}
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger>
+              <IconMessagePlus
+                className="absolute bottom-[12px] left-12 cursor-pointer p-1 hover:opacity-50"
+                size={32}
+                onClick={handleNewChat}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-bold py-1">
+              <p>Start a new chat</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
         <TextareaAutosize
           textareaRef={chatInputRef}
-          className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-inherit px-20 py-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-inherit py-2 pl-24 pr-20 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           placeholder={t(
             // `Ask anything. Type "@" for assistants, "/" for prompts, "#" for files, and "!" for tools.`
             `Ask anything. Type @  /  #  !`
