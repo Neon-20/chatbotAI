@@ -2,7 +2,7 @@ import { ChatbotUIContext } from "@/context/context"
 import { Tables } from "@/supabase/types"
 import { FC, useContext, useEffect, useRef, useState } from "react"
 import { Button } from "../ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
+import { Dialog, DialogContent, DialogFooter } from "../ui/dialog"
 import { Label } from "../ui/label"
 import { TextareaAutosize } from "../ui/textarea-autosize"
 import { usePromptAndCommand } from "./chat-hooks/use-prompt-and-command"
@@ -142,46 +142,73 @@ export const PromptPicker: FC<PromptPickerProps> = ({}) => {
               open={showPromptVariables}
               onOpenChange={setShowPromptVariables}
             >
-              <DialogContent onKeyDown={handleKeydownPromptVariables}>
-                <DialogHeader>
-                  <DialogTitle>Enter Prompt Variables</DialogTitle>
-                </DialogHeader>
-
-                <div className="mt-2 space-y-6">
-                  {promptVariables.map((variable, index) => (
-                    <div key={index} className="flex flex-col space-y-2">
-                      <Label>{variable.name}</Label>
-
-                      <TextareaAutosize
-                        placeholder={`Enter a value for ${variable.name}...`}
-                        value={variable.value}
-                        onValueChange={value => {
-                          const newPromptVariables = [...promptVariables]
-                          newPromptVariables[index].value = value
-                          setPromptVariables(newPromptVariables)
-                        }}
-                        minRows={3}
-                        maxRows={5}
-                        onCompositionStart={() => setIsTyping(true)}
-                        onCompositionEnd={() => setIsTyping(false)}
-                      />
-                    </div>
-                  ))}
+              <DialogContent
+                onKeyDown={handleKeydownPromptVariables}
+                className="gap-0 overflow-hidden p-0 sm:max-w-md"
+              >
+                {/* Red Header */}
+                <div className="border-b bg-red-600 px-6 py-4 text-white">
+                  <h2 className="text-lg font-semibold leading-none tracking-tight">
+                    {prompts.find(
+                      prompt => prompt.id === promptVariables[0]?.promptId
+                    )?.name || "Enter Prompt Variables"}
+                  </h2>
                 </div>
 
-                <div className="mt-2 flex justify-end space-x-2">
+                {/* Content */}
+                <div className="space-y-4 p-6">
+                  {/* Description */}
+                  <div>
+                    <p className="text-muted-foreground text-sm">
+                      Please provide values for the following variables
+                    </p>
+                  </div>
+
+                  {/* Variables */}
+                  <div className="space-y-4">
+                    {promptVariables.map((variable, index) => (
+                      <div key={index} className="space-y-2">
+                        <Label className="text-sm font-medium">
+                          {variable.name}
+                        </Label>
+                        <TextareaAutosize
+                          placeholder={`Enter a value for ${variable.name}...`}
+                          value={variable.value}
+                          onValueChange={value => {
+                            const newPromptVariables = [...promptVariables]
+                            newPromptVariables[index].value = value
+                            setPromptVariables(newPromptVariables)
+                          }}
+                          minRows={3}
+                          maxRows={5}
+                          className="border-input bg-background ring-offset-background placeholder:text-muted-foreground flex min-h-[80px] w-full resize-none rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                          onCompositionStart={() => setIsTyping(true)}
+                          onCompositionEnd={() => setIsTyping(false)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <DialogFooter className="bg-muted/50 border-t px-6 py-4">
                   <Button
-                    variant="ghost"
-                    size="sm"
+                    variant="outline"
                     onClick={handleCancelPromptVariables}
+                    className="mr-2"
                   >
                     Cancel
                   </Button>
-
-                  <Button size="sm" onClick={handleSubmitPromptVariables}>
+                  <Button
+                    onClick={handleSubmitPromptVariables}
+                    className="bg-red-600 text-white hover:bg-red-700"
+                    disabled={promptVariables.some(
+                      variable => !variable.value.trim()
+                    )}
+                  >
                     Submit
                   </Button>
-                </div>
+                </DialogFooter>
               </DialogContent>
             </Dialog>
           ) : filteredPrompts.length === 0 ? (
