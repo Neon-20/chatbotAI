@@ -1,7 +1,7 @@
 "use client"
 
 import { ChatbotUIContext } from "@/context/context"
-import { FC, useContext, useEffect, useState } from "react"
+import { FC, useContext, useMemo, useState } from "react"
 
 interface HeroTextProps {}
 
@@ -24,38 +24,35 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 
 export const HeroText: FC<HeroTextProps> = ({}) => {
   const { profile } = useContext(ChatbotUIContext)
-  const [textParts, setTextParts] = useState<{
-    beforeUsername: string
-    username: string
-    afterUsername: string
-  }>({ beforeUsername: "", username: "", afterUsername: "" })
-
-  useEffect(() => {
-    // Shuffle the text options and select the first one
+  const [heroText] = useState(() => {
+    // Generate the hero text once on component mount
     const shuffledOptions = shuffleArray(HERO_TEXT_OPTIONS)
-    const selectedText = shuffledOptions[0]
+    return shuffledOptions[0]
+  })
 
-    if (selectedText.includes("{username}")) {
+  // Memoize the text parts to avoid unnecessary recalculations
+  const textParts = useMemo(() => {
+    if (heroText.includes("{username}")) {
       // Use display_name first, then username as fallback
       const fullUsername = profile?.display_name || profile?.username || "there"
       // Extract first part before the dot if it exists
       const username = fullUsername.includes(".")
         ? fullUsername.split(".")[0]
         : fullUsername
-      const parts = selectedText.split("{username}")
-      setTextParts({
+      const parts = heroText.split("{username}")
+      return {
         beforeUsername: parts[0] || "",
         username: username,
         afterUsername: parts[1] || ""
-      })
+      }
     } else {
-      setTextParts({
-        beforeUsername: selectedText,
+      return {
+        beforeUsername: heroText,
         username: "",
         afterUsername: ""
-      })
+      }
     }
-  }, [profile])
+  }, [heroText, profile?.display_name, profile?.username])
 
   // Always render something, even if profile is not loaded yet
   if (
