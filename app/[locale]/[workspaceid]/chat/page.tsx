@@ -6,6 +6,7 @@ import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
 import { ChatInput } from "@/components/chat/chat-input"
 import { ChatSettings } from "@/components/chat/chat-settings"
 import { ChatUI } from "@/components/chat/chat-ui"
+import { HeroText } from "@/components/chat/hero-text"
 import { QuickSettings } from "@/components/chat/quick-settings"
 import SuggestionTiles from "@/components/chat/suggestion-tiles"
 import NotificationBanner from "@/components/notification-banner"
@@ -57,6 +58,9 @@ export default function ChatPage() {
           <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
             <div className="-mt-24">
               <Brand theme={theme === "dark" ? "dark" : "light"} />
+            </div>
+            <div className="mt-6">
+              <HeroText />
             </div>
             <div className="mt-10 w-full max-w-3xl px-4">
               <SuggestionTiles />
