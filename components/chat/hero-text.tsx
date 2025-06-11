@@ -1,7 +1,7 @@
 "use client"
 
 import { ChatbotUIContext } from "@/context/context"
-import { FC, useContext, useMemo, useState } from "react"
+import { FC, useContext, useMemo } from "react"
 
 interface HeroTextProps {}
 
@@ -24,11 +24,12 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 
 export const HeroText: FC<HeroTextProps> = ({}) => {
   const { profile } = useContext(ChatbotUIContext)
-  const [heroText] = useState(() => {
-    // Generate the hero text once on component mount
+
+  // Generate the hero text once and memoize it
+  const heroText = useMemo(() => {
     const shuffledOptions = shuffleArray(HERO_TEXT_OPTIONS)
     return shuffledOptions[0]
-  })
+  }, []) // Empty dependency array - only runs once
 
   // Memoize the text parts to avoid unnecessary recalculations
   const textParts = useMemo(() => {
@@ -36,9 +37,12 @@ export const HeroText: FC<HeroTextProps> = ({}) => {
       // Use display_name first, then username as fallback
       const fullUsername = profile?.display_name || profile?.username || "there"
       // Extract first part before the dot if it exists
-      const username = fullUsername.includes(".")
+      const rawUsername = fullUsername.includes(".")
         ? fullUsername.split(".")[0]
         : fullUsername
+      // Capitalize the first letter
+      const username =
+        rawUsername.charAt(0).toUpperCase() + rawUsername.slice(1)
       const parts = heroText.split("{username}")
       return {
         beforeUsername: parts[0] || "",
@@ -75,18 +79,19 @@ export const HeroText: FC<HeroTextProps> = ({}) => {
 
   return (
     <div className="flex flex-col items-center justify-center px-4">
-      <h1 className="text-center text-xl font-medium tracking-tight transition-all duration-300 ease-in-out sm:text-3xl md:text-4xl">
+      <h1 className="text-center text-xl font-medium leading-relaxed tracking-tight transition-all duration-300 ease-in-out sm:text-3xl md:text-4xl">
         {textParts.beforeUsername && (
           <span className="text-black">{textParts.beforeUsername}</span>
         )}
         {textParts.username && (
           <span
-            className="inline-block bg-gradient-to-r from-[#e84315] via-[#FF6B00] to-[#e84315] bg-clip-text text-transparent"
+            className="mx-1 inline-block bg-gradient-to-r from-[#e84315] via-[#FF6B00] to-[#e84315] bg-clip-text text-transparent"
             style={{
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
-              paddingRight: "2px"
+              display: "inline-block",
+              minHeight: "1.2em"
             }}
           >
             {textParts.username}
