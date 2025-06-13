@@ -1,96 +1,263 @@
 "use client"
-
-import { ChatbotUISVG } from "@/components/icons/chatbotui-svg"
+import {
+  CheckCircle,
+  Mail,
+  FileText,
+  Search,
+  Clipboard,
+  Lightbulb,
+  ArrowRight,
+  Users,
+  Zap,
+  Eye,
+  Smile,
+  Lock
+} from "lucide-react"
 import Logo from "@/components/icons/logo"
-import { AnimatedTooltip } from "@/components/ui/animated-tooltip"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { people } from "@/lib/people"
-import { IconArrowRight } from "@tabler/icons-react"
-import { ArrowRight, CheckCircle } from "lucide-react"
-import { useTheme } from "next-themes"
-import Image from "next/image"
-import Link from "next/link"
 
 export default function HomePage() {
-  const { theme } = useTheme()
+  // Define the feature list with corresponding icons and descriptions
+  const features = [
+    {
+      icon: <Mail className="size-6 text-white" />,
+      title: "Draft Emails",
+      description: "Get help with writing, refining, and summarizing messages."
+    },
+    {
+      icon: <FileText className="size-6 text-white" />,
+      title: "Summarize Meetings",
+      description: "Automatically generate key takeaways and summaries."
+    },
+    {
+      icon: <Clipboard className="size-6 text-white" />,
+      title: "Create Docs & Reports",
+      description: "Speed up drafting, editing, and formatting content."
+    },
+    {
+      icon: <Search className="size-6 text-white" />,
+      title: "Research Quickly",
+      description: "Ask questions and get instant insights with context."
+    },
+    {
+      icon: <Users className="size-6 text-white" />,
+      title: "Streamline Onboarding",
+      description: "Build training docs and guides effortlessly."
+    },
+    {
+      icon: <Lightbulb className="size-6 text-white" />,
+      title: "Brainstorm Ideas",
+      description: "Co-create solutions and explore new perspectives."
+    },
+    {
+      icon: <CheckCircle className="size-6 text-white" />,
+      title: "Much More",
+      description:
+        "From automation to content creation, domusAI grows with you."
+    }
+  ]
+
+  // Define compact benefits
+  const benefits = [
+    {
+      icon: <Zap className="size-3 text-white" />,
+      title: "Work Smarter",
+      description: "Streamline tasks with intelligent automation."
+    },
+    {
+      icon: <Eye className="size-3 text-white" />,
+      title: "Quick Insights",
+      description: "Find information instantly with natural queries."
+    },
+    {
+      icon: <Smile className="size-3 text-white" />,
+      title: "Happy Teams",
+      description: "Reduce repetitive work and boost engagement."
+    },
+    {
+      icon: <Lock className="size-3 text-white" />,
+      title: "Enterprise Security",
+      description: "Your data stays private and encrypted."
+    }
+  ]
 
   return (
-    <div className="max-w-auto mt-8 flex min-h-screen flex-col items-center justify-center p-4">
-      <Card
-        className={`mt-6 w-full max-w-3xl border-2 shadow-xl ${theme === "dark" ? "bg-white text-white" : "bg-white"}`}
-      >
-        <CardHeader className="flex flex-col items-center space-y-2">
-          <div className="flex flex-col items-center">
-            <div className="size-auto">
-              <Logo width={120} height={120} />
+    <div className="min-h-screen bg-white p-2 sm:p-4">
+      <div className="mx-auto w-full max-w-4xl rounded-lg bg-white text-black shadow-xl">
+        {/* Header Section */}
+        <div className="relative flex flex-col items-center rounded-t-lg bg-red-600 p-3 text-white sm:p-4">
+          <span className="absolute right-3 top-2 text-xs opacity-75">
+            v1.0.0
+          </span>
+          <div className="flex w-full flex-col items-center">
+            <div className="rounded-lg border border-red-800/30 bg-white px-2 py-1 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl">
+              <Logo width={100} height={50} />
             </div>
-            <span
-              className={`mt-2 text-sm ${theme === "dark" ? "text-black" : "text-gray-500"}`}
-            >
-              v2.0
-            </span>
           </div>
-          <h2 className="text-center text-xl font-bold text-black lg:text-2xl">
-            Let&apos;s transform the way we work together!
-          </h2>
-        </CardHeader>
-        <CardContent className="space-y-6 text-center">
-          <p
-            className={`text-lg lg:text-xl ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}
+
+          <h1
+            className="mt-2 text-center text-xl font-bold sm:text-2xl lg:text-3xl"
+            style={{ fontFamily: "Inter, sans-serif" }}
           >
-            Experience the power of our <i>Internal ChatGPT</i> your AI-driven
-            assistant designed to enhance productivity and streamline your
-            workday.
+            Welcome to <span className="underline">domusAI</span>
+          </h1>
+          <p className="mt-1 max-w-xl text-center text-xs opacity-90 sm:text-sm">
+            Your personal AI-driven assistant to enhance productivity and
+            streamline your workday.
           </p>
-          <div className="text-left">
-            <h3 className="mb-4 text-xl font-semibold lg:text-2xl">
-              Key Benefits:
-            </h3>
-            <ul
-              className={`space-y-4 ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}
-            >
-              {[
-                "<strong>Boosted Efficiency:</strong> Achieve tasks faster by streamlining email writing, development, content creation, and documentation with our AI tools.",
-                "<strong>Instant Access to Information:</strong> Get answers and insights right at your fingertips.",
-                "<strong>Enhanced Job Satisfaction:</strong> Enjoy a more fulfilling work experience with supportive tools.",
-                "<strong>Data Privacy Assurance:</strong> Your data remains confidential and secure; we never use it for training purposes."
-              ].map((benefit, index) => (
-                <li key={index} className="flex items-start">
-                  <CheckCircle className="mr-2 mt-1 size-5 shrink-0 text-green-500" />
-                  <span dangerouslySetInnerHTML={{ __html: benefit }} />
-                </li>
-              ))}
-            </ul>
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col items-center space-y-4">
-          <Link
-            href="/login"
-            className="flex w-full items-center justify-center rounded-lg"
+        </div>
+
+        {/* Features Section */}
+        <div className="space-y-3 bg-white px-3 py-4 text-gray-800">
+          <h2
+            className="text-center text-base font-semibold text-gray-900 sm:text-lg"
+            style={{ fontFamily: "Inter, sans-serif" }}
           >
-            <Button className="flex w-full max-w-md items-center justify-center rounded-lg bg-red-600 px-6 py-3 text-lg font-semibold text-white transition-colors duration-200 hover:bg-red-700">
-              Get started
-              <ArrowRight className="ml-2 size-5" />
-            </Button>
-          </Link>
-          <div className="mt-2 flex flex-col items-center text-center">
-            <div className="flex cursor-pointer">
-              <AnimatedTooltip items={people} />
-            </div>
-            <p
-              className={`max-w-[300px] text-xs ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
+            What can domusAI help you do?
+          </h2>
+
+          <ul className="mx-auto max-w-3xl space-y-1.5">
+            {features.map((feature, idx) => (
+              <li
+                key={idx}
+                className="group flex cursor-pointer items-start rounded-lg px-2 py-1 transition-colors duration-200 hover:bg-gray-50"
+              >
+                <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-red-700 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-red-300">
+                  {feature.icon}
+                </div>
+                <div className="ml-2">
+                  <span className="text-xs font-medium text-gray-900 sm:text-sm">
+                    {feature.title}:
+                  </span>{" "}
+                  <span className="text-xs text-gray-700 sm:text-sm">
+                    {feature.description}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          {/* Benefits Section - Compact */}
+          <div className="mt-3">
+            <h2
+              className="mb-2 text-center text-sm font-semibold text-gray-900 sm:text-base"
+              style={{ fontFamily: "Inter, sans-serif" }}
             >
-              Driven and Maintained by the AI - Automation & Cloud Engineering
-              Team at AD
+              Benefits
+            </h2>
+            <div className="grid grid-cols-2 gap-2 rounded-lg bg-red-50 p-2">
+              {benefits.map((benefit, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-start gap-1.5 rounded-lg bg-white p-2 shadow-sm"
+                >
+                  <div className="flex size-4 shrink-0 items-center justify-center rounded bg-red-600">
+                    {benefit.icon}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="mb-0.5 text-xs font-semibold text-gray-900">
+                      {benefit.title}
+                    </h3>
+                    <p className="text-xs leading-tight text-gray-600">
+                      {benefit.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Call-to-Action */}
+          <div className="mt-3 text-center">
+            <p className="mb-2 text-xs font-semibold text-red-600 sm:text-sm">
+              Join the revolution in productivity
+            </p>
+            <div className="relative flex items-center justify-center">
+              <a href="/login" className="inline-block w-full max-w-xs">
+                <button className="flex w-full items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700">
+                  Get Started
+                  <ArrowRight className="ml-2 size-4" />
+                </button>
+              </a>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="80"
+                height="16"
+                viewBox="0 0 204 29"
+                fill="none"
+                className="absolute right-0 top-20 -mt-1 opacity-80 transition-opacity duration-200 hover:opacity-100"
+              >
+                <path
+                  d="M1.95523 11.7418C4.32664 10.7071 6.42239 10.1898 8.24626 10.1898C10.0701 10.1898 11.5881 10.6769 12.6757 11.6474C13.7594 12.6216 14.2956 14.0264 14.2843 15.8616L14.1937 23.4478C14.1823 24.0671 14.1937 24.5655 14.239 24.9432C14.2805 25.3208 14.39 25.6078 14.5675 25.8117C14.745 26.0118 15.0093 26.1515 15.3605 26.2308C15.7117 26.3101 16.1875 26.3554 16.7841 26.3668L16.8747 27.0804C16.3498 27.2881 15.7117 27.492 14.9564 27.6997C14.2012 27.9074 13.6877 28.0094 13.4196 28.0094C12.2263 28.0094 11.4107 27.4014 10.9688 26.1855C9.24693 27.4165 7.62697 28.0283 6.10142 28.0283C4.39461 28.0283 3.0201 27.6129 1.98166 26.7784C0.943225 25.9438 0.422119 24.7695 0.422119 23.2477C0.422119 21.3747 1.25664 19.9964 2.92947 19.109C4.60229 18.2216 7.22293 17.7798 10.7989 17.7798L10.8178 16.3562C10.8329 14.9931 10.4855 13.9848 9.77937 13.3278C9.07323 12.6707 7.98948 12.3422 6.5319 12.3422C5.42549 12.3422 4.03965 12.5499 2.37438 12.9615L1.95523 11.738V11.7418ZM10.8027 19.2563C8.24626 19.2563 6.49791 19.5169 5.56521 20.0417C4.6325 20.5628 4.16426 21.4465 4.16426 22.685C4.16426 23.8405 4.47391 24.6599 5.09319 25.1395C5.71248 25.6191 6.55455 25.8608 7.61564 25.8608C8.82023 25.8608 9.86999 25.6493 10.7687 25.2226L10.8027 19.2601V19.2563Z"
+                  fill="#3C3C3B"
+                ></path>
+                <path
+                  d="M18.4985 1.92771L18.4078 1.32353C20.564 0.911935 22.5502 0.47768 24.3703 0.0283203L24.5365 0.171813C24.4647 2.15428 24.427 4.90708 24.427 8.43398V20.3061C24.427 22.4812 24.4383 24.2333 24.4647 25.5587C24.5025 25.9137 24.6724 26.1327 24.9745 26.2158L26.9608 26.8162L27.0136 27.5639C25.371 27.5261 23.9512 27.5072 22.7542 27.5072C21.5571 27.5072 20.1411 27.5261 18.5136 27.5639L18.4418 26.8162L20.5036 26.2158C20.8057 26.1176 20.9718 25.9212 20.9945 25.6305C21.0171 24.256 21.0322 22.7229 21.0322 21.0349V13.5393C21.0322 9.01551 21.0096 5.38665 20.9605 2.65273L18.4985 1.92394V1.92771Z"
+                  fill="#3C3C3B"
+                ></path>
+                <path
+                  d="M34.5659 12.5991C34.4942 16.7113 34.4564 20.023 34.4564 22.5416C34.4564 23.8066 34.6452 24.6789 35.0228 25.1585C35.4004 25.6418 36.1179 25.8797 37.1752 25.8797C38.0135 25.8797 39.1086 25.7702 40.4567 25.5512L40.5662 26.3706C38.4629 27.4279 36.5824 27.9566 34.9284 27.9566C33.5803 27.9566 32.5797 27.6016 31.9188 26.888C31.2618 26.178 30.9333 25.1056 30.9333 23.6669C30.9333 21.3068 30.9748 17.5798 31.0617 12.4858L28.543 11.8665L28.4335 11.1188L31.2467 10.8809L32.5343 6.46665C33.2292 6.28539 33.8635 6.10791 34.4375 5.93799L34.6225 6.06638C34.5848 7.53907 34.5659 8.91358 34.5659 10.1899V10.8658H40.0564V12.5991H34.5659Z"
+                  fill="#3C3C3B"
+                ></path>
+                <path
+                  d="M57.7664 26.2233C56.7318 26.869 55.6707 27.3297 54.5756 27.6091C53.4805 27.8885 52.4647 28.0283 51.5283 28.0283C48.8548 28.0283 46.691 27.2655 45.0447 25.7399C43.3983 24.2144 42.5713 22.096 42.5713 19.3847C42.5713 16.6734 43.3416 14.4795 44.8785 12.7651C46.4154 11.0508 48.4696 10.1936 51.0411 10.1936C53.1973 10.1936 54.8739 10.8355 56.0747 12.1194C57.2755 13.4033 57.8759 15.1743 57.8759 17.4362C57.8759 17.7761 57.8571 18.1235 57.8193 18.4747H46.3097C46.3097 21.0877 46.9252 22.9569 48.1524 24.0822C49.3796 25.2075 51.3017 25.7701 53.9148 25.7701C55.0816 25.7701 56.3277 25.6606 57.6531 25.4416L57.7627 26.227L57.7664 26.2233ZM54.1376 16.9567V16.4091C54.1376 14.6834 53.8657 13.4486 53.3257 12.7085C52.7857 11.9646 51.9776 11.5945 50.9052 11.5945C49.4892 11.5945 48.4054 12.1194 47.654 13.1616C46.9063 14.2076 46.4834 15.4726 46.3852 16.9567H54.1376Z"
+                  fill="#3C3C3B"
+                ></path>
+                <path
+                  d="M60.1039 11.4662C62.1354 11.0772 64.0688 10.6505 65.904 10.1898L66.089 10.3182V12.4517C68.3396 10.945 70.5449 10.1898 72.7086 10.1898L72.7992 10.2993C72.448 12.1119 72.1006 13.9886 71.7608 15.9371L71.032 16.0655C70.6921 15.0308 70.3636 14.2038 70.0464 13.577C69.7292 12.9502 69.2308 12.6368 68.5511 12.6368C67.8714 12.6368 67.0746 12.9426 66.089 13.5506V21.4465C66.089 23.3421 66.1004 24.7015 66.1268 25.5134C66.1381 25.8419 66.2892 26.0496 66.5837 26.1326L69.0118 26.8237L69.0646 27.5713C67.169 27.5336 65.6208 27.5185 64.4238 27.5185C63.2267 27.5185 61.8145 27.5374 60.1832 27.5713L60.1114 26.8237L62.2261 26.2044C62.5168 26.1062 62.6679 25.9212 62.683 25.6417C62.6943 25.1169 62.7019 24.3692 62.7019 23.3949V17.1757C62.7019 15.1932 62.6792 13.7167 62.6301 12.7425L60.2058 12.0854L60.1152 11.4662H60.1039Z"
+                  fill="#3C3C3B"
+                ></path>
+                <path
+                  d="M79.7435 27.5186C78.2746 27.5186 76.7679 27.5375 75.2235 27.5752L75.1517 26.7936L77.3948 26.1176C77.7119 26.0232 77.8743 25.8344 77.8894 25.5512C77.9008 25.0641 77.9083 24.5203 77.9159 23.9199C77.9234 23.3195 77.9272 22.6512 77.9272 21.9224V7.12749C77.9272 6.5082 77.9234 5.94934 77.9159 5.45089C77.9083 4.95244 77.9008 4.50308 77.8894 4.10281C77.8781 3.78562 77.7308 3.5817 77.4514 3.48353L75.1895 2.77361L75.1517 1.98818C76.7188 2.03727 78.2482 2.0637 79.7284 2.0637C80.9443 2.0637 82.1149 2.03349 83.2478 1.97307C84.3768 1.91266 85.5361 1.88245 86.7293 1.88245C90.9813 1.88245 94.1759 2.85291 96.3132 4.79007C98.4505 6.731 99.5229 9.60841 99.5229 13.4261C99.5229 17.9234 98.3334 21.4164 95.9582 23.9048C93.583 26.3933 90.2525 27.6319 85.9628 27.6319C84.7846 27.6319 83.7349 27.613 82.8097 27.579C81.8883 27.5412 80.865 27.5224 79.7473 27.5224M81.4994 25.8986C82.2169 25.9968 82.9192 26.061 83.6065 26.0912C84.2937 26.1214 84.9848 26.1365 85.6758 26.1365C88.8855 26.1365 91.3287 25.1925 93.0091 23.3006C94.6857 21.4126 95.524 18.5125 95.524 14.6118C95.524 10.711 94.7272 8.00733 93.1337 6.17591C91.5401 4.34448 89.0177 3.43066 85.5663 3.43066C85.0188 3.43066 84.4146 3.44199 83.7538 3.46842C83.0892 3.49485 82.3377 3.53639 81.4994 3.59681V25.9024V25.8986Z"
+                  fill="#3C3C3B"
+                ></path>
+                <path
+                  d="M120.163 18.7466C120.163 21.5183 119.325 23.7613 117.652 25.4682C115.979 27.175 113.849 28.0284 111.27 28.0284C108.691 28.0284 106.713 27.2241 105.164 25.6116C103.612 23.9992 102.838 21.8922 102.838 19.2904C102.838 16.6887 103.65 14.4305 105.278 12.7313C106.901 11.0358 109.054 10.1862 111.731 10.1862C114.265 10.1862 116.3 10.9678 117.848 12.5311C119.393 14.0907 120.167 16.1638 120.167 18.7391M106.58 18.9052C106.58 21.1785 107.003 23.0288 107.853 24.4599C108.703 25.8873 109.96 26.6048 111.633 26.6048C113.196 26.6048 114.386 25.9742 115.205 24.7167C116.021 23.4593 116.429 21.5938 116.429 19.1243C116.429 16.8019 115.998 14.9743 115.141 13.6338C114.28 12.297 113.034 11.6286 111.399 11.6286C109.847 11.6286 108.657 12.229 107.827 13.4336C106.996 14.6382 106.58 16.4621 106.58 18.9052Z"
+                  fill="#3C3C3B"
+                ></path>
+                <path
+                  d="M139.425 13.7469C139.595 14.3285 139.678 14.9855 139.678 15.7181V22.2281C139.678 23.6517 139.69 24.7959 139.716 25.6569C139.739 25.9854 139.897 26.1968 140.188 26.295L142.031 26.8237L142.068 27.5714C140.584 27.5336 139.244 27.5147 138.047 27.5147C136.85 27.5147 135.521 27.5336 134.059 27.5714L133.988 26.8237L135.721 26.3139C136.072 26.1931 136.257 25.9967 136.268 25.7324C136.28 25.5624 136.287 25.1773 136.287 24.5844V16.6319C136.287 15.1366 135.947 14.0641 135.268 13.4109C134.588 12.7614 133.584 12.4366 132.247 12.4366C131.072 12.4366 129.872 12.7878 128.644 13.4939V21.4653C128.644 22.9871 128.656 24.3767 128.682 25.6417C128.693 26.0043 128.822 26.2119 129.064 26.261L130.997 26.8275L131.035 27.5751C129.528 27.5374 128.172 27.5185 126.975 27.5185C125.778 27.5185 124.362 27.5374 122.735 27.5751L122.663 26.8275L124.759 26.2082C125.065 26.1213 125.219 25.9325 125.231 25.6417C125.242 24.996 125.25 24.2484 125.25 23.3987V17.1794C125.25 15.5859 125.227 14.1094 125.178 12.7463L122.754 12.0892L122.663 11.4699C124.668 11.081 126.594 10.6581 128.429 10.1936L128.61 10.322V12.4366C130.608 10.9413 132.5 10.1936 134.29 10.1936C136.48 10.1936 138.066 11.0395 139.04 12.7312C140.962 11.0395 143.05 10.1936 145.305 10.1936C146.996 10.1936 148.322 10.6694 149.277 11.6248C150.232 12.5801 150.712 13.9433 150.712 15.7181V22.1753C150.712 23.7046 150.723 24.8374 150.746 25.5662C150.772 25.8947 150.935 26.11 151.241 26.2082L153.265 26.8275L153.302 27.5751C151.698 27.5374 150.293 27.5185 149.088 27.5185C147.884 27.5185 146.539 27.5374 145.093 27.5751L145.021 26.8275L146.826 26.2988C147.106 26.2006 147.264 26.0118 147.298 25.7324C147.31 25.5624 147.317 25.1773 147.317 24.5844V16.6319C147.317 15.1366 146.97 14.0641 146.279 13.4109C145.588 12.7614 144.568 12.4366 143.22 12.4366C141.872 12.4366 140.592 12.8747 139.418 13.7507"
+                  fill="#3C3C3B"
+                ></path>
+                <path
+                  d="M168.052 25.9137C166.153 27.326 164.253 28.0284 162.354 28.0284C160.454 28.0284 159.008 27.5412 158.053 26.5708C157.097 25.5965 156.618 24.2296 156.618 22.4661V18.5994C156.618 15.9976 156.591 14.0454 156.542 12.7426L154.118 12.0856L154.027 11.4663C156.157 11.0773 158.132 10.6506 159.956 10.1899L160.118 10.3183C160.047 11.7419 160.009 13.5696 160.009 15.805V21.6089C160.009 23.0779 160.356 24.1465 161.047 24.8073C161.738 25.4719 162.716 25.8005 163.978 25.8005C165.239 25.8005 166.53 25.4644 167.856 24.796V17.0247C167.856 15.3217 167.829 13.8943 167.78 12.7388L165.371 12.0818L165.28 11.4625C167.399 11.0735 169.37 10.6468 171.19 10.1862L171.356 10.3145C171.281 11.7721 171.247 13.6413 171.247 15.9145C171.247 20.3288 171.258 23.0212 171.284 23.9955C171.296 24.4939 171.333 24.8942 171.394 25.2C171.454 25.5021 171.571 25.7363 171.741 25.9024C171.911 26.0686 172.164 26.1818 172.497 26.2498C172.829 26.3178 173.278 26.3555 173.837 26.3706L173.928 27.0806C173.369 27.2996 172.723 27.5073 171.994 27.7112C171.265 27.9113 170.767 28.0133 170.499 28.0133C169.268 28.0133 168.452 27.3147 168.052 25.9175"
+                  fill="#3C3C3B"
+                ></path>
+                <path
+                  d="M185.203 12.0327C184.497 11.8401 183.73 11.7419 182.907 11.7419C181.763 11.7419 180.842 11.9647 180.143 12.4065C179.445 12.8521 179.093 13.4563 179.093 14.2228C179.093 14.9894 179.32 15.5483 179.777 15.975C180.234 16.4017 181.08 16.8208 182.322 17.2324L183.817 17.7422C185.494 18.3124 186.725 18.9694 187.51 19.702C188.296 20.4383 188.685 21.4013 188.685 22.5907C188.685 24.2824 188.028 25.6116 186.717 26.5783C185.403 27.545 183.742 28.0284 181.737 28.0284C179.886 28.0284 177.998 27.6508 176.065 26.8993C176.48 25.3209 176.813 23.7727 177.069 22.266L177.779 22.1565L179.093 26.0761C179.784 26.3442 180.668 26.4764 181.737 26.4764C182.866 26.4764 183.768 26.246 184.444 25.7853C185.12 25.3247 185.456 24.6714 185.456 23.8331C185.456 23.0552 185.23 22.4397 184.773 21.9903C184.316 21.541 183.591 21.152 182.594 20.8235L180.698 20.1853C179.056 19.6378 177.923 18.9808 177.296 18.2067C176.669 17.4325 176.356 16.4772 176.356 15.333C176.356 13.7395 176.96 12.4858 178.172 11.5644C179.38 10.6468 180.978 10.1862 182.96 10.1862C184.807 10.1862 186.487 10.4543 187.994 10.9867C187.654 12.3725 187.344 13.8377 187.065 15.3821L186.37 15.5105L185.203 12.0251V12.0327Z"
+                  fill="#3C3C3B"
+                ></path>
+                <path
+                  d="M203.008 12.701L199.583 13.815L201.701 16.7301C201.848 16.9341 201.803 17.2248 201.599 17.3721L200.262 18.3463C200.059 18.4936 199.768 18.4483 199.621 18.2444L197.498 15.3254L195.376 18.2444C195.229 18.4483 194.938 18.4936 194.734 18.3463L193.397 17.3721C193.194 17.2248 193.148 16.9341 193.295 16.7301L195.414 13.815L191.985 12.701C191.743 12.6217 191.611 12.3612 191.691 12.1233L192.2 10.5486C192.28 10.3069 192.54 10.1748 192.778 10.2541L196.207 11.368V7.80337C196.207 7.52772 196.433 7.30115 196.709 7.30115H198.276C198.552 7.30115 198.778 7.52772 198.778 7.80337V11.368L202.207 10.2541C202.449 10.1748 202.709 10.3069 202.785 10.5486L203.295 12.1233C203.374 12.3649 203.238 12.6255 203 12.701"
+                  fill="#E74315"
+                ></path>
+              </svg>
+            </div>
+            <p className="mt-2 text-xs text-gray-600">
+              Need Help? Contact our{" "}
+              <a
+                href="mailto:ai@alterdomus.com?subject=domusAI%20Support"
+                className="font-medium text-red-600 underline hover:text-red-700"
+              >
+                Team
+              </a>{" "}
+              for assistance.
             </p>
           </div>
-        </CardFooter>
-      </Card>
-      <footer
-        className={`mb-4 py-2 text-center text-xs ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}
-      >
-        Alter Domus, AiD © Copyright 2024. All rights reserved.
+        </div>
+
+        {/* Footer / Team Section */}
+        <div className="-mt-2 flex flex-col items-center rounded-b-lg border-t bg-white p-2">
+          <div className="flex flex-col items-center text-center">
+            <p className="text-xs text-gray-500">
+              Developed by the AI & Cloud Engineering Team
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Footer */}
+      <footer className="mt-2 py-1 text-center text-xs text-gray-500">
+        Alter Domus, domusAI © Copyright 2024. All rights reserved.
       </footer>
     </div>
   )
