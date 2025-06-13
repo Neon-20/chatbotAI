@@ -223,8 +223,9 @@ function SuggestionTiles() {
             <div className="space-y-4 p-6">
               {/* Description */}
               <div>
-                <p className="text-muted-foreground text-sm">
-                  Please provide your content for rephrasing
+                <p className=" text-sm font-medium">
+                  {selectedPrompt?.content?.match(/\{\{(.*?)\}\}/)?.[1] ||
+                    "Please provide your content for rephrasing"}
                 </p>
               </div>
 
