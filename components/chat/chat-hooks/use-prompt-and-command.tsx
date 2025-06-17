@@ -34,8 +34,7 @@ export const usePromptAndCommand = () => {
     () => ({
       atTextRegex: /@([^ ]*)$/,
       slashTextRegex: /\/([^ ]*)$/,
-      hashtagTextRegex: /#([^ ]*)$/,
-      toolTextRegex: /!([^ ]*)$/
+      hashtagTextRegex: /#([^ ]*)$/
     }),
     []
   )
@@ -47,10 +46,7 @@ export const usePromptAndCommand = () => {
 
       // Only process commands if the value ends with a special character
       const lastChar = value.slice(-1)
-      if (
-        !["@", "/", "#", "!"].includes(lastChar) &&
-        !value.match(/[@/#!][^ ]*$/)
-      ) {
+      if (!["@", "/", "#"].includes(lastChar) && !value.match(/[@/#][^ ]*$/)) {
         // Reset all pickers if no command pattern is found
         setIsPromptPickerOpen(false)
         setIsFilePickerOpen(false)
@@ -63,12 +59,10 @@ export const usePromptAndCommand = () => {
         return
       }
 
-      const { atTextRegex, slashTextRegex, hashtagTextRegex, toolTextRegex } =
-        regexPatterns
+      const { atTextRegex, slashTextRegex, hashtagTextRegex } = regexPatterns
       const atMatch = value.match(atTextRegex)
       const slashMatch = value.match(slashTextRegex)
       const hashtagMatch = value.match(hashtagTextRegex)
-      const toolMatch = value.match(toolTextRegex)
 
       if (atMatch) {
         setIsAssistantPickerOpen(true)
@@ -91,13 +85,6 @@ export const usePromptAndCommand = () => {
         setIsPromptPickerOpen(false)
         setIsAssistantPickerOpen(false)
         setIsToolPickerOpen(false)
-      } else if (toolMatch) {
-        setIsToolPickerOpen(true)
-        setToolCommand(toolMatch[1])
-        // Close other pickers
-        setIsPromptPickerOpen(false)
-        setIsFilePickerOpen(false)
-        setIsAssistantPickerOpen(false)
       } else {
         // Reset all pickers
         setIsPromptPickerOpen(false)

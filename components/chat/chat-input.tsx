@@ -307,8 +307,8 @@ const ChatInputComponent: FC<ChatInputProps> = ({}) => {
           textareaRef={chatInputRef}
           className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-inherit py-2 pl-24 pr-20 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           placeholder={t(
-            // `Ask anything. Type "@" for assistants, "/" for prompts, "#" for files, and "!" for tools.`
-            `Ask anything. Type @  /  #  !`
+            // `Ask anything. Type "@" for assistants, "/" for prompts, "#" for files.`
+            `Ask anything. Type @  /  #`
           )}
           onValueChange={handleImmediateInputChange}
           value={localInput}
