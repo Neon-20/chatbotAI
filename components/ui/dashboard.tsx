@@ -66,6 +66,8 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
       if (filesToAccept) {
         const acceptedTypesArray = filesToAccept.split(",").map(t => t.trim())
         let isFileTypeSupported = false
+
+        // Check by MIME type
         for (const acceptedType of acceptedTypesArray) {
           if (acceptedType.endsWith("/*")) {
             const baseType = acceptedType.slice(0, -2)
@@ -78,6 +80,26 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
               isFileTypeSupported = true
               break
             }
+          }
+        }
+
+        // Also check by file extension for code files
+        if (!isFileTypeSupported) {
+          const fileName = file.name.toLowerCase()
+          if (
+            fileName.endsWith(".js") ||
+            fileName.endsWith(".ts") ||
+            fileName.endsWith(".tsx") ||
+            fileName.endsWith(".py") ||
+            fileName.endsWith(".jsx") ||
+            fileName.endsWith(".html") ||
+            fileName.endsWith(".css") ||
+            fileName.endsWith(".php") ||
+            fileName.endsWith(".cs") ||
+            fileName.endsWith(".md") ||
+            fileName.endsWith(".mdx")
+          ) {
+            isFileTypeSupported = true
           }
         }
 

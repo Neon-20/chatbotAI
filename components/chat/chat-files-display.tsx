@@ -10,6 +10,13 @@ import {
   IconFileTypeDocx,
   IconFileTypePdf,
   IconFileTypeTxt,
+  IconFileTypeJs,
+  IconFileTypeTs,
+  IconFileTypeHtml,
+  IconFileTypeCss,
+  IconFileTypePhp,
+  IconBrandPython,
+  IconBrandCSharp,
   IconJson,
   IconLoader2,
   IconMarkdown,
@@ -195,6 +202,28 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
                             return <IconFileTypeCsv />
                           case "docx":
                             return <IconFileTypeDocx />
+                          case "js":
+                            return <IconFileTypeJs />
+                          case "ts":
+                            return <IconFileTypeTs />
+                          case "tsx":
+                            return <IconFileTypeTs />
+                          case "py":
+                            return <IconBrandPython />
+                          case "jsx":
+                            return <IconFileTypeJs />
+                          case "html":
+                            return <IconFileTypeHtml />
+                          case "css":
+                            return <IconFileTypeCss />
+                          case "php":
+                            return <IconFileTypePhp />
+                          case "cs":
+                            return <IconBrandCSharp />
+                          case "md":
+                            return <IconMarkdown />
+                          case "mdx":
+                            return <IconMarkdown />
                           default:
                             return <IconFileFilled />
                         }

@@ -85,12 +85,24 @@ export async function POST(req: Request) {
         chunks = await processJSON(blob)
         break
       case "md":
+      case "mdx":
         chunks = await processMarkdown(blob)
         break
       case "pdf":
         chunks = await processPdf(blob)
         break
       case "txt":
+        chunks = await processTxt(blob)
+        break
+      case "js":
+      case "ts":
+      case "tsx":
+      case "py":
+      case "jsx":
+      case "html":
+      case "css":
+      case "php":
+      case "cs":
         chunks = await processTxt(blob)
         break
       case "xlsx":

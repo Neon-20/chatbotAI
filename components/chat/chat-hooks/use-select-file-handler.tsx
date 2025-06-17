@@ -14,7 +14,30 @@ export const ACCEPTED_FILE_TYPES = [
   "text/plain",
   "application/vnd.ms-excel",
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "text/javascript",
+  "application/javascript",
+  "text/typescript",
+  "application/typescript",
+  "text/x-python",
+  "application/x-python",
+  "text/x-python-script",
+  "text/html",
+  "text/css",
+  "application/x-httpd-php",
+  "text/x-php",
+  "text/x-markdown",
+  ".js",
+  ".ts",
+  ".tsx",
+  ".py",
+  ".jsx",
+  ".html",
+  ".css",
+  ".php",
+  ".cs",
+  ".md",
+  ".mdx"
 ].join(",")
 
 export const useSelectFileHandler = () => {
@@ -55,41 +78,89 @@ export const useSelectFileHandler = () => {
     setUseRetrieval(true)
 
     if (file) {
-      let simplifiedFileType = file.type.split("/")[1]
+      let simplifiedFileType = file.type.split("/")[1] || ""
 
       let reader = new FileReader()
 
       if (file.type.includes("image")) {
         reader.readAsDataURL(file)
-      } else if (ACCEPTED_FILE_TYPES.split(",").includes(file.type)) {
-        if (simplifiedFileType.includes("vnd.adobe.pdf")) {
+      } else if (
+        ACCEPTED_FILE_TYPES.split(",").includes(file.type) ||
+        file.name.endsWith(".js") ||
+        file.name.endsWith(".ts") ||
+        file.name.endsWith(".tsx") ||
+        file.name.endsWith(".py") ||
+        file.name.endsWith(".jsx") ||
+        file.name.endsWith(".html") ||
+        file.name.endsWith(".css") ||
+        file.name.endsWith(".php") ||
+        file.name.endsWith(".cs") ||
+        file.name.endsWith(".md") ||
+        file.name.endsWith(".mdx")
+      ) {
+        // Determine file type based on extension first, then MIME type
+        if (file.name.endsWith(".js")) {
+          simplifiedFileType = "js"
+        } else if (file.name.endsWith(".ts")) {
+          simplifiedFileType = "ts"
+        } else if (file.name.endsWith(".tsx")) {
+          simplifiedFileType = "tsx"
+        } else if (file.name.endsWith(".py")) {
+          simplifiedFileType = "py"
+        } else if (file.name.endsWith(".jsx")) {
+          simplifiedFileType = "jsx"
+        } else if (file.name.endsWith(".html")) {
+          simplifiedFileType = "html"
+        } else if (file.name.endsWith(".css")) {
+          simplifiedFileType = "css"
+        } else if (file.name.endsWith(".php")) {
+          simplifiedFileType = "php"
+        } else if (file.name.endsWith(".cs")) {
+          simplifiedFileType = "cs"
+        } else if (file.name.endsWith(".md")) {
+          simplifiedFileType = "md"
+        } else if (file.name.endsWith(".mdx")) {
+          simplifiedFileType = "mdx"
+        } else if (
+          simplifiedFileType &&
+          simplifiedFileType.includes("vnd.adobe.pdf")
+        ) {
           simplifiedFileType = "pdf"
         } else if (
-          simplifiedFileType.includes(
-            "vnd.openxmlformats-officedocument.wordprocessingml.document"
-          ) ||
-          simplifiedFileType.includes("docx")
+          (simplifiedFileType &&
+            simplifiedFileType.includes(
+              "vnd.openxmlformats-officedocument.wordprocessingml.document"
+            )) ||
+          (simplifiedFileType && simplifiedFileType.includes("docx"))
         ) {
           simplifiedFileType = "docx"
         } else if (
-          simplifiedFileType.includes("vnd.ms-excel") ||
-          simplifiedFileType.includes("xls")
+          (simplifiedFileType && simplifiedFileType.includes("vnd.ms-excel")) ||
+          (simplifiedFileType && simplifiedFileType.includes("xls"))
         ) {
           simplifiedFileType = "xls"
         } else if (
-          simplifiedFileType.includes(
-            "vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          ) ||
-          simplifiedFileType.includes("xlsx")
+          (simplifiedFileType &&
+            simplifiedFileType.includes(
+              "vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )) ||
+          (simplifiedFileType && simplifiedFileType.includes("xlsx"))
         ) {
           simplifiedFileType = "xlsx"
         } else if (
-          simplifiedFileType.includes(
-            "vnd.openxmlformats-officedocument.presentationml.presentation"
-          ) ||
-          simplifiedFileType.includes("pptx")
+          (simplifiedFileType &&
+            simplifiedFileType.includes(
+              "vnd.openxmlformats-officedocument.presentationml.presentation"
+            )) ||
+          (simplifiedFileType && simplifiedFileType.includes("pptx"))
         ) {
           simplifiedFileType = "pptx"
+        } else if (file.type.includes("javascript")) {
+          simplifiedFileType = "js"
+        } else if (file.type.includes("typescript")) {
+          simplifiedFileType = "ts"
+        } else if (file.type.includes("python")) {
+          simplifiedFileType = "py"
         }
 
         setNewMessageFiles(prev => [
