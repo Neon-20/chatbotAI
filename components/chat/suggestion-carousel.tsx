@@ -7,7 +7,6 @@ import { Skeleton } from "../ui/skeleton"
 import { ChatbotUIContext } from "@/context/context"
 import { supabase } from "@/lib/supabase/browser-client"
 import { defaultSuggestion } from "@/lib/suggestion"
-import { AnimatePresence, motion } from "framer-motion"
 import { FaArrowCircleLeft, FaArrowCircleRight } from "react-icons/fa"
 
 function SuggestionCarousel({
@@ -108,30 +107,19 @@ function SuggestionCarousel({
         <FaArrowCircleLeft className="size-6" />
       </Button>
       <div className="relative w-full overflow-hidden">
-        <motion.div
+        <div
           ref={scrollRef}
-          className="flex space-x-2"
-          animate={{
-            x: [0, -100 * (suggestions?.length || 0)]
-          }}
-          transition={{
-            x: {
-              repeat: Infinity,
-              repeatType: "loop",
-              duration: 20,
-              ease: "linear"
-            }
-          }}
+          className="scrollbar-hide flex space-x-2 overflow-x-auto"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {suggestions &&
-            [...suggestions, ...suggestions].map((suggestion, index) => (
-              <motion.div
+            suggestions.map((suggestion, index) => (
+              <div
                 key={index}
-                className="flex h-full shrink-0 cursor-pointer items-center justify-center"
+                className="flex h-full shrink-0 cursor-pointer items-center justify-center transition-transform duration-200 hover:scale-105"
                 onClick={() =>
                   handleSendMessage(suggestion, chatMessages, false)
                 }
-                whileHover={{ scale: 1.05 }}
               >
                 {isGenerating ? (
                   <Skeleton className="h-10 w-20 rounded-lg" />
@@ -141,9 +129,9 @@ function SuggestionCarousel({
                     <div>{suggestion}</div>
                   </div>
                 )}
-              </motion.div>
+              </div>
             ))}
-        </motion.div>
+        </div>
       </div>
 
       <Button
