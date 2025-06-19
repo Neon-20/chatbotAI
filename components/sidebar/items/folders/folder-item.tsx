@@ -76,9 +76,10 @@ export const Folder: FC<FolderProps> = ({
       id="folder"
       className={
         folder.public
-          ? "text-blue-500"
+          ? ""
           : "" + cn("rounded focus:outline-none", isDragOver && "bg-accent")
       }
+      style={folder.public ? { color: "#f1530d" } : {}}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
