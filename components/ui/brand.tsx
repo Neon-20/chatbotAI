@@ -16,7 +16,7 @@ export const Brand: FC<BrandProps> = ({ theme = "dark" }) => {
     >
       <div draggable="false" onDragStart={e => e.preventDefault()}>
         <div className="mb-2" draggable="false">
-          <Logo width={367.2} height={207.9} />
+          <Logo width={367.2} height={207.9} theme={theme} />
         </div>
       </div>
     </div>

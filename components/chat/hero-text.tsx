@@ -68,7 +68,7 @@ export const HeroText: FC<HeroTextProps> = ({}) => {
     return (
       <div className="flex flex-col items-center justify-center px-4">
         <h1 className="text-center text-2xl font-medium tracking-tight transition-all duration-300 ease-in-out sm:text-3xl md:text-4xl">
-          <span className="text-black">Welcome</span>
+          <span className="text-black dark:text-white">Welcome</span>
           <span className="bg-gradient-to-r from-[#e84315] via-[#FF6B00] to-[#e84315] bg-clip-text text-transparent">
             !
           </span>
@@ -81,7 +81,9 @@ export const HeroText: FC<HeroTextProps> = ({}) => {
     <div className="flex flex-col items-center justify-center px-4">
       <h1 className="text-center text-xl font-medium leading-relaxed tracking-tight transition-all duration-300 ease-in-out sm:text-3xl md:text-4xl">
         {textParts.beforeUsername && (
-          <span className="text-black">{textParts.beforeUsername}</span>
+          <span className="text-black dark:text-white">
+            {textParts.beforeUsername}
+          </span>
         )}
         {textParts.username && (
           <span
@@ -98,7 +100,9 @@ export const HeroText: FC<HeroTextProps> = ({}) => {
           </span>
         )}
         {textParts.afterUsername && (
-          <span className="text-black">{textParts.afterUsername}</span>
+          <span className="text-black dark:text-white">
+            {textParts.afterUsername}
+          </span>
         )}
       </h1>
     </div>
