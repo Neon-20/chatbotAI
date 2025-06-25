@@ -81,7 +81,7 @@ export default function HomePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-white p-2 sm:p-4">
+    <div className="mt-10 min-h-screen bg-white p-2 sm:p-4 dark:bg-black">
       <div className="mx-auto w-full max-w-4xl rounded-lg bg-white text-black shadow-xl">
         {/* Header Section */}
         <div className="relative flex flex-col items-center rounded-t-lg bg-red-600 p-3 text-white sm:p-4">

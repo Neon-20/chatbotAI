@@ -74,11 +74,10 @@ export const Folder: FC<FolderProps> = ({
     <div
       ref={itemRef}
       id="folder"
-      className={
-        folder.public
-          ? ""
-          : "" + cn("rounded focus:outline-none", isDragOver && "bg-accent")
-      }
+      className={cn(
+        "bg-background rounded focus:outline-none",
+        isDragOver && "bg-accent"
+      )}
       style={folder.public ? { color: "#f1530d" } : {}}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
@@ -91,7 +90,7 @@ export const Folder: FC<FolderProps> = ({
       <div
         tabIndex={0}
         className={cn(
-          "hover:bg-accent focus:bg-accent flex w-full cursor-pointer items-center justify-between rounded p-2 hover:opacity-50 focus:outline-none"
+          "bg-card hover:bg-accent focus:bg-accent flex w-full cursor-pointer items-center justify-between rounded p-2 hover:opacity-50 focus:outline-none"
         )}
         onClick={handleClick}
       >
