@@ -7,7 +7,8 @@ import {
   IconFile,
   IconMessage,
   IconPencil,
-  IconRobotFace
+  IconRobotFace,
+  IconPalette
 } from "@tabler/icons-react"
 import { FC, useContext } from "react"
 import AdminRolesSheet from "../AdminRolesSheet"
@@ -30,7 +31,7 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
   const { profile, selectedWorkspace } = useContext(ChatbotUIContext)
   return (
     <div className="flex flex-col justify-between border-r-2 pb-5">
-      <TabsList className="bg-background grid h-[440px] grid-rows-7">
+      <TabsList className="bg-background grid h-[480px] grid-rows-8">
         <SidebarSwitchItem
           icon={<IconMessage size={SIDEBAR_ICON_SIZE} />}
           contentType="chats"
@@ -63,6 +64,19 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
               onContentTypeChange={onContentTypeChange}
             />
           )}
+
+        {/* Canvas Design Tool */}
+        <WithTooltip
+          display={<div>Canvas Designer</div>}
+          trigger={
+            <Link href="/canvas" passHref>
+              <Button variant={"ghost"}>
+                <IconPalette size={28} />
+              </Button>
+            </Link>
+          }
+        />
+
         {(profile?.roles == "admin" || profile?.roles == "superadmin") && (
           // <AdminRolesSheet />
           <WithTooltip
