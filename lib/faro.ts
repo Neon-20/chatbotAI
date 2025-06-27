@@ -23,6 +23,10 @@ export const getFaro = () => {
         environment: process.env.NODE_ENV
       },
       trackGeolocation: true,
+      ignoreUrls: [
+        new RegExp(".*applicationinsights.azure.*"),
+        new RegExp(".*monitor.azure.*")
+      ],
       instrumentations: [
         ...getWebInstrumentations(),
         new TracingInstrumentation(),
