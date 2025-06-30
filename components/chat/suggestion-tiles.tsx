@@ -22,10 +22,13 @@ import {
 
 import { useContext, useState } from "react"
 import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
+import { trackTileClick } from "@/db/tile-insights"
+import { useParams } from "next/navigation"
 
 function SuggestionTiles() {
-  const { setUserInput, chatMessages } = useContext(ChatbotUIContext)
+  const { setUserInput, chatMessages, profile } = useContext(ChatbotUIContext)
   const { handleSendMessage } = useChatHandler()
+  const params = useParams()
 
   const [showPromptVariables, setShowPromptVariables] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
@@ -59,10 +62,27 @@ function SuggestionTiles() {
     }
   }
 
-  const handlePromptSelection = (
+  const handlePromptSelection = async (
     suggestionContent: string,
-    suggestionName: string
+    suggestionName: string,
+    tileIndex: number
   ) => {
+    // Track tile click analytics
+    if (profile?.user_id && params.workspaceid) {
+      try {
+        await trackTileClick({
+          workspace_id: params.workspaceid as string,
+          tile_name: suggestionName,
+          tile_index: tileIndex,
+          user_agent: navigator.userAgent,
+          session_id: `session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`
+        })
+      } catch (error) {
+        console.error("Error tracking tile click:", error)
+        // Don't block the user experience if analytics fail
+      }
+    }
+
     const testPrompt: Tables<"prompts"> = {
       id: "test-prompt-id",
       user_id: "test-user",
@@ -161,7 +181,8 @@ function SuggestionTiles() {
                         onClick={() =>
                           handlePromptSelection(
                             suggestion.content,
-                            suggestion.name
+                            suggestion.name,
+                            index
                           )
                         }
                       >
