@@ -5,7 +5,6 @@ import { ChartFileTypes } from "@/components/analytics/chart-file-types"
 import { ChartMessagesGrowth } from "@/components/analytics/chart-messages-growth"
 import { ChartPieTopUsers } from "@/components/analytics/chart-pie-top-users"
 import { KeyMetrics } from "@/components/analytics/key-metrics"
-import { TileAnalytics } from "@/components/analytics/tile-analytics"
 import NewChat from "@/components/analytics/newChat"
 import { Button } from "@/components/ui/button"
 import {
@@ -167,11 +166,6 @@ export default function Page() {
           <ChartFileTypes selectedMonth={selectedMonth} />
           <ChartAreaCumulative selectedMonth={selectedMonth} />
           <ChartPieTopUsers selectedMonth={selectedMonth} />
-        </div>
-
-        {/* Tile Analytics Section */}
-        <div className="mt-8">
-          <TileAnalytics />
         </div>
       </main>
       <footer className="mt-4 flex items-center justify-center border-t border-black py-2 text-[11px] text-black">
