@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase/browser-client"
+import { Json } from "@/supabase/types"
 
 // Types for tile insights
 export interface TileInsight {
@@ -7,14 +8,14 @@ export interface TileInsight {
   tile_id: string
   tile_text: string
   tile_name: string
-  session_id?: string
-  user_agent?: string
-  ip_address?: string
-  metadata?: Record<string, any>
-  username?: string
-  user_role?: string
+  session_id: string | null
+  user_agent: string | null
+  ip_address: unknown
+  metadata: Json
+  username: string | null
+  user_role: string | null
   created_at: string
-  updated_at?: string
+  updated_at: string | null
 }
 
 export interface TileClickCount {
