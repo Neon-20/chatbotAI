@@ -40,9 +40,11 @@ export const HeroText: FC<HeroTextProps> = ({}) => {
       const rawUsername = fullUsername.includes(".")
         ? fullUsername.split(".")[0]
         : fullUsername
-      // Capitalize the first letter
-      const username =
-        rawUsername.charAt(0).toUpperCase() + rawUsername.slice(1)
+      // Capitalize the first letter of each word (first and second names)
+      const username = rawUsername
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
       const parts = heroText.split("{username}")
       return {
         beforeUsername: parts[0] || "",
