@@ -112,7 +112,7 @@ function SuggestionTiles() {
     // Check directly for variables in the content
     const regex = /\{\{.*?\}\}/g
     const matches = suggestionContent.match(regex)
-    const hasVariables = matches && matches.length > 0
+    const hasVariables = Boolean(matches && matches.length > 0)
 
     console.log("Variable matches:", matches)
 
