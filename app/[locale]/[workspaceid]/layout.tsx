@@ -170,17 +170,7 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
           (workspace?.embeddings_provider as "openai" | "local") || "openai"
       })
     } catch (error) {
-      console.error("Error fetching workspace data:", error)
-
-      if (error instanceof Error) {
-        if (error.message.includes("JWT") || error.message.includes("auth")) {
-          return router.replace("/login")
-        } else {
-          console.error("Workspacedata fetch error:", error.message)
-        }
-      } else {
-        router.replace("/login")
-      }
+      router.replace("/login")
     }
     setLoading(false)
   }
