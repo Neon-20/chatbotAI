@@ -20,8 +20,9 @@ import {
   IconWriting
 } from "@tabler/icons-react"
 
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
+import { insertTileClick, generateSessionId } from "@/db/tile-insights"
 
 function SuggestionTiles() {
   const { setUserInput, chatMessages } = useContext(ChatbotUIContext)
@@ -32,6 +33,12 @@ function SuggestionTiles() {
   const [promptContent, setPromptContent] = useState("")
   const [selectedPrompt, setSelectedPrompt] =
     useState<Tables<"prompts"> | null>(null)
+  const [sessionId, setSessionId] = useState<string>("")
+
+  // Generate session ID on component mount
+  useEffect(() => {
+    setSessionId(generateSessionId())
+  }, [])
 
   // Function to get the appropriate icon component based on the icon name
   const getIconComponent = (iconName: string) => {
@@ -59,9 +66,36 @@ function SuggestionTiles() {
     }
   }
 
-  const handlePromptSelection = (
+  // Function to track tile clicks
+  const trackTileClick = async (
+    tileId: string,
+    tileName: string,
+    tileContent: string,
+    hasVariables: boolean
+  ) => {
+    try {
+      await insertTileClick({
+        tile_id: tileId,
+        tile_name: tileName,
+        tile_text: tileContent.substring(0, 500), // Limit to 500 chars
+        session_id: sessionId,
+        metadata: {
+          has_variables: hasVariables,
+          content_length: tileContent.length,
+          timestamp: new Date().toISOString(),
+          user_agent: navigator?.userAgent || "unknown"
+        }
+      })
+    } catch (error) {
+      // Don't block user interaction if analytics fails
+      console.warn("Failed to track tile click:", error)
+    }
+  }
+
+  const handlePromptSelection = async (
     suggestionContent: string,
-    suggestionName: string
+    suggestionName: string,
+    suggestionIndex: number
   ) => {
     const testPrompt: Tables<"prompts"> = {
       id: "test-prompt-id",
@@ -78,10 +112,15 @@ function SuggestionTiles() {
     // Check directly for variables in the content
     const regex = /\{\{.*?\}\}/g
     const matches = suggestionContent.match(regex)
+    const hasVariables = matches && matches.length > 0
 
     console.log("Variable matches:", matches)
 
-    if (matches && matches.length > 0) {
+    // Track the tile click (async, non-blocking)
+    const tileId = `tile_${suggestionIndex}_${suggestionName.toLowerCase().replace(/\s+/g, "_")}`
+    trackTileClick(tileId, suggestionName, suggestionContent, hasVariables)
+
+    if (hasVariables) {
       // Found variables, show dialog
       setSelectedPrompt(testPrompt)
       setPromptContent("")
@@ -103,7 +142,7 @@ function SuggestionTiles() {
     }
   }
 
-  const handleSubmitPromptVariables = () => {
+  const handleSubmitPromptVariables = async () => {
     if (!selectedPrompt || !promptContent.trim()) return
 
     // Replace all variable placeholders with the user's content
@@ -111,6 +150,26 @@ function SuggestionTiles() {
     const newPromptContent =
       selectedPrompt.content?.replace(regex, promptContent.trim()) ||
       promptContent
+
+    // Track the dialog submission as a separate event
+    try {
+      const tileId = `dialog_${selectedPrompt.name.toLowerCase().replace(/\s+/g, "_")}`
+      await insertTileClick({
+        tile_id: tileId,
+        tile_name: `${selectedPrompt.name} (Dialog Submitted)`,
+        tile_text: newPromptContent.substring(0, 500),
+        session_id: sessionId,
+        metadata: {
+          has_variables: true,
+          dialog_submitted: true,
+          original_content: selectedPrompt.content?.substring(0, 200) || "",
+          user_input: promptContent.trim().substring(0, 200),
+          timestamp: new Date().toISOString()
+        }
+      })
+    } catch (error) {
+      console.warn("Failed to track dialog submission:", error)
+    }
 
     // Set the user input and auto-submit the message
     setUserInput(newPromptContent)
@@ -161,7 +220,8 @@ function SuggestionTiles() {
                         onClick={() =>
                           handlePromptSelection(
                             suggestion.content,
-                            suggestion.name
+                            suggestion.name,
+                            index
                           )
                         }
                       >

@@ -22,8 +22,9 @@ import {
   SelectValue
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import { FilterIcon } from "lucide-react"
+import { FilterIcon, BarChart3 } from "lucide-react"
 import { useState } from "react"
+import Link from "next/link"
 
 export default function Page() {
   const [selectedMonth, setSelectedMonth] = useState<string | undefined>()
@@ -85,7 +86,13 @@ export default function Page() {
               </svg>
               <span className="font-medium">domusAI Stats Dashboard</span>
             </div>
-            <nav className="flex items-center gap-6">
+            <nav className="flex items-center gap-4">
+              <Link href="/tile_insights">
+                <Button variant="ghost" className="text-sm">
+                  <BarChart3 className="mr-2" size={20} />
+                  Tile Insights
+                </Button>
+              </Link>
               <NewChat />
             </nav>
           </div>
