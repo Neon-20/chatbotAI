@@ -42,7 +42,7 @@ export default function TileInsightsPage() {
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
-              <svg
+              {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -62,7 +62,7 @@ export default function TileInsightsPage() {
                     </g>
                   </g>
                 </g>
-              </svg>
+              </svg> */}
               <span className="font-medium">
                 domusAI Tile Insights Dashboard
               </span>
@@ -148,7 +148,7 @@ export default function TileInsightsPage() {
         {/* Time Chart - Full Width */}
         <TileInsightsTimeChart selectedPeriod={selectedPeriod} />
 
-        {/* Charts and Engagement Grid */}
+        {/* Charts and Engagemejnt Grid */}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <TileInsightsCharts selectedPeriod={selectedPeriod} />

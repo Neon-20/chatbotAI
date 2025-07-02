@@ -63,7 +63,7 @@ export default function Page() {
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
-              <svg
+              {/* <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -83,7 +83,7 @@ export default function Page() {
                     </g>
                   </g>
                 </g>
-              </svg>
+              </svg> */}
               <span className="font-medium">domusAI Stats Dashboard</span>
             </div>
             <nav className="flex items-center gap-4">
