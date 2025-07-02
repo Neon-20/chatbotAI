@@ -6,11 +6,11 @@ import { FC, useContext, useMemo } from "react"
 interface HeroTextProps {}
 
 const HERO_TEXT_OPTIONS = [
-  "Welcome {username}, What's on your mind today?",
-  "Welcome {username}, How can I help?",
-  "Welcome {username}, Ready to Dive in?",
-  "Welcome {username}, Where should we begin?",
-  "Welcome {username}, What's on the agenda today?"
+  "Welcome {username}, what's on your mind today?",
+  "Welcome {username}, how can I help?",
+  "Welcome {username}, ready to Dive in?",
+  "Welcome {username}, where should we begin?",
+  "Welcome {username}, what's on the agenda today?"
 ]
 
 const shuffleArray = <T,>(array: T[]): T[] => {
