@@ -17,6 +17,8 @@ import { ProfileSettings } from "../utility/profile-settings"
 import { SidebarSwitchItem } from "./sidebar-switch-item"
 import { Button } from "../ui/button"
 import Link from "next/link"
+import { ThemeSwitcher } from "../utility/theme-switcher"
+import { LogoutButton } from "../utility/logout-button"
 
 export const SIDEBAR_ICON_SIZE = 28
 
@@ -96,6 +98,10 @@ export const SidebarSwitcher: FC<SidebarSwitcherProps> = ({
 
         {/* TODO */}
         {/* <Alerts /> */}
+
+        {/* <LogoutButton /> */}
+
+        <ThemeSwitcher />
 
         <WithTooltip
           display={<div>Profile Settings</div>}
