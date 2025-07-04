@@ -12,39 +12,6 @@ export async function middleware(request: NextRequest) {
 
     const session = await supabase.auth.getSession()
 
-    // Role-based access control for protected routes
-    if (session?.data.session?.user) {
-      const pathname = request.nextUrl.pathname
-
-      // Check if accessing protected routes
-      if (pathname.includes('/admin') || pathname.includes('/analytics') || pathname.includes('/tile_insights')) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("roles")
-          .eq("user_id", session.data.session.user.id)
-          .single()
-
-        if (!profile) {
-          return NextResponse.redirect(new URL('/unauthorized', request.url))
-        }
-
-        const userRole = profile.roles
-
-        // Check access permissions
-        if (pathname.includes('/admin')) {
-          if (userRole !== 'admin' && userRole !== 'superadmin') {
-            return NextResponse.redirect(new URL('/unauthorized', request.url))
-          }
-        }
-
-        if (pathname.includes('/analytics') || pathname.includes('/tile_insights')) {
-          if (userRole !== 'superadmin') {
-            return NextResponse.redirect(new URL('/unauthorized', request.url))
-          }
-        }
-      }
-    }
-
     const redirectToChat = session && request.nextUrl.pathname === "/"
 
     if (redirectToChat) {
