@@ -19,11 +19,37 @@ import {
   SelectValue
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
-import { FilterIcon, ArrowLeft } from "lucide-react"
-import { useState } from "react"
+import { FilterIcon, ArrowLeft, XIcon } from "lucide-react"
+import { useState, useContext } from "react"
 import Link from "next/link"
+import { ChatbotUIContext } from "@/context/context"
+
+// Access Control Component
+const AccessDenied = () => (
+  <div className="bg-background flex min-h-screen items-center justify-center p-4">
+    <div className="bg-card w-full max-w-md rounded-md border p-6 text-center">
+      <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+        <XIcon className="size-8 text-red-600 dark:text-red-400" />
+      </div>
+      <h2 className="text-foreground mb-2 text-2xl font-semibold">
+        Access Denied
+      </h2>
+      <p className="text-muted-foreground mb-4">
+        You don&apos;t have permission to access this page. Superadmin access
+        required.
+      </p>
+      <Button
+        onClick={() => window.history.back()}
+        className="bg-[#dc2626] text-white hover:bg-[#dc2626]/90"
+      >
+        Go Back
+      </Button>
+    </div>
+  </div>
+)
 
 export default function TileInsightsPage() {
+  const { profile } = useContext(ChatbotUIContext)
   const [selectedPeriod, setSelectedPeriod] = useState<string>("30")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
@@ -35,6 +61,11 @@ export default function TileInsightsPage() {
     { value: "365", label: "Last year" },
     { value: "all", label: "All time" }
   ]
+
+  // Check if user has superadmin role
+  if (profile && profile.roles !== "superadmin") {
+    return <AccessDenied />
+  }
 
   return (
     <div className="min-h-screen">

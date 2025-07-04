@@ -38,6 +38,30 @@ import NewChat from "@/components/analytics/newChat"
 
 type Role = "user" | "developer" | "admin" | "superadmin"
 
+// Access Control Component
+const AccessDenied = () => (
+  <div className="bg-background flex min-h-screen items-center justify-center p-4">
+    <div className="bg-card w-full max-w-md rounded-md border p-6 text-center">
+      <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+        <XIcon className="size-8 text-red-600 dark:text-red-400" />
+      </div>
+      <h2 className="text-foreground mb-2 text-2xl font-semibold">
+        Access Denied
+      </h2>
+      <p className="text-muted-foreground mb-4">
+        You don&apos;t have permission to access this page. Admin access
+        required.
+      </p>
+      <Button
+        onClick={() => window.history.back()}
+        className="bg-[#dc2626] text-white hover:bg-[#dc2626]/90"
+      >
+        Go Back
+      </Button>
+    </div>
+  </div>
+)
+
 const AdminRolesPage = () => {
   const { profile } = useContext(ChatbotUIContext)
   const [profileList, setProfileList] = useState<TablesUpdate<"profiles">[]>([])
@@ -151,6 +175,11 @@ const AdminRolesPage = () => {
       ...prev,
       [column]: prev[column] === "asc" ? "desc" : "asc"
     }))
+  }
+
+  // Check if user has admin or superadmin role
+  if (profile && profile.roles !== "admin" && profile.roles !== "superadmin") {
+    return <AccessDenied />
   }
 
   return (
