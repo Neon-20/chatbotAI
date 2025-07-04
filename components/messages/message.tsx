@@ -10,7 +10,6 @@ import {
   IconCaretRightFilled,
   IconCircleFilled,
   IconFileText,
-  IconMoodSmile,
   IconPencil
 } from "@tabler/icons-react"
 import Image from "next/image"
@@ -228,18 +227,13 @@ export const Message: FC<MessageProps> = ({
                     }
                   />
                 )
-              ) : profile?.image_url ? (
+              ) : (
                 <Image
                   className={`size-[32px] rounded`}
-                  src={profile?.image_url}
+                  src={profile?.image_url || "/logo.png"}
                   height={32}
                   width={32}
                   alt="user image"
-                />
-              ) : (
-                <IconMoodSmile
-                  className="bg-primary text-secondary border-primary rounded border-DEFAULT p-1"
-                  size={ICON_SIZE}
                 />
               )}
 

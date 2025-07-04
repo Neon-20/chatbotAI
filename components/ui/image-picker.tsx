@@ -10,6 +10,7 @@ interface ImagePickerProps {
   onImageChange: (image: File) => void
   width?: number
   height?: number
+  defaultSrc?: string
 }
 
 const ImagePicker: FC<ImagePickerProps> = ({
@@ -18,7 +19,8 @@ const ImagePicker: FC<ImagePickerProps> = ({
   onSrcChange,
   onImageChange,
   width = 200,
-  height = 200
+  height = 200,
+  defaultSrc = ""
 }) => {
   const [previewSrc, setPreviewSrc] = useState<string>(src)
   const [previewImage, setPreviewImage] = useState<File | null>(image)
@@ -74,13 +76,13 @@ const ImagePicker: FC<ImagePickerProps> = ({
 
   return (
     <div>
-      {previewSrc && (
+      {(previewSrc || defaultSrc) && (
         <Image
           style={{ width: `${width}px`, height: `${width}px` }}
           className="rounded"
           height={width}
           width={width}
-          src={previewSrc}
+          src={previewSrc || defaultSrc}
           alt={"Image"}
         />
       )}

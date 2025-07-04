@@ -18,14 +18,13 @@ import {
   IconCircleXFilled,
   IconFileDownload,
   IconLoader2,
-  IconLogout,
-  IconUser
+  IconLogout
 } from "@tabler/icons-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { FC, useCallback, useContext, useRef, useState } from "react"
 import { toast } from "sonner"
-import { SIDEBAR_ICON_SIZE } from "../sidebar/sidebar-switcher"
+
 import { Button } from "../ui/button"
 import ImagePicker from "../ui/image-picker"
 import { Input } from "../ui/input"
@@ -66,7 +65,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
   const [usernameAvailable, setUsernameAvailable] = useState(true)
   const [loadingUsername, setLoadingUsername] = useState(false)
   const [profileImageSrc, setProfileImageSrc] = useState(
-    profile?.image_url || ""
+    profile?.image_url || "/logo.png"
   )
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
   const [profileInstructions, setProfileInstructions] = useState(
@@ -296,19 +295,13 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        {profile.image_url ? (
-          <Image
-            className="mt-2 size-[34px] cursor-pointer rounded hover:opacity-50"
-            src={profile.image_url + "?" + new Date().getTime()}
-            height={34}
-            width={34}
-            alt={"Image"}
-          />
-        ) : (
-          <Button size="icon" variant="ghost">
-            <IconUser size={SIDEBAR_ICON_SIZE} />
-          </Button>
-        )}
+        <Image
+          className="mt-2 size-[34px] cursor-pointer rounded hover:opacity-50"
+          src={(profile.image_url || "/logo.png") + "?" + new Date().getTime()}
+          height={34}
+          width={34}
+          alt={"Profile Image"}
+        />
       </SheetTrigger>
 
       <SheetContent
@@ -389,6 +382,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                   width={50}
                   onSrcChange={setProfileImageSrc}
                   onImageChange={setProfileImageFile}
+                  defaultSrc="/logo.png"
                 />
               </div>
 
