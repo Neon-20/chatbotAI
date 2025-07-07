@@ -1,4 +1,3 @@
-"use client"
 import {
   CheckCircle,
   Mail,
@@ -6,7 +5,6 @@ import {
   Search,
   Clipboard,
   Lightbulb,
-  ArrowRight,
   Users,
   Zap,
   Eye,
@@ -14,16 +12,9 @@ import {
   Lock
 } from "lucide-react"
 import Logo from "@/components/icons/logo"
+import EnvironmentButton from "@/components/ui/environment-button"
 
 export default function HomePage() {
-  // Get environment-specific button text based on URL
-  const getButtonText = () => {
-    const environmentUrl = process.env.NEXT_PUBLIC_ENVIRONMENT
-    // Check if URL contains 'cloud' (production) or 'dev' (development)
-    const isProduction = environmentUrl?.includes("alterdomus.cloud")
-    return isProduction ? "Get Started with Prod" : "Get Started."
-  }
-
   // Define the feature list with corresponding icons and descriptions
   const features = [
     {
@@ -180,12 +171,7 @@ export default function HomePage() {
               Join the revolution in productivity
             </p>
             <div className="relative flex items-center justify-center">
-              <a href="/login" className="inline-block w-full max-w-xs">
-                <button className="flex w-full items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700">
-                  {getButtonText()}
-                  <ArrowRight className="ml-2 size-4" />
-                </button>
-              </a>
+              <EnvironmentButton />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="80"
