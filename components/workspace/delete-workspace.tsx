@@ -10,11 +10,12 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog"
 import { ChatbotUIContext } from "@/context/context"
-import { deleteWorkspace } from "@/db/workspaces"
+import { deleteWorkspace, getHomeWorkspaceByUserId } from "@/db/workspaces"
 import { Tables } from "@/supabase/types"
 import { FC, useContext, useRef, useState } from "react"
 import { Input } from "../ui/input"
-import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+import { IconLoader2 } from "@tabler/icons-react"
 
 interface DeleteWorkspaceProps {
   workspace: Tables<"workspaces">
@@ -25,36 +26,80 @@ export const DeleteWorkspace: FC<DeleteWorkspaceProps> = ({
   workspace,
   onDelete
 }) => {
-  const { setWorkspaces, setSelectedWorkspace } = useContext(ChatbotUIContext)
+  const { setWorkspaces, setSelectedWorkspace, profile } =
+    useContext(ChatbotUIContext)
   const { handleNewChat } = useChatHandler()
-  const router = useRouter()
 
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const [showWorkspaceDialog, setShowWorkspaceDialog] = useState(false)
-
+  const [isDeleting, setIsDeleting] = useState(false)
   const [name, setName] = useState("")
 
   const handleDeleteWorkspace = async () => {
-    await deleteWorkspace(workspace.id)
+    if (!profile) {
+      toast.error("User profile not found. Please refresh and try again.")
+      return
+    }
 
-    setWorkspaces(prevWorkspaces => {
-      const filteredWorkspaces = prevWorkspaces.filter(
-        w => w.id !== workspace.id
-      )
+    setIsDeleting(true)
 
-      const defaultWorkspace = filteredWorkspaces[0]
+    try {
+      // Step 1: Delete the workspace from database
+      await deleteWorkspace(workspace.id)
 
-      setSelectedWorkspace(defaultWorkspace)
-      router.push(`/${defaultWorkspace.id}/chat`)
+      // Step 2: Get the home workspace ID for the user
+      let homeWorkspaceId: string
+      try {
+        homeWorkspaceId = await getHomeWorkspaceByUserId(profile.user_id)
+      } catch (error) {
+        console.error("Failed to get home workspace:", error)
+        toast.error("Failed to find home workspace. Redirecting to login.")
+        window.location.href = "/login"
+        return
+      }
 
-      return filteredWorkspaces
-    })
+      // Step 3: Update local state
+      setWorkspaces(prevWorkspaces => {
+        const filteredWorkspaces = prevWorkspaces.filter(
+          w => w.id !== workspace.id
+        )
 
-    setShowWorkspaceDialog(false)
-    onDelete()
+        const homeWorkspace = filteredWorkspaces.find(
+          w => w.id === homeWorkspaceId
+        )
 
-    handleNewChat()
+        if (homeWorkspace) {
+          setSelectedWorkspace(homeWorkspace)
+        } else {
+          // Fallback: if home workspace not in local state, we'll still redirect
+          console.warn(
+            "Home workspace not found in local state, but continuing with redirect"
+          )
+        }
+
+        return filteredWorkspaces
+      })
+
+      // Step 4: Clean up UI state
+      setShowWorkspaceDialog(false)
+      onDelete()
+
+      // Step 5: Reset chat state
+      handleNewChat()
+
+      // Step 6: Show success message and redirect
+      toast.success("Workspace deleted successfully")
+
+      // Small delay to ensure state updates complete before navigation
+      setTimeout(() => {
+        window.location.href = `/${homeWorkspaceId}/chat`
+      }, 100)
+    } catch (error) {
+      console.error("Failed to delete workspace:", error)
+      toast.error("Failed to delete workspace. Please try again.")
+      setIsDeleting(false)
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -64,7 +109,15 @@ export const DeleteWorkspace: FC<DeleteWorkspaceProps> = ({
   }
 
   return (
-    <Dialog open={showWorkspaceDialog} onOpenChange={setShowWorkspaceDialog}>
+    <Dialog
+      open={showWorkspaceDialog}
+      onOpenChange={open => {
+        // Prevent closing dialog during deletion
+        if (!isDeleting) {
+          setShowWorkspaceDialog(open)
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button variant="destructive">Delete</Button>
       </DialogTrigger>
@@ -86,7 +139,11 @@ export const DeleteWorkspace: FC<DeleteWorkspaceProps> = ({
         />
 
         <DialogFooter>
-          <Button variant="ghost" onClick={() => setShowWorkspaceDialog(false)}>
+          <Button
+            variant="ghost"
+            onClick={() => setShowWorkspaceDialog(false)}
+            disabled={isDeleting}
+          >
             Cancel
           </Button>
 
@@ -94,9 +151,16 @@ export const DeleteWorkspace: FC<DeleteWorkspaceProps> = ({
             ref={buttonRef}
             variant="destructive"
             onClick={handleDeleteWorkspace}
-            disabled={name !== workspace.name}
+            disabled={name !== workspace.name || isDeleting}
           >
-            Delete
+            {isDeleting ? (
+              <>
+                <IconLoader2 className="mr-2 size-4 animate-spin" />
+                Deleting...
+              </>
+            ) : (
+              "Delete"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
