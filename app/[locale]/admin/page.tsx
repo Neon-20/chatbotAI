@@ -5,6 +5,9 @@ import { TablesUpdate } from "@/supabase/types"
 import { supabase } from "@/lib/supabase/browser-client"
 import { getAllProfiles } from "@/db/profile"
 import { ChatbotUIContext } from "@/context/context"
+import { useRoleBasedAccess } from "@/lib/hooks/use-role-based-access"
+import { AccessDenied } from "@/components/ui/access-denied"
+import { ScreenLoader } from "@/components/ui/screen-loader"
 import { ArrowUpDown, Trash2, XIcon } from "lucide-react"
 import {
   Table,
@@ -54,25 +57,42 @@ const AdminRolesPage = () => {
   const [totalAdmins, setTotalAdmins] = useState(0)
   const [totalUsers, setTotalUsers] = useState(0)
 
+  // Role-based access control
+  const { isAuthorized, isLoading: accessLoading } = useRoleBasedAccess({
+    allowedRoles: ["admin", "superadmin"],
+    showAccessDenied: true
+  })
+
   useEffect(() => {
+    // Only fetch data if user is authorized
+    if (!isAuthorized || accessLoading) {
+      return
+    }
+
     async function fetchProfiles() {
       setLoading(true)
-      let profiles = await getAllProfiles()
-      profiles.forEach(profile => {
-        if (!profile.updated_at) {
-          profile.updated_at = profile.created_at
-        }
-      })
-      setProfileList(profiles)
-      setLoading(false)
-      setTotalSuperAdmins(
-        profiles.filter(user => user.roles === "superadmin").length
-      )
-      setTotalAdmins(profiles.filter(user => user.roles === "admin").length)
-      setTotalUsers(profiles.filter(user => user.roles === "user").length)
+      try {
+        let profiles = await getAllProfiles()
+        profiles.forEach(profile => {
+          if (!profile.updated_at) {
+            profile.updated_at = profile.created_at
+          }
+        })
+        setProfileList(profiles)
+        setTotalSuperAdmins(
+          profiles.filter(user => user.roles === "superadmin").length
+        )
+        setTotalAdmins(profiles.filter(user => user.roles === "admin").length)
+        setTotalUsers(profiles.filter(user => user.roles === "user").length)
+      } catch (error) {
+        console.error("Error fetching profiles:", error)
+        toast.error("Failed to load user profiles")
+      } finally {
+        setLoading(false)
+      }
     }
     fetchProfiles()
-  }, [])
+  }, [isAuthorized, accessLoading])
 
   const filteredProfileList = useMemo(() => {
     const filtered = profileList.filter(
@@ -90,7 +110,7 @@ const AdminRolesPage = () => {
 
   const handleRoleChange = async (username: string, newRole: Role) => {
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("profiles")
         .update({ roles: newRole })
         .eq("username", username)
@@ -112,18 +132,20 @@ const AdminRolesPage = () => {
 
   const handleDeleteUser = async (userId: string | undefined) => {
     try {
-      if (!userId) throw "User ID not found"
+      if (!userId) throw new Error("User ID not found")
 
-      const { data, error } = await supabase
+      const { error: profileError } = await supabase
         .from("profiles")
         .delete()
         .eq("id", userId)
-      const { error: err } = await supabase
+
+      const { error: userError } = await supabase
         .from("users")
         .delete()
         .eq("id", userId)
 
-      if (error) throw error
+      if (profileError) throw profileError
+      if (userError) throw userError
 
       setProfileList(profileList.filter(user => user.id !== userId))
       toast.success("User removed successfully")
@@ -151,6 +173,22 @@ const AdminRolesPage = () => {
       ...prev,
       [column]: prev[column] === "asc" ? "desc" : "asc"
     }))
+  }
+
+  // Show loading screen while checking access
+  if (accessLoading) {
+    return <ScreenLoader />
+  }
+
+  // Show access denied if not authorized
+  if (!isAuthorized) {
+    return (
+      <AccessDenied
+        title="Admin Access Required"
+        message="You need administrator privileges to access this page. Only users with 'admin' or 'superadmin' roles can manage user roles and permissions."
+        backUrl="/"
+      />
+    )
   }
 
   return (

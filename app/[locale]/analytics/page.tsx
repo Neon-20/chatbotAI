@@ -21,6 +21,9 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
+import { useRoleBasedAccess } from "@/lib/hooks/use-role-based-access"
+import { AccessDenied } from "@/components/ui/access-denied"
+import { ScreenLoader } from "@/components/ui/screen-loader"
 import { cn } from "@/lib/utils"
 import { FilterIcon, BarChart3 } from "lucide-react"
 import { useState } from "react"
@@ -29,6 +32,12 @@ import Link from "next/link"
 export default function Page() {
   const [selectedMonth, setSelectedMonth] = useState<string | undefined>()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  // Role-based access control - only superadmin can access analytics
+  const { isAuthorized, isLoading: accessLoading } = useRoleBasedAccess({
+    allowedRoles: ["superadmin"],
+    showAccessDenied: true
+  })
 
   const getCurrentMonths = () => {
     const currentDate = new Date()
@@ -56,6 +65,22 @@ export default function Page() {
   }
 
   const months = getCurrentMonths()
+
+  // Show loading screen while checking access
+  if (accessLoading) {
+    return <ScreenLoader />
+  }
+
+  // Show access denied if not authorized
+  if (!isAuthorized) {
+    return (
+      <AccessDenied
+        title="Superadmin Access Required"
+        message="You need superadmin privileges to access the Analytics dashboard. This feature is restricted to users with 'superadmin' role only."
+        backUrl="/"
+      />
+    )
+  }
 
   return (
     <div className="min-h-screen">

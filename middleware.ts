@@ -12,6 +12,49 @@ export async function middleware(request: NextRequest) {
 
     const session = await supabase.auth.getSession()
 
+    // Check for protected admin routes - use exact path matching to prevent bypass
+    const pathname = request.nextUrl.pathname
+    const pathSegments = pathname.split('/').filter(Boolean)
+
+    // More secure route matching - check for exact path segments
+    const isAdminRoute = pathSegments.includes('admin')
+    const isAnalyticsRoute = pathSegments.includes('analytics')
+    const isTileInsightsRoute = pathSegments.includes('tile_insights')
+
+    // If accessing protected routes, check authentication and authorization
+    if (isAdminRoute || isAnalyticsRoute || isTileInsightsRoute) {
+      // Redirect to login if not authenticated
+      if (!session.data.session) {
+        return NextResponse.redirect(new URL('/login', request.url))
+      }
+
+      // Get user profile to check role
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("roles")
+        .eq("user_id", session.data.session.user.id)
+        .single()
+
+      if (profileError || !profile || !profile.roles) {
+        // Log error for debugging but don't expose details to user
+        console.error('Profile fetch error in middleware:', profileError?.message)
+        return NextResponse.redirect(new URL('/access-denied', request.url))
+      }
+
+      // Check role-based access
+      if (isAdminRoute) {
+        // Admin route: requires admin or superadmin role
+        if (!['admin', 'superadmin'].includes(profile.roles)) {
+          return NextResponse.redirect(new URL('/access-denied', request.url))
+        }
+      } else if (isAnalyticsRoute || isTileInsightsRoute) {
+        // Analytics and tile insights routes: requires superadmin role only
+        if (profile.roles !== 'superadmin') {
+          return NextResponse.redirect(new URL('/access-denied', request.url))
+        }
+      }
+    }
+
     const redirectToChat = session && request.nextUrl.pathname === "/"
 
     if (redirectToChat) {
