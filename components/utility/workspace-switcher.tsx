@@ -53,6 +53,21 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({}) => {
   const handleCreateWorkspace = async () => {
     if (!selectedWorkspace) return
 
+    // Generate numbered workspace name
+    const existingWorkspaces = workspaces.filter(
+      w => w.name.startsWith("New Workspace") && !w.is_home
+    )
+
+    let workspaceName = "New Workspace 1"
+    if (existingWorkspaces.length > 0) {
+      const numbers = existingWorkspaces.map(w => {
+        const match = w.name.match(/New Workspace( (\d+))?/)
+        return match && match[2] ? parseInt(match[2]) : 1
+      })
+      const maxNumber = Math.max(...numbers)
+      workspaceName = `New Workspace ${maxNumber + 1}`
+    }
+
     const createdWorkspace = await createWorkspace({
       user_id: selectedWorkspace.user_id,
       default_context_length: selectedWorkspace.default_context_length,
@@ -66,7 +81,7 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({}) => {
         selectedWorkspace.include_workspace_instructions,
       instructions: selectedWorkspace.instructions,
       is_home: false,
-      name: "New Workspace"
+      name: workspaceName
     })
 
     setWorkspaces([...workspaces, createdWorkspace])
