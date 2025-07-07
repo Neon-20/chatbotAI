@@ -1,0 +1,145 @@
+# Default values for app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 0
+
+image:
+  repository: ""
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 2000
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 2001
+  readOnlyRootFilesystem: false
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  type: ClusterIP
+  port: 3000
+  containerPort: 3000
+
+volumes:
+  enabled: false
+#   values:
+#     - name: example-backend-files-prd
+#       mountPath: /opt/app/public/uploads
+#     - name: example-backend-cache-prd
+#       mountPath: /tmp
+
+
+environment:
+  enabled: true
+  values:
+    AUTH_PROVIDER: azure
+    AZURE_OPENAI_ENDPOINT: https://csweden-prd-automation-ai-01.openai.azure.com/
+    AZURE_GPT_35_TURBO_NAME: sweden-gpt-4o-mini
+    AZURE_GPT_45_TURBO_NAME: sweden-gpt-4o-mini
+    AZURE_GPT_45_VISION_NAME: sweden-gpt-4o-mini
+    AZURE_GPT_4o_NAME: sweden-gpt40-1
+    AZURE_GPT_4o_MINI_NAME: sweden-gpt-4o-mini
+    AZURE_o1_PREVIEW_NAME: sweden-o1-preview
+    AZURE_o1_MINI_NAME: o1-mini
+    AZURE_EMBEDDINGS_NAME: text-embedding-ada-002
+    AZURE_OPENAI_EUROPE_ENDPOINT: https://placeholder.openai.azure.com/
+    AZURE_GPT_4o_EUROPE_NAME: sweden-gpt40-1
+    AZURE_GPT_4o_MINI_EUROPE_NAME: gpt-4o-mini
+    NEXT_PUBLIC_SUPABASE_URL: "https://supabase.internal.alterdomus.cloud"
+    NEXT_PUBLIC_USER_FILE_SIZE_LIMIT: 504857600
+    NEXT_PUBLIC_OLLAMA_URL: ""
+    NEXT_PUBLIC_ENVIRONMENT: "https://chat.internal.alterdomus.cloud"
+
+
+secrets:
+  enabled: true
+  managedIdentity:
+    resourceId: /subscriptions/2a62fac8-01c9-4b6e-8069-04fba82a7ca8/resourceGroups/rg-weu-prd-automation-ai-01/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mi-weu-prd-automation-ai-01
+    clientId: e4b9325b-8e5c-4b6d-9edc-880f6d7ba355
+    tenantId: 9c21c241-22b5-40e4-8af2-c7b7b6c127dc
+  keyvaultName: kv-weu-prd-automat-ai-01
+  prefix: prd
+  values:
+    # key: version in keyvault or empty quotes for latest
+    # AZURE_AD_CLIENT_SECRET: ""
+    # AUTH_SECRET: ""
+    AZURE_OPENAI_SWEDEN_API_KEY: ""
+    AZURE_OPENAI_EUROPE_API_KEY: ""
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: ""
+    SUPABASE_SERVICE_ROLE_KEY: ""
+    NEXT_PUBLIC_APPLICATIONINSIGHTS_CONNECTION_STRING: ""
+    NEXT_PUBLIC_APPLICATIONINSIGHTS_INSTRUMENTATION: ""
+
+ingress:
+  enabled: false
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Frame-Options: DENY";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-XSS-Protection: 1; mode=block";
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
+    cert-manager.io/cluster-issuer: letsencrypt-prd
+  tls:
+    - hosts:
+        - chat.internal.alterdomus.cloud
+      secretName: chat-v2-prd-tls-secret
+  hosts:
+    - host: chat.internal.alterdomus.cloud
+      paths:
+        - path: /
+          pathType: Prefix
+
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 800m
+    memory: 1000Mi
+  requests:
+    cpu: 400m
+    memory: 1000Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations:
+  - key: "env"
+    operator: "Equal"
+    value: "prd"
+    effect: "NoSchedule"
+
+affinity: {}
