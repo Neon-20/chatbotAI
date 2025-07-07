@@ -79,7 +79,7 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({}) => {
       include_profile_context: selectedWorkspace.include_profile_context,
       include_workspace_instructions:
         selectedWorkspace.include_workspace_instructions,
-      instructions: selectedWorkspace.instructions,
+      instructions: "",
       is_home: false,
       name: workspaceName
     })
