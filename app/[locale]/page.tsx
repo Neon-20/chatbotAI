@@ -11,7 +11,9 @@ import {
   Zap,
   Eye,
   Smile,
-  Lock
+  Lock,
+  ArrowRightCircle,
+  ArrowRightLeft
 } from "lucide-react"
 import Logo from "@/components/icons/logo"
 
@@ -171,11 +173,21 @@ export default function HomePage() {
             <p className="mb-2 text-xs font-semibold text-red-600 sm:text-sm">
               Join the revolution in productivity
             </p>
-            <div className="relative flex items-center justify-center">
-              <a href="/login" className="inline-block w-full max-w-xs">
+            <div className="relative flex flex-col items-center justify-center space-y-2">
+              <a
+                href="https://chat.internal.alterdomus.cloud"
+                className="inline-block w-full max-w-xs"
+                target="_blank"
+              >
                 <button className="flex w-full items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700">
-                  Get Started
+                  Access Newly Launched DomusAI
                   <ArrowRight className="ml-2 size-4" />
+                </button>
+              </a>
+              <a href="/login" className="inline-block w-full max-w-xs">
+                <button className="flex w-full items-center justify-center rounded-lg border border-red-600 bg-white px-4 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50">
+                  Use Dev for Migrating (30 days)
+                  <ArrowRightLeft className="ml-4 size-4" />
                 </button>
               </a>
               <svg
