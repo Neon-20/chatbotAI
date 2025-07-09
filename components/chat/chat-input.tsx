@@ -34,6 +34,7 @@ import SuggestionCarousel from "./suggestion-carousel"
 import { getAppInsights } from "@/lib/appInsights"
 import TermsAndConditions from "../legal/terms-and-conditions"
 import PrivacyPolicy from "../legal/privacy-policy"
+import UserManual from "../legal/user-manual"
 import {
   Tooltip,
   TooltipContent,
@@ -366,7 +367,8 @@ const ChatInputComponent: FC<ChatInputProps> = ({}) => {
           "AID is an open-source tool brought by the Alter Domus Automation Team and adapted by the Cloud Platform Engineering Team."
         )}{" "}
         <p className="flex">
-          Refer <TermsAndConditions /> and <PrivacyPolicy /> for more details.
+          Refer <TermsAndConditions /> , <PrivacyPolicy /> and <UserManual />{" "}
+          for more details.
         </p>
       </div>
     </>

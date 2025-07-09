@@ -245,14 +245,22 @@ export default function HomePage() {
               </svg>
             </div>
             <p className="mt-2 text-xs text-gray-600">
-              Need Help? Contact our{" "}
+              Need Help? Create a{" "}
               <a
-                href="mailto:ai@alterdomus.com?subject=domusAI%20Support"
+                href="https://nttds.service-now.com/adoportal?id=sc_cat_item&sys_id=8496046b1b9f3810270b0e55624bcb73"
+                target="_blank"
                 className="font-medium text-red-600 underline hover:text-red-700"
               >
-                Team
+                ticket
               </a>{" "}
-              for assistance.
+              or{" "}
+              <a
+                href="mailto:ai@alterdomus.com?subject=domusAI%20Support"
+                target="_blank"
+                className="font-medium text-red-600 underline hover:text-red-700"
+              >
+                contact us
+              </a>
             </p>
           </div>
         </div>
