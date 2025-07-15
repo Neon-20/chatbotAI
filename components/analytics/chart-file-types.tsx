@@ -32,7 +32,7 @@ type ProcessedFileTypeData = Array<{
 
 // Enhanced color palette for better visual distinction
 const FILE_TYPE_COLORS = [
-  "#dc2626", // Primary red
+  "#0ea5e9", // Sky blue (changed from red)
   "#e84e0f", // AlterDomus orange
   "#004851", // AlterDomus teal
   "#ffb81c", // AlterDomus gold
@@ -45,7 +45,7 @@ const FILE_TYPE_COLORS = [
   "#0d9488", // Teal
   "#ca8a04", // Yellow
   "#9333ea", // Violet
-  "#dc2626", // Red variant
+  "#0ea5e9", // Sky blue variant (changed from red)
   "#16a34a" // Green variant
 ]
 
