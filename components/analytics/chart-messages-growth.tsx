@@ -17,6 +17,35 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { getMessages } from "@/db/client_admin"
 import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
+import { Separator } from "@/components/ui/separator"
+
+// Custom Legend Component with Separator
+const CustomLegend = ({ payload }: any) => {
+  if (!payload || payload.length === 0) return null
+
+  return (
+    <div className="flex items-center justify-center gap-4 pt-3">
+      {payload.map((entry: any, index: number) => (
+        <div key={index} className="flex items-center gap-4">
+          <div className="flex items-center gap-1.5">
+            <div
+              className="size-2 shrink-0 rounded-[2px]"
+              style={{ backgroundColor: entry.color }}
+            />
+            <span className="text-muted-foreground text-sm">
+              {entry.dataKey === "total_messages"
+                ? "Total Messages"
+                : "Growth Rate"}
+            </span>
+          </div>
+          {index < payload.length - 1 && (
+            <Separator orientation="vertical" className="h-4" />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
 
 export function ChartMessagesGrowth({
   selectedMonth
@@ -99,7 +128,7 @@ export function ChartMessagesGrowth({
                 stroke="var(--ad-gold)"
                 tick={{ fontSize: 12 }}
               />
-              <Legend />
+              <Legend content={<CustomLegend />} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: "var(--ad-white)",
@@ -107,7 +136,7 @@ export function ChartMessagesGrowth({
                 }}
                 formatter={(value, name) => [
                   name === "total_messages"
-                    ? `${value.toLocaleString()} messages`
+                    ? `${value.toLocaleString()}`
                     : `${value}%`,
                   name === "total_messages" ? "Total Messages" : "Growth Rate"
                 ]}
@@ -171,7 +200,7 @@ export function ChartMessagesGrowth({
                   stroke="var(--ad-gold)"
                   tick={{ fontSize: 12 }}
                 />
-                <Legend />
+                <Legend content={<CustomLegend />} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "var(--ad-white)",
@@ -179,7 +208,7 @@ export function ChartMessagesGrowth({
                   }}
                   formatter={(value, name) => [
                     name === "total_messages"
-                      ? `${value.toLocaleString()} messages`
+                      ? `${value.toLocaleString()}`
                       : `${value}%`,
                     name === "total_messages" ? "Total Messages" : "Growth Rate"
                   ]}
