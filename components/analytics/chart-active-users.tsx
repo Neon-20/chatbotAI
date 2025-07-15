@@ -13,7 +13,8 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Line
+  Line,
+  Legend
 } from "recharts"
 import { useEffect, useState, useContext } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
@@ -22,7 +23,25 @@ import { ChartLoadingSkeleton } from "./chart-loading-skeleton"
 import { ChatbotUIContext } from "@/context/context"
 import { redirect } from "next/navigation"
 
-type ActiveUsersData = Array<{ month: string; active_users: number }>
+type ActiveUsersData = Array<{
+  month: string
+  active_users: number
+  growth: number
+}>
+
+// Custom legend component
+const CustomLegend = () => (
+  <div className="flex justify-center gap-6 pb-4">
+    <div className="flex items-center gap-2">
+      <div className="size-3 rounded-full bg-[var(--ad-orange)]"></div>
+      <span className="text-sm text-gray-600">Active Users</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <div className="size-3 rounded-full bg-[var(--ad-gold)]"></div>
+      <span className="text-sm text-gray-600">Growth Rate</span>
+    </div>
+  </div>
+)
 
 export function ChartActiveUsers({
   selectedMonth
@@ -65,12 +84,75 @@ export function ChartActiveUsers({
         <CardHeader>
           <h3 className="mb-2 text-lg font-medium">Monthly Active Users</h3>
           <p className="mb-6 text-sm text-gray-500">
-            Growth in active users over time
+            Total active users and month-over-month growth
           </p>
         </CardHeader>
         {/* Trigger dialog on click */}
         <CardContent className="grow" onClick={() => setIsOpen(true)}>
-          <ActiveUsersChart data={chartData} />
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart
+              data={chartData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="var(--ad-gray-200)"
+              />
+              <XAxis
+                dataKey="month"
+                stroke="var(--ad-gray-600)"
+                tick={{ fontSize: 12 }}
+              />
+              <YAxis
+                yAxisId="left"
+                stroke="var(--ad-orange)"
+                tick={{ fontSize: 12 }}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                stroke="var(--ad-gold)"
+                tick={{ fontSize: 12 }}
+              />
+              <Legend content={<CustomLegend />} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "var(--ad-white)",
+                  borderColor: "var(--ad-gray-300)"
+                }}
+                formatter={(value, name) => [
+                  name === "active_users"
+                    ? `${value.toLocaleString()} users`
+                    : `${value}%`,
+                  name === "active_users" ? "Active Users" : "Growth Rate"
+                ]}
+              />
+              <Line
+                yAxisId="left"
+                type="monotone"
+                dataKey="active_users"
+                stroke="var(--ad-orange)"
+                strokeWidth={3}
+                dot={{
+                  fill: "var(--ad-orange)",
+                  strokeWidth: 2,
+                  r: 4
+                }}
+              />
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="growth"
+                stroke="var(--ad-gold)"
+                strokeWidth={2}
+                dot={{
+                  fill: "var(--ad-gold)",
+                  strokeWidth: 2,
+                  r: 4
+                }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </CardContent>
       </Card>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -78,7 +160,7 @@ export function ChartActiveUsers({
           <DialogHeader>
             <h3 className="mb-2 text-lg font-medium">Monthly Active Users</h3>
             <p className="mb-6 text-sm text-gray-500">
-              Growth in active users over time
+              Total active users and month-over-month growth
             </p>
           </DialogHeader>
           <div className="size-full">
@@ -96,22 +178,53 @@ export function ChartActiveUsers({
                   stroke="var(--ad-gray-600)"
                   tick={{ fontSize: 12 }}
                 />
-                <YAxis stroke="var(--ad-gray-600)" tick={{ fontSize: 12 }} />
+                <YAxis
+                  yAxisId="left"
+                  stroke="var(--ad-orange)"
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  stroke="var(--ad-gold)"
+                  tick={{ fontSize: 12 }}
+                />
+                <Legend content={<CustomLegend />} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "var(--ad-white)",
                     borderColor: "var(--ad-gray-300)"
                   }}
-                  formatter={(value: number) => [
-                    `${value} users`,
-                    "Active Users"
+                  formatter={(value, name) => [
+                    name === "active_users"
+                      ? `${value.toLocaleString()} users`
+                      : `${value}%`,
+                    name === "active_users" ? "Active Users" : "Growth Rate"
                   ]}
                 />
                 <Line
+                  yAxisId="left"
                   type="monotone"
                   dataKey="active_users"
                   stroke="var(--ad-orange)"
+                  strokeWidth={3}
+                  dot={{
+                    fill: "var(--ad-orange)",
+                    strokeWidth: 2,
+                    r: 4
+                  }}
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="growth"
+                  stroke="var(--ad-gold)"
                   strokeWidth={2}
+                  dot={{
+                    fill: "var(--ad-gold)",
+                    strokeWidth: 2,
+                    r: 4
+                  }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -119,42 +232,5 @@ export function ChartActiveUsers({
         </DialogContent>
       </Dialog>
     </>
-  )
-}
-
-// Client component for rendering the chart
-export function ActiveUsersChart({
-  data
-}: {
-  data: Array<{ month: string; active_users: number }>
-}) {
-  return (
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart
-        data={data}
-        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--ad-gray-200)" />
-        <XAxis
-          dataKey="month"
-          stroke="var(--ad-gray-600)"
-          tick={{ fontSize: 12 }}
-        />
-        <YAxis stroke="var(--ad-gray-600)" tick={{ fontSize: 12 }} />
-        <Tooltip
-          contentStyle={{
-            backgroundColor: "var(--ad-white)",
-            borderColor: "var(--ad-gray-300)"
-          }}
-          formatter={(value: number) => [`${value} users`, "Active Users"]}
-        />
-        <Line
-          type="monotone"
-          dataKey="active_users"
-          stroke="var(--ad-orange)"
-          strokeWidth={2}
-        />
-      </LineChart>
-    </ResponsiveContainer>
   )
 }

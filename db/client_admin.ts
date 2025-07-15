@@ -173,10 +173,22 @@ export async function getYearMessages(selectedMonth?: string) {
       dailyMap[day].add(msg.user_id)
     })
 
-    const chartActiveUsersData = Object.entries(dailyMap)
-      .map(([day, users]) => ({ month: day, active_users: users.size }))
-      .sort((a, b) => (a.month > b.month ? 1 : -1))
-    return chartActiveUsersData
+    const sortedDays = Object.keys(dailyMap).sort()
+    const dailyData = sortedDays.map(day => ({
+      day,
+      active_users: dailyMap[day].size
+    }))
+
+    const computedData = dailyData.map((item, index) => {
+      if (index === 0) return { ...item, growth: 0, month: item.day }
+      const previous = dailyData[index - 1].active_users
+      const growth =
+        previous > 0
+          ? Math.round(((item.active_users - previous) / previous) * 100)
+          : 0
+      return { ...item, growth, month: item.day } // Include month field for compatibility
+    })
+    return computedData
   }
   // Otherwise, group by month as before
   else {
@@ -189,10 +201,23 @@ export async function getYearMessages(selectedMonth?: string) {
       }
       monthMap[month].add(msg.user_id)
     })
-    const chartActiveUsersData = Object.entries(monthMap)
-      .map(([month, users]) => ({ month, active_users: users.size }))
-      .sort((a, b) => (a.month > b.month ? 1 : -1))
-    return chartActiveUsersData
+
+    const sortedMonths = Object.keys(monthMap).sort()
+    const monthlyData = sortedMonths.map(month => ({
+      month,
+      active_users: monthMap[month].size
+    }))
+
+    const computedData = monthlyData.map((item, index) => {
+      if (index === 0) return { ...item, growth: 0 }
+      const previous = monthlyData[index - 1].active_users
+      const growth =
+        previous > 0
+          ? Math.round(((item.active_users - previous) / previous) * 100)
+          : 0
+      return { ...item, growth }
+    })
+    return computedData
   }
 }
 
