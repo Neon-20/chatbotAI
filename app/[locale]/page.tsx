@@ -245,7 +245,24 @@ export default function HomePage() {
               </svg>
             </div>
             <p className="mt-2 text-xs text-gray-600">
-              Need Help? Create a{" "}
+              Need Help? Refer the{" "}
+              <a
+                href="https://alterdomusgroup.sharepoint.com/sites/Automation/SiteAssets/Forms/AllItems.aspx?id=%2Fsites%2FAutomation%2FSiteAssets%2FSitePages%2F1e7f1673%2Dc0f5%2D459d%2D9ec5%2D803f74de9bc7%2FUserManual%5FDomusAI%5FVersion1%2E0%2Epdf&parent=%2Fsites%2FAutomation%2FSiteAssets%2FSitePages%2F1e7f1673%2Dc0f5%2D459d%2D9ec5%2D803f74de9bc7"
+                target="_blank"
+                className="font-medium text-red-600 underline hover:text-red-700"
+              >
+                User Manual
+              </a>{" "}
+              and our{" "}
+              <a
+                href="https://alterdomusgroup.sharepoint.com/sites/Automation/SitePages/domusAI---Your-personal-AI-driven-assistant.aspx"
+                target="_blank"
+                className="font-medium text-red-600 underline hover:text-red-700"
+              >
+                Information Hub
+              </a>
+              <br />
+              Create a{" "}
               <a
                 href="https://nttds.service-now.com/adoportal?id=sc_cat_item&sys_id=8496046b1b9f3810270b0e55624bcb73"
                 target="_blank"
@@ -255,12 +272,13 @@ export default function HomePage() {
               </a>{" "}
               or{" "}
               <a
-                href="mailto:ai@alterdomus.com?subject=domusAI%20Support"
+                href="mailto:ai@alterdomus.com"
                 target="_blank"
                 className="font-medium text-red-600 underline hover:text-red-700"
               >
-                contact us
-              </a>
+                contact
+              </a>{" "}
+              us for support
             </p>
           </div>
         </div>

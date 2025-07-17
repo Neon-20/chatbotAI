@@ -32,9 +32,6 @@ import { usePromptAndCommand } from "./chat-hooks/use-prompt-and-command"
 import { useSelectFileHandler } from "./chat-hooks/use-select-file-handler"
 import SuggestionCarousel from "./suggestion-carousel"
 import { getAppInsights } from "@/lib/appInsights"
-import TermsAndConditions from "../legal/terms-and-conditions"
-import PrivacyPolicy from "../legal/privacy-policy"
-import UserManual from "../legal/user-manual"
 import {
   Tooltip,
   TooltipContent,
@@ -366,9 +363,40 @@ const ChatInputComponent: FC<ChatInputProps> = ({}) => {
         {t(
           "AID is an open-source tool brought by the Alter Domus Automation Team and adapted by the Cloud Platform Engineering Team."
         )}{" "}
-        <p className="flex">
-          Refer <TermsAndConditions /> , <PrivacyPolicy /> and <UserManual />{" "}
-          for more details.
+        <p className="text-center">
+          Need Help? Refer the{" "}
+          <a
+            href="https://alterdomusgroup.sharepoint.com/sites/Automation/SiteAssets/Forms/AllItems.aspx?id=%2Fsites%2FAutomation%2FSiteAssets%2FSitePages%2F1e7f1673%2Dc0f5%2D459d%2D9ec5%2D803f74de9bc7%2FUserManual%5FDomusAI%5FVersion1%2E0%2Epdf&parent=%2Fsites%2FAutomation%2FSiteAssets%2FSitePages%2F1e7f1673%2Dc0f5%2D459d%2D9ec5%2D803f74de9bc7"
+            target="_blank"
+            className="font-medium text-red-600 underline hover:text-red-700"
+          >
+            User Manual
+          </a>{" "}
+          and our{" "}
+          <a
+            href="https://alterdomusgroup.sharepoint.com/sites/Automation/SitePages/domusAI---Your-personal-AI-driven-assistant.aspx"
+            target="_blank"
+            className="font-medium text-red-600 underline hover:text-red-700"
+          >
+            Information Hub
+          </a>
+          , create a{" "}
+          <a
+            href="https://nttds.service-now.com/adoportal?id=sc_cat_item&sys_id=8496046b1b9f3810270b0e55624bcb73"
+            target="_blank"
+            className="font-medium text-red-600 underline hover:text-red-700"
+          >
+            ticket
+          </a>{" "}
+          or{" "}
+          <a
+            href="mailto:ai@alterdomus.com"
+            target="_blank"
+            className="font-medium text-red-600 underline hover:text-red-700"
+          >
+            contact
+          </a>{" "}
+          us for support.
         </p>
       </div>
     </>
