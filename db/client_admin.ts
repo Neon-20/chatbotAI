@@ -364,6 +364,80 @@ export async function getCumulativeData(selectedMonth?: string) {
   }
 }
 
+export async function getTotalUsers(selectedMonth?: string) {
+  let query = supabase.from("profiles").select("created_at")
+  if (selectedMonth && selectedMonth !== "all") {
+    const { start, end } = getMonthRange(selectedMonth)
+    query = query.gte("created_at", start).lt("created_at", end)
+  } else {
+    const oneYearAgo = new Date()
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1)
+    query = query.gte("created_at", oneYearAgo.toISOString())
+  }
+  const { data: profiles, error } = await query
+  if (error) {
+    console.error("Error fetching profiles:", error.message)
+    return []
+  }
+
+  // If a specific month is selected, show day-by-day data
+  if (selectedMonth && selectedMonth !== "all") {
+    const dailyMap: Record<string, number> = {}
+    profiles?.forEach((profile: { created_at: string }) => {
+      const date = new Date(profile.created_at)
+      const day = `${date.getFullYear()}-${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`
+      dailyMap[day] = (dailyMap[day] || 0) + 1
+    })
+
+    const sortedDays = Object.keys(dailyMap).sort()
+    let cumulative = 0
+    const dailyData = sortedDays.map(day => {
+      cumulative += dailyMap[day]
+      return { day, total_users: cumulative }
+    })
+
+    const computedData = dailyData.map((item, index) => {
+      if (index === 0) return { ...item, growth: 0, month: item.day }
+      const previous = dailyData[index - 1].total_users
+      const growth =
+        previous > 0
+          ? Math.round(((item.total_users - previous) / previous) * 100)
+          : 0
+      return { ...item, growth, month: item.day }
+    })
+    return computedData
+  }
+  // Otherwise, group by month as before
+  else {
+    const monthMap: Record<string, number> = {}
+    profiles?.forEach((profile: { created_at: string }) => {
+      const date = new Date(profile.created_at)
+      const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`
+      monthMap[month] = (monthMap[month] || 0) + 1
+    })
+
+    const sortedMonths = Object.keys(monthMap).sort()
+    let cumulative = 0
+    const monthlyData = sortedMonths.map(month => {
+      cumulative += monthMap[month]
+      return { month, total_users: cumulative }
+    })
+
+    const computedData = monthlyData.map((item, index) => {
+      if (index === 0) return { ...item, growth: 0 }
+      const previous = monthlyData[index - 1].total_users
+      const growth =
+        previous > 0
+          ? Math.round(((item.total_users - previous) / previous) * 100)
+          : 0
+      return { ...item, growth }
+    })
+    return computedData
+  }
+}
+
 export async function getTopUsers(selectedMonth?: string) {
   let query = supabase.from("messages").select("user_id, created_at")
   if (selectedMonth && selectedMonth !== "all") {

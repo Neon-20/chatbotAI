@@ -1,9 +1,8 @@
 "use client"
 import { ChartActiveUsers } from "@/components/analytics/chart-active-users"
-import { ChartAreaCumulative } from "@/components/analytics/chart-area-cumulative"
 import { ChartFileTypes } from "@/components/analytics/chart-file-types"
 import { ChartMessagesGrowth } from "@/components/analytics/chart-messages-growth"
-import { ChartPieTopUsers } from "@/components/analytics/chart-pie-top-users"
+import { ChartTotalUsers } from "@/components/analytics/chart-total-users"
 import { KeyMetrics } from "@/components/analytics/key-metrics"
 import NewChat from "@/components/analytics/newChat"
 import { Button } from "@/components/ui/button"
@@ -194,10 +193,9 @@ export default function Page() {
           <ChartMessagesGrowth selectedMonth={selectedMonth} />
           <ChartActiveUsers selectedMonth={selectedMonth} />
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           <ChartFileTypes selectedMonth={selectedMonth} />
-          <ChartAreaCumulative selectedMonth={selectedMonth} />
-          <ChartPieTopUsers selectedMonth={selectedMonth} />
+          <ChartTotalUsers selectedMonth={selectedMonth} />
         </div>
       </main>
       <footer className="mt-4 flex items-center justify-center border-t border-black py-2 text-[11px] text-black">
