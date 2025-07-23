@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DomusAI - Empower Your Productivity | Alter Domus</title>
+    <style>
+        /* ————————————————————————————————
+           DOMUSAI DESIGN SYSTEM
+           ———————————————————————————————— */
+        :root {
+            --primary-red: #E64E20;
+            --primary-red-hover: #C6431A;
+            --primary-red-light: #FFE8E4;
+            --text-dark: #2a2b2a;
+            --text-gray: #666666;
+            --text-light: #999999;
+            --bg-white: #ffffff;
+            --bg-light: #f8f8f8;
+            --bg-lighter: #fafafa;
+            --border-light: #e5e5e5;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-white);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 56px;
+            line-height: 1.1;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: 42px;
+            line-height: 1.2;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        h3 {
+            font-size: 32px;
+            line-height: 1.3;
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 24px;
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--text-gray);
+        }
+
+        .large-text {
+            font-size: 20px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1200px) {
+            .testimonials-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 42px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 24px; }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 72px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 12px;
+        }
+
+        .logo svg {
+            height: 40px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 36px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-red);
+        }
+
+        .nav-cta {
+            background: var(--primary-red);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-cta:hover {
+            background: var(--primary-red-hover) !important;
+            color: white !important;
+            transform: translateY(-1px);
+            /* box-shadow: 0 4px 12px rgba(230, 78, 32, 0.25); */
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 0 80px;
+            background: var(--bg-white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            width: 1000px;
+            height: 1000px;
+            transform: translateX(-50%);
+            background: radial-gradient(circle, var(--primary-red-light) 0%, transparent 70%);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-logo {
+            width: 160px;
+            height: 100px;
+            margin: 0 auto 40px;
+            display: block;
+        }
+
+        .hero h1 {
+            margin-bottom: 24px;
+            color: var(--text-dark);
+        }
+
+        .hero h1 span {
+            color: var(--primary-red);
+        }
+
+        .hero-subtitle {
+            font-size: 24px;
+            color: var(--text-gray);
+            margin-bottom: 48px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 36px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-red-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(230, 78, 32, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-red);
+            border: 2px solid var(--primary-red);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-red);
+            color: white;
+        }
+
+        .btn-text {
+            background: transparent;
+            color: var(--primary-red);
+            padding: 0;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .btn-text:hover {
+            text-decoration: underline;
+        }
+
+        /* Intro Video Section */
+        .video-section {
+            padding: 100px 0;
+            background: var(--bg-light);
+        }
+
+        .video-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: var(--radius-xl);
+        }
+
+        /* AI Agents Grid */
+        .quick-actions {
+            padding: 100px 0 80px;
+            background: var(--bg-white);
+            overflow: visible;
+        }
+
+        .actions-intro {
+            background: var(--primary-red-light);
+            border-radius: var(--radius-lg);
+            padding: 60px;
+            text-align: center;
+            margin-bottom: 60px;
+            overflow: visible;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            max-width: 900px;
+            margin: 0 auto;
+            overflow: visible;
+            padding: 20px 0;
+        }
+
+        .action-card-wrapper {
+            position: relative;
+        }
+
+        .action-card-wrapper.fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .action-card {
+            background: var(--primary-red);
+            color: white;
+            padding: 24px 28px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+
+        .action-card:hover {
+            background: var(--primary-red-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .action-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-dark);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.4;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 10;
+            width: 220px;
+            text-align: center;
+            pointer-events: none;
+            white-space: normal;
+        }
+
+        .action-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--text-dark);
+        }
+
+        .action-card-wrapper:hover .action-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .action-icon {
+            font-size: 24px;
+            width: 32px;
+            text-align: center;
+        }
+
+        .action-text {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: var(--bg-light);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: var(--bg-white);
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-red-light);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--primary-red-light);
+            color: var(--primary-red);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: var(--primary-red);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .feature-card h4 {
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .feature-card p {
+            line-height: 1.7;
+        }
+
+        /* Technology Section */
+        .technology {
+            padding: 100px 0;
+            background: var(--bg-white);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tech-category {
+            background: var(--bg-light);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+        }
+
+        .tech-category h4 {
+            color: var(--text-dark);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tech-category h4::before {
+            content: attr(data-icon);
+            width: 40px;
+            height: 40px;
+            background: var(--primary-red-light);
+            color: var(--primary-red);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .tech-list {
+            list-style: none;
+        }
+
+        .tech-list li {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tech-list li:last-child {
+            border-bottom: none;
+        }
+
+        .tech-badge {
+            background: var(--primary-red-light);
+            color: var(--primary-red);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Architecture Section */
+        .architecture {
+            padding: 100px 0;
+            background: var(--bg-light);
+        }
+
+        .architecture-layers {
+            max-width: 900px;
+            margin: 60px auto 0;
+        }
+
+        .layer-card {
+            background: var(--bg-white);
+            padding: 32px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-red);
+            transition: all 0.3s ease;
+        }
+
+        .layer-card:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow);
+        }
+
+        .layer-card h4 {
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .layer-card h4::before {
+            content: attr(data-icon);
+            width: 40px;
+            height: 40px;
+            background: var(--primary-red-light);
+            color: var(--primary-red);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* Security Section */
+        .security {
+            padding: 100px 0;
+            background: var(--bg-white);
+        }
+
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .security-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .security-item {
+            display: flex;
+            gap: 24px;
+        }
+
+        .security-icon {
+            flex-shrink: 0;
+            width: 64px;
+            height: 64px;
+            background: var(--primary-red-light);
+            color: var(--primary-red);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .security-item:hover .security-icon {
+            background: var(--primary-red);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .security-content h4 {
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .retention-notice {
+            background: var(--primary-red);
+            color: white;
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .retention-notice h4 {
+            color: white;
+            margin-bottom: 12px;
+            font-size: 24px;
+        }
+
+        .retention-notice p {
+            color: white;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Resources Section */
+        .resources {
+            padding: 100px 0;
+            background: var(--bg-light);
+        }
+
+        /* FAQ Section */
+        .faq {
+            padding: 100px 0;
+            background: var(--bg-white);
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 60px auto 0;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border-light);
+            padding: 32px 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-toggle {
+            font-size: 24px;
+            color: var(--primary-red);
+            transition: transform 0.3s ease;
+        }
+
+        .faq-question:hover {
+            color: var(--primary-red);
+        }
+
+        .faq-answer {
+            color: var(--text-gray);
+            line-height: 1.7;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding-top: 12px;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            padding: 60px 0 100px;
+            background: var(--bg-light);
+        }
+
+        .testimonial-highlight {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: 48px;
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .testimonial-highlight h3 {
+            color: var(--primary-red);
+            margin-bottom: 32px;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            text-align: left;
+        }
+
+        .impact-item {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .impact-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-red);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .testimonial-card {
+            background: var(--bg-white);
+            padding: 32px;
+            border-radius: var(--radius-lg);
+            position: relative;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-red-light);
+        }
+
+        .quote-icon {
+            font-size: 36px;
+            color: var(--primary-red);
+            line-height: 0.5;
+            margin-bottom: 8px;
+            font-family: serif;
+            opacity: 0.3;
+            position: absolute;
+            top: 24px;
+            left: 24px;
+        }
+
+        .testimonial-quote {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            margin-bottom: 24px;
+            font-style: italic;
+            padding-left: 40px;
+            position: relative;
+        }
+
+        .testimonial-quote mark {
+            background-color: rgba(253, 203, 90, 0.3);
+            color: var(--text-dark);
+            font-weight: 600;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-red-light);
+            color: var(--primary-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .testimonial-author h4 {
+            margin-bottom: 4px;
+            font-size: 18px;
+        }
+
+        .testimonial-author p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        .location {
+            font-size: 12px !important;
+            color: var(--text-light) !important;
+        }
+
+        .testimonial-uses {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .use-tag {
+            background: var(--bg-light);
+            color: var(--text-gray);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .efficiency-badge {
+            background: var(--primary-red);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 16px;
+        }
+
+        /* Adjust tooltip position for edge cards */
+        @media (min-width: 769px) {
+            /* First card in each row */
+            .action-card-wrapper:nth-child(3n+1) .action-tooltip {
+                left: 0;
+                transform: translateX(0);
+            }
+            
+            /* Last card in each row */
+            .action-card-wrapper:nth-child(3n) .action-tooltip {
+                left: auto;
+                right: 0;
+                transform: translateX(0);
+            }
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 100px 0;
+            background: var(--primary-red);
+            color: white;
+            text-align: center;
+        }
+
+        .cta h2 {
+            color: white;
+            margin-bottom: 24px;
+        }
+
+        .cta p {
+            color: white;
+            opacity: 0.9;
+            font-size: 20px;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta .btn-secondary {
+            background: white;
+            color: var(--primary-red);
+            border: none;
+        }
+
+        .cta .btn-secondary:hover {
+            background: var(--bg-lighter);
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 0;
+            background: var(--bg-white);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-red);
+        }
+
+        .footer-copyright {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* Utilities */
+        .text-center {
+            text-align: center;
+        }
+
+        .section-intro {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            text-align: center;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-delay-1 { animation-delay: 0.1s; }
+        .fade-in-delay-2 { animation-delay: 0.2s; }
+        .fade-in-delay-3 { animation-delay: 0.3s; }
+
+        /* Mobile Nav Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .testimonials-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .hero {
+                padding: 120px 0 60px;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .actions-intro {
+                padding: 40px 20px;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .testimonial-card {
+                padding: 24px;
+            }
+
+            .action-tooltip {
+                display: none;
+            }
+
+            .action-card-wrapper {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-content">
+            <a href="#" class="logo">
+                <svg width="140" height="40" viewBox="0 0 367.2 207.8455641767384" style="height: 40px; width: auto;">
+                    <g transform="matrix(1.6739130434782612,0,0,1.6739130434782612,91.30434782608695,-35.39084048893142)" fill="#ed2516">
+                        <g data-name="Layer 2">
+                            <path d="M60.71436,21.14258A56.71492,56.71492,0,0,0,4,77.85742a1,1,0,0,0,2,0A54.71462,54.71462,0,0,1,60.71436,23.14258,33.28587,33.28587,0,0,1,94,56.42871,20.4284,20.4284,0,0,1,73.57129,76.85742,11.85753,11.85753,0,0,1,61.71436,65a7.57153,7.57153,0,0,1,7.57128-7.57129,3.29022,3.29022,0,0,1,3.28565,3.28516,1,1,0,1,0,2,0,5.2858,5.2858,0,0,0-5.28565-5.28516A9.5718,9.5718,0,0,0,59.71436,65,13.8578,13.8578,0,0,0,73.57129,78.85742,22.42881,22.42881,0,0,0,96,56.42871,35.28624,35.28624,0,0,0,60.71436,21.14258Z"></path>
+                        </g>
+                    </g>
+                    <g transform="matrix(4.166953924090829,0,0,4.166953924090829,-2.7670244531685926,96.16523037954585)" fill="#2a2b2a">
+                        <path d="M8.5742 5 l2.8125 0 l0 15 l-2.666 0 l-0.068359 -1.3086 c-0.57617 0.98633 -1.7871 1.543 -3.1543 1.543 c-2.6465 0 -4.834 -1.9531 -4.834 -5.2344 s2.1973 -5.2344 4.834 -5.2344 c1.3184 0 2.4805 0.49805 3.0762 1.4063 l0 -6.1719 z M6.1426 17.9004 c1.4941 0 2.6563 -1.1426 2.6563 -2.9004 s-1.1719 -2.9102 -2.6563 -2.9102 c-1.4941 0 -2.666 1.1035 -2.666 2.9102 c0 1.7969 1.1719 2.9004 2.666 2.9004 z M18.974596875 20.19531 c-3.1934 0 -5.498 -1.9434 -5.498 -5.2246 c0 -3.2617 2.2852 -5.2051 5.498 -5.2051 c3.2324 0 5.5078 1.9434 5.5078 5.2051 c0 3.2813 -2.2852 5.2246 -5.5078 5.2246 z M18.945296875 17.959 c1.6309 0 2.7441 -1.1914 2.7441 -2.9883 s-1.1133 -2.9883 -2.7441 -2.9883 c-1.5723 0 -2.6758 1.1914 -2.6758 2.9883 s1.1035 2.9883 2.6758 2.9883 z M38.4671875 9.766 c2.1484 0 3.5352 1.0938 3.5352 3.1543 l0 7.0801 l-2.8125 0 l0 -6.2793 c0 -1.1816 -0.74219 -1.6992 -1.582 -1.6992 c-1.0059 0 -1.8945 0.57617 -1.8945 2.3145 l0 5.6641 l-2.8418 0 l0 -6.25 c0 -1.2012 -0.72266 -1.7285 -1.6113 -1.7285 c-0.97656 0 -1.8848 0.57617 -1.8848 2.4609 l0 5.5176 l-2.8027 0 l0 -10.039 l2.8027 0 l0 1.1816 c0.66406 -0.88867 1.6797 -1.377 2.9102 -1.377 c1.4551 0 2.5488 0.52734 3.0762 1.5039 c0.70313 -1.0059 1.7773 -1.5039 3.1055 -1.5039 z M51.38675 9.961 l2.8125 0 l0 10.039 l-2.666 0 l-0.068359 -1.2109 c-0.70313 0.88867 -1.8164 1.4063 -3.1934 1.4063 c-2.4121 0 -3.7402 -1.2598 -3.7402 -3.4766 l0 -6.7578 l2.8223 0 l0 6.1523 c0 1.3281 0.83008 1.8164 1.8066 1.8164 c1.1621 0 2.2168 -0.58594 2.2266 -2.4316 l0 -5.5371 z M60.644496875 20.19531 c-2.2559 0 -4.0039 -0.88867 -4.3652 -2.793 l2.3535 -0.66406 c0.30273 1.0742 1.0645 1.4941 2.0117 1.4941 c0.69336 0 1.4453 -0.21484 1.4258 -1.0059 c-0.0097656 -1.0449 -1.5918 -1.1328 -3.1836 -1.6992 c-1.2012 -0.41992 -2.3535 -1.0645 -2.3535 -2.7539 c0 -2.0605 1.709 -3.0078 3.9355 -3.0078 c1.9531 0 3.584 0.74219 3.9746 2.6563 l-2.1777 0.48828 c-0.30273 -0.9375 -0.9668 -1.2695 -1.7871 -1.2695 c-0.74219 0 -1.377 0.26367 -1.377 0.88867 c0 0.79102 1.1621 0.94727 2.4219 1.2891 c1.5527 0.41992 3.252 1.0938 3.252 3.2422 c0 2.3047 -1.9629 3.1348 -4.1309 3.1348 z M76.611796875 20 l-1.0254 -2.9102 l-5.9277 0 l-1.0254 2.9102 l-2.998 0 l5.1953 -14.111 l3.584 0 l5.1953 14.111 l-2.998 0 z M70.517596875 14.6387 l4.209 0 l-2.0996 -5.9863 z M81.72854375 20 l0 -14.111 l2.9297 0 l0 14.111 l-2.9297 0 z"></path>
+                    </g>
+                </svg>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#technology">Technology</a></li>
+                <li><a href="#security">Security</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#resources">Resources</a></li>
+                <li><a href="https://chat.internal.alterdomus.dev" class="nav-cta">Access DomusAI →</a></li>
+            </ul>
+            <button class="mobile-menu-toggle">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <svg class="hero-logo fade-in" viewBox="73 101.70 154 96.61" preserveAspectRatio="xMidYMid meet">
+                    <g transform="translate(-25,101.70)">
+                        <g transform="matrix(1.6739130434782612,0,0,1.6739130434782612,91.30434782608695,-35.39084048893142)" fill="#ed2516">
+                            <g data-name="Layer 2">
+                                <path d="M60.71436,21.14258A56.71492,56.71492,0,0,0,4,77.85742a1,1,0,0,0,2,0A54.71462,54.71462,0,0,1,60.71436,23.14258,33.28587,33.28587,0,0,1,94,56.42871,20.4284,20.4284,0,0,1,73.57129,76.85742,11.85753,11.85753,0,0,1,61.71436,65a7.57153,7.57153,0,0,1,7.57128-7.57129,3.29022,3.29022,0,0,1,3.28565,3.28516,1,1,0,1,0,2,0,5.2858,5.2858,0,0,0-5.28565-5.28516A9.5718,9.5718,0,0,0,59.71436,65,13.8578,13.8578,0,0,0,73.57129,78.85742,22.42881,22.42881,0,0,0,96,56.42871,35.28624,35.28624,0,0,0,60.71436,21.14258Z"></path>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+                
+                <h1 class="fade-in fade-in-delay-1">Your intelligent<br><span>productivity partner.</span></h1>
+                <p class="hero-subtitle fade-in fade-in-delay-2">
+                    Experience the power of AI seamlessly integrated into your daily workflow at Alter Domus. 
+                    From drafting emails to analyzing documents, DomusAI transforms how you work.
+                </p>
+                <div class="hero-actions fade-in fade-in-delay-3">
+                    <a href="https://chat.internal.alterdomus.dev" class="btn btn-primary">
+                        Get Started →
+                    </a>
+                    <a href="#features" class="btn btn-secondary">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Intro Video Section -->
+    <section class="video-section">
+        <div class="container">
+            <div class="section-intro fade-in">
+                <h2>See DomusAI in Action</h2>
+                <p class="large-text">Watch how DomusAI enhances productivity and streamlines your daily tasks</p>
+            </div>
+            <div class="video-container fade-in fade-in-delay-1">
+                <iframe src="https://alterdomusgroup-my.sharepoint.com/personal/davendra_patel_alterdomus_com/_layouts/15/embed.aspx?UniqueId=6bf38311-2d0b-45fa-a47a-00f15c9e19b4&embed=%7B%22ust%22%3Atrue%2C%22hv%22%3A%22CopyEmbedCode%22%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create" width="1280" height="720" frameborder="0" scrolling="no" allowfullscreen title="1. Introduction in domusAI - 0.3.mp4"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Agents Section -->
+    <section class="quick-actions">
+        <div class="container">
+            <div class="actions-intro fade-in">
+                <h3>AI Agents at Your Service</h3>
+                <p class="large-text">Choose from our specialized AI agents designed for your daily tasks</p>
+            </div>
+            
+            <div class="actions-grid">
+                <div class="action-card-wrapper fade-in">
+                    <div class="action-card">
+                        <span class="action-icon">✍️</span>
+                        <span class="action-text">Writing Assistant</span>
+                    </div>
+                    <span class="action-tooltip">Revamp your text for clarity and impact</span>
+                </div>
+                <div class="action-card-wrapper fade-in fade-in-delay-1">
+                    <div class="action-card">
+                        <span class="action-icon">📧</span>
+                        <span class="action-text">Quick Email Creator</span>
+                    </div>
+                    <span class="action-tooltip">Draft professional emails in seconds</span>
+                </div>
+                <div class="action-card-wrapper fade-in fade-in-delay-2">
+                    <div class="action-card">
+                        <span class="action-icon">🌐</span>
+                        <span class="action-text">Multilingual Translator</span>
+                    </div>
+                    <span class="action-tooltip">Translate text to any language</span>
+                </div>
+                <div class="action-card-wrapper fade-in">
+                    <div class="action-card">
+                        <span class="action-icon">📄</span>
+                        <span class="action-text">Analyze a Document</span>
+                    </div>
+                    <span class="action-tooltip">Summarize lengthy PDFs effortlessly</span>
+                </div>
+                <div class="action-card-wrapper fade-in fade-in-delay-1">
+                    <div class="action-card">
+                        <span class="action-icon">📝</span>
+                        <span class="action-text">Meeting Minutes</span>
+                    </div>
+                    <span class="action-tooltip">Capture key points from meetings quickly</span>
+                </div>
+                <div class="action-card-wrapper fade-in fade-in-delay-2">
+                    <div class="action-card">
+                        <span class="action-icon">💡</span>
+                        <span class="action-text">Coding Assistant</span>
+                    </div>
+                    <span class="action-tooltip">Get coding help at your fingertips</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-intro fade-in">
+                <h2>Powerful Capabilities.<br>Designed for You.</h2>
+                <p class="large-text">
+                    DomusAI brings advanced AI technology to every employee at Alter Domus, 
+                    making complex tasks simple and time-consuming work efficient.
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">💬</div>
+                    <h4>Natural Conversations</h4>
+                    <p>Chat naturally in multiple languages. DomusAI understands context and remembers your conversation history for more relevant responses.</p>
+                </div>
+                
+                <div class="feature-card fade-in fade-in-delay-1">
+                    <div class="feature-icon">📁</div>
+                    <h4>File Intelligence</h4>
+                    <p>Upload PDFs, Excel files, Word documents, and images. Ask questions, extract insights, and generate summaries from your documents instantly.</p>
+                </div>
+                
+                <div class="feature-card fade-in fade-in-delay-2">
+                    <div class="feature-icon">🎯</div>
+                    <h4>Custom Prompts</h4>
+                    <p>Create and save personalized prompts tailored to your specific workflows. Access them instantly with a simple forward slash.</p>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🏢</div>
+                    <h4>Workspaces</h4>
+                    <p>Organize your work with dedicated workspaces. Each workspace can be customized with specific AI behaviors and instructions.</p>
+                </div>
+                
+                <div class="feature-card fade-in fade-in-delay-1">
+                    <div class="feature-icon">👤</div>
+                    <h4>Profile Context</h4>
+                    <p>Personalize DomusAI by setting your role, preferred tone, and audience. Get responses perfectly tailored to your professional needs.</p>
+                </div>
+                
+                <div class="feature-card fade-in fade-in-delay-2">
+                    <div class="feature-icon">⚡</div>
+                    <h4>Real-time Assistance</h4>
+                    <p>Get instant help with writing, proofreading, analysis, and creative tasks. DomusAI is always ready when you need it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="technology" class="technology">
+        <div class="container">
+            <div class="section-intro fade-in">
+                <h2>Built on Cutting-Edge<br>Technology.</h2>
+                <p class="large-text">
+                    DomusAI leverages the latest in AI and cloud technology to deliver 
+                    a secure, scalable, and intelligent experience.
+                </p>
+            </div>
+            
+            <div class="tech-grid">
+                <div class="tech-category fade-in">
+                    <h4 data-icon="🤖">AI & Intelligence</h4>
+                    <ul class="tech-list">
+                        <li>
+                            <span>GPT-4o Mini Model</span>
+                            <span class="tech-badge">Latest</span>
+                        </li>
+                        <li>
+                            <span>Azure OpenAI Service</span>
+                            <span class="tech-badge">Enterprise</span>
+                        </li>
+                        <li>
+                            <span>Natural Language Processing</span>
+                            <span class="tech-badge">Advanced</span>
+                        </li>
+                        <li>
+                            <span>Multilingual Support</span>
+                            <span class="tech-badge">Global</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="tech-category fade-in fade-in-delay-1">
+                    <h4 data-icon="⚙️">Infrastructure</h4>
+                    <ul class="tech-list">
+                        <li>
+                            <span>Next.js & React Frontend</span>
+                            <span class="tech-badge">Modern</span>
+                        </li>
+                        <li>
+                            <span>Supabase Backend</span>
+                            <span class="tech-badge">Scalable</span>
+                        </li>
+                        <li>
+                            <span>EU Azure Tenant</span>
+                            <span class="tech-badge">Compliant</span>
+                        </li>
+                        <li>
+                            <span>WebSocket Real-time</span>
+                            <span class="tech-badge">Fast</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="architecture">
+        <div class="container">
+            <div class="section-intro fade-in">
+                <h2>Architecture Overview</h2>
+                <p class="large-text">A robust, scalable system designed for enterprise use</p>
+            </div>
+            
+            <div class="architecture-layers">
+                <div class="layer-card fade-in">
+                    <h4 data-icon="🎨">Frontend Layer</h4>
+                    <p>Built with Next.js and React, providing a user-friendly interface with real-time updates and responsive design.</p>
+                </div>
+                <div class="layer-card fade-in fade-in-delay-1">
+                    <h4 data-icon="🔗">Integration Layer</h4>
+                    <p>Connects frontend to backend using AI Model APIs and WebSocket connections for instant data exchange.</p>
+                </div>
+                <div class="layer-card fade-in fade-in-delay-2">
+                    <h4 data-icon="💾">Backend/Database Layer</h4>
+                    <p>Utilizes Supabase for authentication and file storage, with Azure Storage for secure data management.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Section -->
+    <section id="security" class="security">
+        <div class="container">
+            <div class="section-intro fade-in">
+                <h2>Enterprise-Grade Security</h2>
+                <p class="large-text">Your data security is our top priority</p>
+            </div>
+            
+            <div class="security-grid">
+                <div class="security-item fade-in">
+                    <div class="security-icon">🔐</div>
+                    <div class="security-content">
+                        <h4>Single Sign-On (SSO)</h4>
+                        <p>Seamless and secure access with your existing Alter Domus credentials. No additional passwords to remember.</p>
+                    </div>
+                </div>
+                
+                <div class="security-item fade-in fade-in-delay-1">
+                    <div class="security-icon">🛡️</div>
+                    <div class="security-content">
+                        <h4>Azure Security</h4>
+                        <p>Hosted on Alter Domus' EU Azure tenant with advanced encryption for data at rest and in transit.</p>
+                    </div>
+                </div>
+                
+                <div class="security-item fade-in fade-in-delay-2">
+                    <div class="security-icon">🔒</div>
+                    <div class="security-content">
+                        <h4>Data Privacy</h4>
+                        <p>Your data is never used for training purposes. All information remains private and confidential.</p>
+                    </div>
+                </div>
+                
+                <div class="security-item fade-in fade-in-delay-3">
+                    <div class="security-icon">✅</div>
+                    <div class="security-content">
+                        <h4>Responsible AI</h4>
+                        <p>Adheres to Microsoft's Responsible AI practices and Alter Domus compliance standards.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="retention-notice fade-in">
+                <h4><span style="display: inline-flex; width: 40px; height: 40px; background: rgba(255,255,255,0.2); color: white; border-radius: 10px; align-items: center; justify-content: center; font-size: 20px; margin-right: 12px; vertical-align: middle;">🔄</span>30-Day Data Retention Policy</h4>
+                <p>
+                    Chats and files are automatically deleted after 30 days to ensure your privacy. 
+                    Save important items to folders to keep them permanently. This policy helps maintain 
+                    an organized workspace while ensuring data security.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section id="resources" class="resources">
+        <div class="container">
+            <div class="section-intro fade-in">
+                <h2>Resources & Training</h2>
+                <p class="large-text">Level up your AI skills with our comprehensive training programs</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">📚</div>
+                    <h4>User Manual</h4>
+                    <p>Comprehensive guide covering features, chat functionality, file management, workspace tools, and FAQs.</p>
+                    <a href="https://alterdomusgroup.sharepoint.com/sites/Automation/SiteAssets/Forms/AllItems.aspx?id=%2Fsites%2FAutomation%2FSiteAssets%2FSitePages%2F1e7f1673%2Dc0f5%2D459d%2D9ec5%2D803f74de9bc7%2FUserManual%5FDomusAI%5FVersion1%2E0%2Epdf&parent=%2Fsites%2FAutomation%2FSiteAssets%2FSitePages%2F1e7f1673%2Dc0f5%2D459d%2D9ec5%2D803f74de9bc7" target="_blank" class="btn-text" style="margin-top: 16px;">Download PDF →</a>
+                </div>
+
+                <div class="feature-card fade-in fade-in-delay-1">
+                    <div class="feature-icon">🎓</div>
+                    <h4>Academy Course - Learning DomusAI Fundamentals</h4>
+                    <p>This course explores the essential features and functionalities of DomusAI.</p>
+                    <a href="https://alterdomus.plateau.com/learning/user/deeplink.do?programSectionSysGUID=161b53bd-f20a-41b2-a908-b9822e1cfc32&linkId=PROGRAM_DETAILS&fromSF=Y&programID=AI_Fundamentals" target="_blank" class="btn-text" style="margin-top: 16px;">Start Learning →</a>
+                </div>
+
+                <div class="feature-card fade-in fade-in-delay-2">
+                    <div class="feature-icon">💼</div>
+                    <h4>LinkedIn Learning - Enhancing AI Interactions Through Effective Prompting</h4>
+                    <p>Master the art of crafting effective prompts to get the best results from AI tools.</p>
+                    <a href="https://www.linkedin.com/learning-login/share?forceAccount=false&redirect=https://www.linkedin.com/learning/microsoft-copilot-the-art-of-prompt-writing-24554232/understand-the-ingredients-of-a-good-prompt?trk%3Dshare_video_url%26shareId%3DsH2nTlq8SPemmZBOKovMLQ%253D%253D" target="_blank" class="btn-text" style="margin-top: 16px;">Enroll Now →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq">
+        <div class="container">
+            <div class="section-intro fade-in">
+                <h2>Frequently Asked Questions</h2>
+                <p class="large-text">Get answers to common questions about DomusAI</p>
+            </div>
+            
+            <div class="faq-container">
+                <div class="faq-item fade-in">
+                    <div class="faq-question">
+                        <span>Can I upload client documents to DomusAI?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, DomusAI has been designed in accordance with Alter Domus compliance and security measures. You can safely upload both client and internal documents to enhance efficiency in your workflow. The tool is safe to use for all regulated entities within Alter Domus.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item fade-in">
+                    <div class="faq-question">
+                        <span>What file types are supported?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>DomusAI can process PDFs, CSVs, text documents, Word and Excel files, and images. You can upload files using drag and drop, the Files button, or the Add button in the chat area.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item fade-in">
+                    <div class="faq-question">
+                        <span>Is my data used for AI training?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>No, your data is never used for model training purposes. All data remains in-house, is encrypted, and is not shared with third parties. Your privacy is completely protected.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item fade-in">
+                    <div class="faq-question">
+                        <span>How current is the AI's knowledge?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>The GPT-4o Mini model's training data includes information up to October 2023. For more recent information, you can provide documents or context in your queries.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item fade-in">
+                    <div class="faq-question">
+                        <span>Can I access internal SharePoint documents?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Integration with internal resources like SharePoint and AD News pages is on our roadmap and will be available in future releases. Currently, you can upload documents directly to DomusAI.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item fade-in">
+                    <div class="faq-question">
+                        <span>Who is responsible for the content generated?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Users are solely responsible for checking the accuracy of the outputs generated by AI tools, including DomusAI. Always verify important information before using it in your work.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <div class="section-intro fade-in">
+                <h2>See How Your Colleagues<br>Are Using DomusAI</h2>
+                <p class="large-text">
+                    Discover how DomusAI is making a difference in daily work across Alter Domus
+                </p>
+                <div style="margin-top: 24px; font-style: italic; color: var(--text-gray);">
+                    <p>"Curious about how DomusAI is making a difference in our daily work? Take a look at what your peers are doing with it! Get inspired by their experiences and see how you can leverage this powerful tool to enhance your own workflow."</p>
+                    <p style="margin-top: 12px; font-weight: 600; color: var(--text-dark);">— Prasad Ekal, BA & PM - AI & Automation Team</p>
+                </div>
+            </div>
+            
+            <div class="testimonial-highlight fade-in">
+                <h3>DomusAI Impact Across Alter Domus</h3>
+                <div class="impact-grid">
+                    <div class="impact-item">
+                        <span class="impact-icon">✓</span>
+                        <p><strong>Makes Tasks Easier:</strong> Helps with daily stuff like prepping documents and checking data</p>
+                    </div>
+                    <div class="impact-item">
+                        <span class="impact-icon">✓</span>
+                        <p><strong>Improves Communication:</strong> Makes chatting and drafting emails a breeze</p>
+                    </div>
+                    <div class="impact-item">
+                        <span class="impact-icon">✓</span>
+                        <p><strong>Saves Time:</strong> Frees you up to work on more interesting projects</p>
+                    </div>
+                    <div class="impact-item">
+                        <span class="impact-icon">✓</span>
+                        <p><strong>Helps with Decisions:</strong> Analyzes info and gives insights quickly</p>
+                    </div>
+                    <div class="impact-item">
+                        <span class="impact-icon">✓</span>
+                        <p><strong>Enhances Quality:</strong> Improves accuracy and consistency in your work outputs</p>
+                    </div>
+                    <div class="impact-item">
+                        <span class="impact-icon">✓</span>
+                        <p><strong>Boosts Collaboration:</strong> Enables better teamwork with shared workspaces and insights</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card fade-in">
+                    <div class="quote-icon">"</div>
+                    <p class="testimonial-quote">Since integrating DomusAI into my daily routine, I can fairly say <mark>it has become an extension of myself</mark>.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">JV</div>
+                        <div>
+                            <h4>Jonathan Veiler</h4>
+                            <p>Head of IT Infrastructure & Operations</p>
+                            <p class="location">Luxembourg - EMEA</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-uses">
+                        <span class="use-tag">Rephrasing Communication</span>
+                        <span class="use-tag">Research & Data Extraction</span>
+                        <span class="use-tag">Document Preparation</span>
+                        <span class="use-tag">Invoice Translation</span>
+                    </div>
+                    <p class="efficiency-badge">15-20% efficiency gain</p>
+                </div>
+                
+                <div class="testimonial-card fade-in fade-in-delay-1">
+                    <div class="quote-icon">"</div>
+                    <p class="testimonial-quote">DomusAI is a companion tool, one that allows us to <mark>shift from repetitive tasks to more creative work</mark>.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">DP</div>
+                        <div>
+                            <h4>Daniel Pinter</h4>
+                            <p>Sales Operations Officer</p>
+                            <p class="location">Malta - EMEA</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-uses">
+                        <span class="use-tag">Data Validation</span>
+                        <span class="use-tag">Excel Support</span>
+                        <span class="use-tag">Data Summarization</span>
+                        <span class="use-tag">Email Drafting</span>
+                    </div>
+                    <p class="efficiency-badge">Focus on creative tasks</p>
+                </div>
+                
+                <div class="testimonial-card fade-in fade-in-delay-2">
+                    <div class="quote-icon">"</div>
+                    <p class="testimonial-quote">It allows me to <mark>assist our clients in a timely and effective manner</mark>.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RR</div>
+                        <div>
+                            <h4>Russell Rosales</h4>
+                            <p>Senior Manager</p>
+                            <p class="location">England - EMEA</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-uses">
+                        <span class="use-tag">Personal Assistant</span>
+                        <span class="use-tag">Email Paraphrasing</span>
+                        <span class="use-tag">Document Translation</span>
+                    </div>
+                    <p class="efficiency-badge">3-5 hours saved per week</p>
+                </div>
+                
+                <div class="testimonial-card fade-in">
+                    <div class="quote-icon">"</div>
+                    <p class="testimonial-quote">I thank the DomusAI team for giving us this wonderful tool and <mark>helping us deliver the modern web for a legacy app</mark>.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">NS</div>
+                        <div>
+                            <h4>Nitesh Sanghvi</h4>
+                            <p>Software Engineer Manager</p>
+                            <p class="location">India - APAC</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-uses">
+                        <span class="use-tag">Code Quality</span>
+                        <span class="use-tag">App Migration</span>
+                        <span class="use-tag">Problem Solving</span>
+                    </div>
+                    <p class="efficiency-badge">Legacy app modernized</p>
+                </div>
+                
+                <div class="testimonial-card fade-in fade-in-delay-1">
+                    <div class="quote-icon">"</div>
+                    <p class="testimonial-quote">I've definitely noticed some time savings—<mark>about 2 hours each week</mark>, which has been a huge help in managing my workload.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">BT</div>
+                        <div>
+                            <h4>Bishnu Prasad Tripathy</h4>
+                            <p>Senior Software Engineer</p>
+                            <p class="location">India - APAC</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-uses">
+                        <span class="use-tag">Quick Information Access</span>
+                        <span class="use-tag">Legacy Code Solutions</span>
+                        <span class="use-tag">Team Collaboration</span>
+                    </div>
+                    <p class="efficiency-badge">2 hours saved per week</p>
+                </div>
+                
+                <div class="testimonial-card fade-in fade-in-delay-2">
+                    <div class="quote-icon">"</div>
+                    <p class="testimonial-quote">Overall, DomusAI stands out as <mark>a valuable assistant for both personal and professional use</mark>.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">EJ</div>
+                        <div>
+                            <h4>Emilija Jaraite</h4>
+                            <p>Financial Operations Senior Officer</p>
+                            <p class="location">Lithuania - EMEA</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-uses">
+                        <span class="use-tag">Formal Emails</span>
+                        <span class="use-tag">Document Reading</span>
+                        <span class="use-tag">Calculations</span>
+                        <span class="use-tag">Workspaces</span>
+                    </div>
+                    <p class="efficiency-badge">Enhanced productivity</p>
+                </div>
+            </div>
+            
+            <!-- View More Testimonials Button -->
+            <div class="testimonials-cta fade-in" style="text-align: center; margin-top: 48px;">
+                <a href="https://alterdomusgroup.sharepoint.com/:u:/r/sites/Automation/SitePages/Testimonials.aspx" class="btn btn-primary" style="background: var(--primary-red); color: white; padding: 16px 32px; border-radius: var(--radius); text-decoration: none; font-weight: 600; display: inline-block; transition: all 0.3s ease;">
+                    View More Testimonials →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2 class="fade-in">Ready to Transform<br>Your Productivity?</h2>
+            <p class="fade-in fade-in-delay-1">
+                Join thousands of Alter Domus employees already using DomusAI to work smarter, not harder.
+            </p>
+            <div class="cta-buttons fade-in fade-in-delay-2">
+                <a href="https://chat.internal.alterdomus.dev" class="btn btn-secondary">
+                    Get Started Now →
+                </a>
+                <div class="resources-dropdown" style="position: relative; display: inline-block;">
+                    <button class="btn btn-primary resources-toggle" style="background: transparent; border: 2px solid white; cursor: pointer;">
+                        View Training Resources ▼
+                    </button>
+                    <div class="resources-menu" style="display: none; position: absolute; top: 100%; left: 0; background: white; border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 20px; min-width: 350px; z-index: 1000; margin-top: 8px;">
+                        <h4 style="color: var(--text-dark); margin-bottom: 16px; font-size: 18px;">Learning Resources</h4>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <a href="https://alterdomusgroup.sharepoint.com/sites/Automation/SiteAssets/Forms/AllItems.aspx?id=%2Fsites%2FAutomation%2FSiteAssets%2FSitePages%2F1e7f1673%2Dc0f5%2D459d%2D9ec5%2D803f74de9bc7%2FUserManual%5FDomusAI%5FVersion1%2E0%2Epdf&parent=%2Fsites%2FAutomation%2FSiteAssets%2FSitePages%2F1e7f1673%2Dc0f5%2D459d%2D9ec5%2D803f74de9bc7" target="_blank" class="resource-link" style="color: var(--primary-red); text-decoration: none; padding: 8px 12px; border-radius: 6px; transition: background 0.3s ease; display: block;">
+                                📄 Download User Manual (PDF)
+                            </a>
+                            <a href="https://alterdomus.plateau.com/learning/user/deeplink.do?programSectionSysGUID=161b53bd-f20a-41b2-a908-b9822e1cfc32&linkId=PROGRAM_DETAILS&fromSF=Y&programID=AI_Fundamentals" class="resource-link" style="color: var(--primary-red); text-decoration: none; padding: 8px 12px; border-radius: 6px; transition: background 0.3s ease; display: block;">
+                                🎓 AI Fundamentals Course
+                            </a>
+                            <a href="https://www.linkedin.com/learning-login/share?forceAccount=false&redirect=https://www.linkedin.com/learning/microsoft-copilot-the-art-of-prompt-writing-24554232/understand-the-ingredients-of-a-good-prompt?trk%3Dshare_video_url%26shareId%3DsH2nTlq8SPemmZBOKovMLQ%253D%253D" class="resource-link" style="color: var(--primary-red); text-decoration: none; padding: 8px 12px; border-radius: 6px; transition: background 0.3s ease; display: block;">
+                                💡 LinkedIn Learning: Effective Prompting
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="https://alterdomusgroup.sharepoint.com/sites/Automation/SiteAssets/Forms/AllItems.aspx?id=%2Fsites%2FAutomation%2FSiteAssets%2FSitePages%2F1e7f1673%2Dc0f5%2D459d%2D9ec5%2D803f74de9bc7%2FUserManual%5FDomusAI%5FVersion1%2E0%2Epdf&parent=%2Fsites%2FAutomation%2FSiteAssets%2FSitePages%2F1e7f1673%2Dc0f5%2D459d%2D9ec5%2D803f74de9bc7" target="_blank">User Manual</a>
+                    <a href="#">Information Hub</a>
+                    <a href="#">Support Ticket</a>
+                    <a href="#">Contact Team</a>
+                </div>
+                <p class="footer-copyright">
+                    © 2025 Alter Domus. All rights reserved. DomusAI - Empowering productivity through AI<br>
+                    Developed by the AI & Cloud Engineering Team
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Video placeholder
+        function playVideo() {
+            alert('Video player would open here');
+            // In production, this would open a video modal or embed
+        }
+
+        // Add shadow to nav on scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 10) {
+                nav.style.boxShadow = '0 4px 16px rgba(0,0,0,0.08)';
+            } else {
+                nav.style.boxShadow = 'none';
+            }
+        });
+
+        // Resources Dropdown Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const resourcesToggle = document.querySelector('.resources-toggle');
+            const resourcesMenu = document.querySelector('.resources-menu');
+            
+            if (resourcesToggle && resourcesMenu) {
+                resourcesToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const isVisible = resourcesMenu.style.display === 'block';
+                    resourcesMenu.style.display = isVisible ? 'none' : 'block';
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!resourcesToggle.contains(e.target) && !resourcesMenu.contains(e.target)) {
+                        resourcesMenu.style.display = 'none';
+                    }
+                });
+                
+                // Add hover effects to resource links
+                document.querySelectorAll('.resource-link').forEach(link => {
+                    link.addEventListener('mouseenter', function() {
+                        this.style.backgroundColor = 'var(--bg-light)';
+                    });
+                    link.addEventListener('mouseleave', function() {
+                        this.style.backgroundColor = 'transparent';
+                    });
+                });
+            }
+        });
+
+        // FAQ Toggle
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const faqItem = this.parentElement;
+                const wasActive = faqItem.classList.contains('active');
+                
+                // Close all FAQ items
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                // Open clicked item if it wasn't active
+                if (!wasActive) {
+                    faqItem.classList.add('active');
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.opacity = '0';
+            observer.observe(el);
+        });
+
+        // Also observe action card wrappers
+        document.querySelectorAll('.action-card-wrapper').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
