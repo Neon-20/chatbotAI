@@ -1093,6 +1093,11 @@
             .action-card-wrapper {
                 width: 100%;
             }
+
+            /* Training Videos Mobile Responsive */
+            .training-videos-grid {
+                grid-template-columns: 1fr !important;
+            }
         }
     </style>
 </head>
@@ -1436,9 +1441,53 @@
 
                 <div class="feature-card fade-in fade-in-delay-2">
                     <div class="feature-icon">💼</div>
-                    <h4>AI Fundamentals Programme - Unlock the power of AI with our comprehensive training</h4>
+                    <h4>AI Fundamentals Programme - Unlock the power of AI with LinkedIn's comprehensive training</h4>
                     <p>Enhance your skills with the key AI concepts and practical examples to maximize the benefits of DomusAI in your role.</p>
                     <a href="https://www.linkedin.com/learning-login/share?forceAccount=false&redirect=https://www.linkedin.com/learning/microsoft-copilot-the-art-of-prompt-writing-24554232/understand-the-ingredients-of-a-good-prompt?trk%3Dshare_video_url%26shareId%3DsH2nTlq8SPemmZBOKovMLQ%253D%253D" target="_blank" class="btn-text" style="margin-top: 16px;">Enroll Now →</a>
+                </div>
+            </div>
+
+            <!-- Training Videos Section -->
+            <div id="training-videos" class="training-videos-section section-intro fade-in" style="margin-top: 80px;">
+                <h3>Training Videos</h3>
+                <p class="large-text">Master the art of prompt writing with these essential training videos</p>
+            </div>
+
+            <div class="training-videos-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 40px;">
+                <!-- Video 1: Understand the ingredients of a good prompt -->
+                <div class="feature-card fade-in" style="padding: 0; overflow: hidden;">
+                    <div class="video-wrapper" style="position: relative; width: 100%; height: 300px; background: #000; border-radius: var(--radius-lg) var(--radius-lg) 0 0; cursor: pointer;" onclick="playVideo(this, '/video1.mp4')">
+                        <!-- Image Thumbnail -->
+                        <img class="video-thumbnail" src="video1-pic.png" alt="Video 1 Thumbnail" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-lg) var(--radius-lg) 0 0; cursor: pointer;" />
+
+                        <!-- Video Element (hidden initially) -->
+                        <video class="video-element" style="display: none; width: 100%; height: 100%; border-radius: var(--radius-lg) var(--radius-lg) 0 0;" controls>
+                            <source src="/video1.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div style="padding: 24px;">
+                        <h4 style="margin-bottom: 12px; color: var(--text-dark);">Understand the ingredients of a good prompt</h4>
+                        <p style="color: var(--text-gray); line-height: 1.6; margin-bottom: 0;">The video explains that a prompt is the input given to an AI, like Copilot, to elicit a response, emphasizing that crafting effective prompts with clear goals, context, sources, and expectations can significantly improve the quality of the AI's output.</p>
+                    </div>
+                </div>
+
+                <!-- Video 2: Prompting Do's and Don't's -->
+                <div class="feature-card fade-in fade-in-delay-1" style="padding: 0; overflow: hidden;">
+                    <div class="video-wrapper" style="position: relative; width: 100%; height: 300px; background: #000; border-radius: var(--radius-lg) var(--radius-lg) 0 0; cursor: pointer;" onclick="playVideo(this, '/video2.mp4')">
+                        <!-- Image Thumbnail -->
+                        <img class="video-thumbnail" src="video2-pic.png" alt="Video 2 Thumbnail" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-lg) var(--radius-lg) 0 0; cursor: pointer;" />
+
+                        <!-- Video Element (hidden initially) -->
+                        <video class="video-element" style="display: none; width: 100%; height: 100%; border-radius: var(--radius-lg) var(--radius-lg) 0 0;" controls>
+                            <source src="/video2.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div style="padding: 24px;">
+                        <h4 style="margin-bottom: 12px; color: var(--text-dark);">Prompting Do's and Don't's</h4>
+                        <p style="color: var(--text-gray); line-height: 1.6; margin-bottom: 0;">The video outlines best practices for writing effective prompts for AI, emphasizing the importance of clarity, specificity, and politeness, while also providing dos and don'ts to enhance the quality of AI responses, such as avoiding vagueness and conflicting instructions.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1705,10 +1754,10 @@
                     Get Started Now →
                 </a>
                 <div class="resources-dropdown" style="position: relative; display: inline-block;">
-                    <button class="btn btn-primary resources-toggle" style="background: transparent; border: 2px solid white; cursor: pointer;">
-                        View Training Resources ▼
+                    <button class="btn btn-primary resources-toggle" style="background: transparent; border: 2px solid white; cursor: pointer;" onclick="scrollToTrainingVideos()">
+                        View Training Videos
                     </button>
-                    <div class="resources-menu" style="display: none; position: absolute; top: 100%; left: 0; background: white; border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 20px; min-width: 350px; z-index: 1000; margin-top: 8px;">
+                    <!-- <div class="resources-menu" style="display: none; position: absolute; top: 100%; left: 0; background: white; border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 20px; min-width: 350px; z-index: 1000; margin-top: 8px;">
                         <h4 style="color: var(--text-dark); margin-bottom: 16px; font-size: 18px;">Learning Resources</h4>
                         <div style="display: flex; flex-direction: column; gap: 12px;">
                             <a href="https://alterdomusgroup.sharepoint.com/sites/Automation/SiteAssets/Forms/AllItems.aspx?id=%2Fsites%2FAutomation%2FSiteAssets%2FSitePages%2F1e7f1673%2Dc0f5%2D459d%2D9ec5%2D803f74de9bc7%2FUserManual%5FDomusAI%5FVersion1%2E0%2Epdf&parent=%2Fsites%2FAutomation%2FSiteAssets%2FSitePages%2F1e7f1673%2Dc0f5%2D459d%2D9ec5%2D803f74de9bc7" target="_blank" class="resource-link" style="color: var(--primary-red); text-decoration: none; padding: 8px 12px; border-radius: 6px; transition: background 0.3s ease; display: block;">
@@ -1721,7 +1770,7 @@
                                 💡 LinkedIn Learning: Effective Prompting
                             </a>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -1760,10 +1809,43 @@
             });
         });
 
-        // Video placeholder
-        function playVideo() {
-            alert('Video player would open here');
-            // In production, this would open a video modal or embed
+        // Video player function
+        function playVideo(wrapper, videoSrc) {
+            const thumbnail = wrapper.querySelector('.video-thumbnail');
+            const videoElement = wrapper.querySelector('.video-element');
+
+            // Hide thumbnail and show video
+            thumbnail.style.display = 'none';
+            videoElement.style.display = 'block';
+
+            // Play the video
+            videoElement.play();
+
+            // When video ends, show thumbnail again
+            videoElement.addEventListener('ended', function() {
+                thumbnail.style.display = 'flex';
+                videoElement.style.display = 'none';
+                videoElement.currentTime = 0; // Reset to beginning
+            });
+
+            // When video is paused, optionally show thumbnail again
+            videoElement.addEventListener('pause', function() {
+                if (videoElement.currentTime === 0) {
+                    thumbnail.style.display = 'flex';
+                    videoElement.style.display = 'none';
+                }
+            });
+        }
+
+        // Scroll to training videos section
+        function scrollToTrainingVideos() {
+            const trainingVideosSection = document.getElementById('training-videos');
+            if (trainingVideosSection) {
+                trainingVideosSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         }
 
         // Add shadow to nav on scroll
