@@ -374,7 +374,7 @@ const ChatInputComponent: FC<ChatInputProps> = ({}) => {
           </a>{" "}
           and our{" "}
           <a
-            href="https://alterdomusgroup.sharepoint.com/sites/Automation/SitePages/domusAI---Your-personal-AI-driven-assistant.aspx"
+            href="/web.html"
             target="_blank"
             className="font-medium text-red-600 underline hover:text-red-700"
           >

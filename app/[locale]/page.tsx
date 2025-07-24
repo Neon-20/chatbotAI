@@ -16,6 +16,7 @@ import {
   ArrowRightLeft
 } from "lucide-react"
 import Logo from "@/components/icons/logo"
+import Link from "next/link"
 
 export default function HomePage() {
   // Define the feature list with corresponding icons and descriptions
@@ -174,22 +175,22 @@ export default function HomePage() {
               Join the revolution in productivity
             </p>
             <div className="relative flex flex-col items-center justify-center space-y-2">
-              <a
-                href="https://chat.internal.alterdomus.cloud"
-                className="inline-block w-full max-w-xs"
-                target="_blank"
-              >
+              <Link href="/login" className="inline-block w-full max-w-xs">
                 <button className="flex w-full items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700">
-                  Access Newly Launched DomusAI
+                  Get Started
                   <ArrowRight className="ml-2 size-4" />
                 </button>
-              </a>
-              <a href="/login" className="inline-block w-full max-w-xs">
+              </Link>
+              <Link
+                href="/web.html"
+                target="_blank"
+                className="inline-block w-full max-w-xs"
+              >
                 <button className="flex w-full items-center justify-center rounded-lg border border-red-600 bg-white px-4 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50">
-                  Use Dev for Migrating (30 days)
-                  <ArrowRightLeft className="ml-4 size-4" />
+                  Discover the power of domusAI
+                  <ArrowRightCircle className="ml-2 size-4" />
                 </button>
-              </a>
+              </Link>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="80"
@@ -255,7 +256,7 @@ export default function HomePage() {
               </a>{" "}
               and our{" "}
               <a
-                href="https://alterdomusgroup.sharepoint.com/sites/Automation/SitePages/domusAI---Your-personal-AI-driven-assistant.aspx"
+                href="/web.html"
                 target="_blank"
                 className="font-medium text-red-600 underline hover:text-red-700"
               >
