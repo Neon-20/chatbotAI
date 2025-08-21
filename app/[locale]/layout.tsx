@@ -98,7 +98,7 @@ export default async function RootLayout({
             resources={resources}
           >
             <FaroProvider>
-              <Toaster richColors position="top-center" duration={3000} />
+              <Toaster richColors position="top-right" duration={3000} />
               <div className="bg-background text-foreground flex h-dvh flex-col items-center overflow-x-auto">
                 {session ? <GlobalState>{children}</GlobalState> : children}
               </div>

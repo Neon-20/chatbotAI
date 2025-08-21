@@ -13,12 +13,42 @@ import {
   Smile,
   Lock,
   ArrowRightCircle,
-  ArrowRightLeft
+  AlertTriangle
 } from "lucide-react"
 import Logo from "@/components/icons/logo"
 import Link from "next/link"
+import { useEffect } from "react"
+import { toast } from "sonner"
 
 export default function HomePage() {
+  // Show development environment warning toast
+  useEffect(() => {
+    // Check if this is development environment
+    const isDevelopment =
+      typeof window !== "undefined" &&
+      (window.location.hostname === "chat.internal.alterdomus.dev" ||
+        window.location.hostname.includes("dev") ||
+        window.location.hostname === "localhost" ||
+        window.location.hostname.includes("127.0.0.1"))
+
+    if (isDevelopment) {
+      toast.warning("Development Environment Notice", {
+        description:
+          "This development version will expire on August 25th. Please migrate your data and switch to the production environment for continued access.",
+        duration: Infinity, // Toast won't disappear automatically
+        action: {
+          label: "Understood",
+          onClick: () => {} // Just dismiss the toast
+        },
+        icon: <AlertTriangle className="size-4" />
+        // style: {
+        //   border: '1px solid #f59e0b',
+        //   backgroundColor: '#fef3c7'
+        // }
+      })
+    }
+  }, [])
+
   // Define the feature list with corresponding icons and descriptions
   const features = [
     {
