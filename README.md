@@ -113,5 +113,5 @@ npm run dev
 
 
 ## models
-: AZURE_GPT_41_MINI_NAME="sweden-gpt-4.1-mini"
+: AZURE_GPT_41_MINI_NAME=sweden-gpt-4.1-mini
 
